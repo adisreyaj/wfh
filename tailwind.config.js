@@ -1,5 +1,5 @@
 module.exports = {
-  content: [],
+  content: ['apps/store-front/**/*.{ts,html}', 'libs/ui/src/**/*.{ts,html}'],
   theme: {
     extend: {
       colors: {
