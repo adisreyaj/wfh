@@ -84,10 +84,7 @@
             "polyfills": "apps/store-front/src/polyfills.ts",
             "tsConfig": "apps/store-front/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              "apps/store-front/src/favicon.ico",
-              "apps/store-front/src/assets"
-            ],
+            "assets": ["apps/store-front/src/favicon.ico", "apps/store-front/src/assets"],
             "styles": ["apps/store-front/src/styles.scss"],
             "scripts": []
           },
@@ -148,10 +145,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/store-front/src/**/*.ts",
-              "apps/store-front/src/**/*.html"
-            ]
+            "lintFilePatterns": ["apps/store-front/src/**/*.ts", "apps/store-front/src/**/*.html"]
           }
         },
         "test": {
@@ -192,6 +186,45 @@
       },
       "tags": [],
       "implicitDependencies": ["store-front"]
+    },
+    "ui": {
+      "projectType": "library",
+      "root": "libs/ui",
+      "sourceRoot": "libs/ui/src",
+      "prefix": "wfh",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/angular:ng-packagr-lite",
+          "outputs": ["dist/libs/ui"],
+          "options": {
+            "project": "libs/ui/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "libs/ui/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "libs/ui/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/ui"],
+          "options": {
+            "jestConfig": "libs/ui/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/ui/src/**/*.ts", "libs/ui/src/**/*.html"]
+          }
+        }
+      },
+      "tags": []
     }
   }
 }
