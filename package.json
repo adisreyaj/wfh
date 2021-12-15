@@ -25,6 +25,7 @@
     "@nrwl/angular": "13.3.4",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.4.0",
+    "tailwindcss": "^3.0.3",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4"
   },
