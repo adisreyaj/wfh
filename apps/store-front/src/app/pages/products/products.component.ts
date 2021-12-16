@@ -5,7 +5,7 @@ import { FilterSidebarModule } from '@wfh/ui';
 @Component({
   selector: 'wfh-products',
   template: `
-    <aside class="w-60">
+    <aside class="w-72">
       <wfh-filter-sidebar></wfh-filter-sidebar>
     </aside>
     <section></section>

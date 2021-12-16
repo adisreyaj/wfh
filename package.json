@@ -23,6 +23,7 @@
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "@nrwl/angular": "13.3.4",
+    "@tailwindcss/forms": "^0.4.0",
     "angular-remix-icon": "^3.0.0",
     "cal-sans": "^1.0.1",
     "reflect-metadata": "^0.1.13",

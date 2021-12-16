@@ -11,6 +11,9 @@ export class AccordionItem {
   title = '';
   @Input()
   disabled = false;
+  @Input()
+  isOpen = false;
+
   @ContentChild(AccordionContent)
   content?: AccordionContent;
 

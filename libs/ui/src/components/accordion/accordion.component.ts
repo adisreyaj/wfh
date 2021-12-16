@@ -1,5 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import {
+  AfterContentInit,
   ChangeDetectionStrategy,
   Component,
   ContentChildren,
@@ -58,7 +59,7 @@ import { AccordionItem } from './directives/accordion-item.directive';
     `
       .accordion {
         &__header {
-          @apply flex items-center justify-between text-sm cursor-pointer hover:bg-gray-100 p-2;
+          @apply flex items-center bg-gray-50 justify-between text-sm cursor-pointer hover:bg-gray-100 p-2;
         }
 
         &__item.active .accordion__toggle-btn {
@@ -76,7 +77,7 @@ import { AccordionItem } from './directives/accordion-item.directive';
     ]),
   ],
 })
-export class AccordionComponent {
+export class AccordionComponent implements AfterContentInit {
   expanded = new Set<number>();
   /**
    * Decides if the single item will be open at once or not.
@@ -85,6 +86,16 @@ export class AccordionComponent {
   @Input() collapsing = false;
 
   @ContentChildren(AccordionItem) items?: QueryList<AccordionItem>;
+
+  ngAfterContentInit() {
+    if (this.items) {
+      this.items?.forEach((item, index) => {
+        if (item.isOpen) {
+          this.expanded.add(index);
+        }
+      });
+    }
+  }
 
   toggleState = (index: number) => {
     if (this.expanded.has(index)) {
