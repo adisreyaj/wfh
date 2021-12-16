@@ -1,41 +1,41 @@
 import { CommonModule } from '@angular/common';
-import { Attribute, ChangeDetectionStrategy, Component, HostBinding, Input, NgModule } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input, NgModule } from '@angular/core';
 @Component({
   selector: 'button',
   template: ` <ng-content></ng-content> `,
-  styles: [],
+  styles: [
+    `
+      :host {
+        @apply px-5 py-3 text-base font-medium;
+        @apply transition duration-150 ease-in-out;
+      }
+
+      :host-context(.primary) {
+        @apply bg-primary text-white;
+        @apply hover:bg-primary-dark;
+      }
+      :host-context(.secondary) {
+        @apply bg-secondary text-white;
+      }
+      :host-context(.neutral) {
+        @apply bg-gray-100 hover:bg-gray-200 hover:text-primary;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonComponent {
   @HostBinding('class')
   get buttonClasses() {
-    const baseClasses = new Set([
-      'button',
-      'px-5',
-      'py-3',
-      'text-base',
-      'font-medium',
-      'transition',
-      'duration-150',
-      'ease-in-out',
-    ]);
+    const baseClasses = new Set(['button', this.variant ?? 'primary']);
     this.class.split(' ').forEach((c) => baseClasses.add(c));
-    switch (this.variant) {
-      case 'secondary':
-        baseClasses.add('bg-secondary');
-        baseClasses.add('text-white');
-        break;
-      default:
-        baseClasses.add('bg-primary');
-        baseClasses.add('text-white');
-        break;
-    }
     return Array.from(baseClasses).join(' ');
   }
   @Input()
   class = '';
 
-  constructor(@Attribute('variant') private variant: string) {}
+  @Input()
+  variant = 'primary';
 }
 
 @NgModule({

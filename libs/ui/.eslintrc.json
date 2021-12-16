@@ -18,11 +18,10 @@
         "@angular-eslint/directive-selector": [
           "error",
           {
-            "type": "attribute",
-            "prefix": "wfh",
-            "style": "camelCase"
+            "prefix": "wfh"
           }
         ],
+        "@angular-eslint/directive-class-suffix": "off",
         "@angular-eslint/component-selector": [
           "off",
           {

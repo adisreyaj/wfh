@@ -3,5 +3,6 @@
   "dest": "../../dist/libs/ui",
   "lib": {
     "entryFile": "src/index.ts"
-  }
+  },
+  "inlineStyleLanguage": "scss"
 }

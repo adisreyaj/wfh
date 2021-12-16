@@ -4,7 +4,19 @@ import { FilterSidebarModule } from '@wfh/ui';
 
 @Component({
   selector: 'wfh-products',
-  template: ``,
+  template: `
+    <aside class="w-60">
+      <wfh-filter-sidebar></wfh-filter-sidebar>
+    </aside>
+    <section></section>
+  `,
+  styles: [
+    `
+      :host {
+        @apply block mx-auto max-w-7xl;
+      }
+    `,
+  ],
 })
 export class ProductsPage {}
 
