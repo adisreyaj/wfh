@@ -1,5 +1,7 @@
 import { Component, NgModule } from '@angular/core';
 import { AccordionModule } from '../accordion/accordion.module';
+import { CheckboxModule } from '../checkbox/checkbox.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'wfh-filter-sidebar',
@@ -30,7 +32,12 @@ import { AccordionModule } from '../accordion/accordion.module';
     </wfh-accordion-item>
     <wfh-accordion-item title="Brands">
       <ng-template wfhAccordionContent>
-        <div class="p-4"></div>
+        <div class="p-4 flex flex-col gap-2">
+          <wfh-checkbox label="Apple"></wfh-checkbox>
+          <wfh-checkbox label="Samsung"></wfh-checkbox>
+          <wfh-checkbox label="Sony"></wfh-checkbox>
+          <wfh-checkbox label="SteelSeries"></wfh-checkbox>
+        </div>
       </ng-template>
     </wfh-accordion-item>
     <wfh-accordion-item title="Rating">
@@ -51,7 +58,7 @@ export class FilterSidebarComponent {}
 
 @NgModule({
   declarations: [FilterSidebarComponent],
-  imports: [AccordionModule],
+  imports: [CommonModule, AccordionModule, CheckboxModule],
   exports: [FilterSidebarComponent],
 })
 export class FilterSidebarModule {}
