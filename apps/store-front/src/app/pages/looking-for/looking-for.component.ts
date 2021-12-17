@@ -19,7 +19,10 @@ import { StorageService } from '@wfh/ui';
               [class.selected]="selected.has(category.id)"
             >
               <ng-container *ngIf="selected.has(category.id)">
-                <rmx-icon name="checkbox-circle-fill" class="absolute top-1 right-1 selected-icon"></rmx-icon>
+                <rmx-icon
+                  name="checkbox-circle-fill"
+                  class="absolute top-1 right-1 selected-icon"
+                ></rmx-icon>
               </ng-container>
               <header>
                 <img [src]="category.image" [alt]="category.name" />
@@ -30,7 +33,7 @@ import { StorageService } from '@wfh/ui';
           </ng-container>
         </ul>
         <footer class="flex justify-end items-center">
-          <button (click)="proceed()" [variant]="selected.size === 0 ? 'neutral' : 'primary'">
+          <button wfh (click)="proceed()" [variant]="selected.size === 0 ? 'neutral' : 'primary'">
             {{ selected.size === 0 ? 'Skip for Now' : 'Proceed' }}
           </button>
         </footer>
@@ -42,6 +45,7 @@ import { StorageService } from '@wfh/ui';
       .selected {
         @apply shadow-2xl;
       }
+
       .selected-icon {
         @apply fill-green-500;
       }
