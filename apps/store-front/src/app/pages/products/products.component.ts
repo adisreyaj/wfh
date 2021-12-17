@@ -13,10 +13,10 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'wfh-products',
   template: `
-    <aside>
+    <aside class="sticky top-6">
       <wfh-filter-sidebar></wfh-filter-sidebar>
     </aside>
-    <section class="px-6">
+    <section class="content px-6 pb-10">
       <ul class="grid grid-cols-3 gap-4">
         <li (click)="sideSheetRef.open()">
           <wfh-product-card
@@ -77,11 +77,11 @@ import { CommonModule } from '@angular/common';
           unknown printer took a galley of type and scrambled it to make a type specimen book.
         </p>
 
-        <section class="mt-2">
+        <section class="mt-4">
           <div class="flex text-2xl items-center">
             <p class="font-medium">{{ 4000 | currency: currencyCode }}</p>
             <ng-container *ngIf="true">
-              <p class="text-gray-500  line-through ml-2">
+              <p class="text-gray-500 text-base line-through ml-2">
                 {{ 4599 | currency: currencyCode }}
               </p>
             </ng-container>
@@ -91,8 +91,7 @@ import { CommonModule } from '@angular/common';
               <p>
                 You will save
                 <strong class="text-green-600">{{ 3400 | currency: currencyCode }}</strong>
-                ({{ 29 }})
-                <span class="text-xs">%</span>
+                ({{ 29 }} <span class="text-xs">%</span>)
               </p>
             </div>
           </ng-container>
@@ -141,10 +140,17 @@ import { CommonModule } from '@angular/common';
     </wfh-side-sheet>
   `,
   styles: [
+    //language=SCSS
     `
       :host {
-        @apply grid mx-auto max-w-7xl px-4;
-        grid-template-columns: 280px 1fr;
+        @apply flex mx-auto max-w-7xl px-4 items-start;
+        aside {
+          width: 280px;
+        }
+
+        .content {
+          @apply flex-1;
+        }
       }
     `,
   ],

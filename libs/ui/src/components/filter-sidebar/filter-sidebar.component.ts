@@ -80,7 +80,7 @@ import { CommonModule } from '@angular/common';
   styles: [
     `
       :host {
-        @apply block w-full h-full border border-gray-100;
+        @apply block w-full border border-gray-100;
       }
     `,
   ],

@@ -34,7 +34,7 @@ import { OverlayService } from '../../common';
 export class SideSheetComponent {
   @Input()
   @HostBinding('class.open')
-  isOpen = true;
+  isOpen = false;
 
   constructor(private overlayService: OverlayService) {}
 

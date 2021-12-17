@@ -5,6 +5,7 @@ import {
   RiEyeLine,
   RiHeart3Line,
   RiNotification4Fill,
+  RiSearch2Line,
   RiShoppingCart2Fill,
 } from 'angular-remix-icon';
 
@@ -14,6 +15,7 @@ const ICONS = {
   RiEyeLine,
   RiHeart3Line,
   RiCloseLine,
+  RiSearch2Line,
 };
 
 @NgModule({
