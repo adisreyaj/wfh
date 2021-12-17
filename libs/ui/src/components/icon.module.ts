@@ -1,9 +1,19 @@
 import { NgModule } from '@angular/core';
-import { RemixIconModule, RiNotification4Fill, RiShoppingCart2Fill } from 'angular-remix-icon';
+import {
+  RemixIconModule,
+  RiCloseLine,
+  RiEyeLine,
+  RiHeart3Line,
+  RiNotification4Fill,
+  RiShoppingCart2Fill,
+} from 'angular-remix-icon';
 
 const ICONS = {
   RiNotification4Fill,
   RiShoppingCart2Fill,
+  RiEyeLine,
+  RiHeart3Line,
+  RiCloseLine,
 };
 
 @NgModule({

@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'wfh-filter-sidebar',
   template: ` <wfh-accordion>
-    <wfh-accordion-item title="Price" [isOpen]="true">
+    <wfh-accordion-item title="Price Range" [isOpen]="true">
       <ng-template wfhAccordionContent>
         <div class="p-2 grid grid-cols-2 gap-4">
           <div class="form-group">
@@ -43,6 +43,37 @@ import { CommonModule } from '@angular/common';
     <wfh-accordion-item title="Rating">
       <ng-template wfhAccordionContent>
         <div class="p-4"></div>
+      </ng-template>
+    </wfh-accordion-item>
+    <wfh-accordion-item title="Colors" [isOpen]="true">
+      <ng-template wfhAccordionContent>
+        <div class="p-4">
+          <ul class="flex gap-4">
+            <li>
+              <button class="w-6 h-6 bg-primary"></button>
+            </li>
+            <li>
+              <button class="w-6 h-6 bg-primary"></button>
+            </li>
+            <li>
+              <button class="w-6 h-6 bg-primary"></button>
+            </li>
+            <li>
+              <button class="w-6 h-6 bg-primary"></button>
+            </li>
+            <li>
+              <button class="w-6 h-6 bg-primary"></button>
+            </li>
+          </ul>
+        </div>
+      </ng-template>
+    </wfh-accordion-item>
+    <wfh-accordion-item title="Stock">
+      <ng-template wfhAccordionContent>
+        <div class="p-4 flex flex-col gap-2">
+          <wfh-checkbox label="In Stock"></wfh-checkbox>
+          <wfh-checkbox label="Out of Stock"></wfh-checkbox>
+        </div>
       </ng-template>
     </wfh-accordion-item>
   </wfh-accordion>`,
