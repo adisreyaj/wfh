@@ -36,15 +36,11 @@
     }
   }
 
-  input[type='checkbox'],
-  input[type='radio'] {
-    @apply text-primary;
-  }
 }
 
-[type='checkbox'],
-[type='radio'] {
-  border-radius: 6px !important;
+input[type='checkbox'],
+input[type='radio'] {
+  color: var(--primary) !important;
 }
 
 [type='checkbox']:focus,
