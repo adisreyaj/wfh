@@ -7,12 +7,18 @@ import { ChangeDetectionStrategy, Component, HostBinding, Input, NgModule } from
   styles: [
     `
       :host {
-        @apply px-5 py-3 text-base font-medium;
+        @apply px-5 h-10 text-base font-medium outline-none;
         @apply transition duration-150 ease-in-out;
+        @apply hover:ring-2 ring-offset-1 hover:ring-primary;
+        @apply focus:ring-2 focus:ring-primary;
+      }
+
+      :host-context(.icon) {
+        @apply flex items-center justify-center;
       }
 
       :host-context(.xsmall) {
-        @apply px-2 py-1 text-xs font-medium;
+        @apply p-1 text-xs font-medium;
       }
 
       :host-context(.small) {
@@ -35,6 +41,14 @@ import { ChangeDetectionStrategy, Component, HostBinding, Input, NgModule } from
       :host-context(.outline) {
         @apply hover:bg-gray-100 outline-none border border-gray-200 hover:text-primary;
       }
+
+      :host-context(.icon.small) {
+        @apply h-12 w-12;
+      }
+
+      :host-context(.icon.xsmall) {
+        @apply h-8 w-8;
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,6 +56,7 @@ import { ChangeDetectionStrategy, Component, HostBinding, Input, NgModule } from
 export class ButtonComponent {
   @Input()
   class = '';
+
   @Input()
   variant = 'primary';
 
