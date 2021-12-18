@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
-import { RemixIconModule, RiCheckboxCircleFill } from 'angular-remix-icon';
+import { RemixIconModule, RiCheckboxCircleFill, RiDeleteBin5Fill } from 'angular-remix-icon';
 
 const ICONS = {
   RiCheckboxCircleFill,
+  RiDeleteBin5Fill,
 };
 
 @NgModule({
