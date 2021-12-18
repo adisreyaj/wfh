@@ -2,14 +2,22 @@ import { Component, NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'wfh-cart',
+  selector: 'wfh-checkout',
   template: ``,
 })
-export class CartComponent {}
+export class CheckoutComponent {}
 
 @NgModule({
-  declarations: [CartComponent],
-  imports: [RouterModule.forChild([{ path: '', component: CartComponent }])],
-  exports: [CartComponent],
+  declarations: [CheckoutComponent],
+  imports: [
+    RouterModule.forChild([
+      { path: '', component: CheckoutComponent },
+      {
+        path: 'cart',
+        loadChildren: () => import('./cart/cart.component').then((m) => m.CartModule),
+      },
+    ]),
+  ],
+  exports: [CheckoutComponent],
 })
-export class CartModule {}
+export class CheckoutModule {}
