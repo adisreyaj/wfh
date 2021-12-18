@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -7,4 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 export class OverlayService {
   showOverlaySubject = new BehaviorSubject(false);
   showOverlay$ = this.showOverlaySubject.asObservable();
+
+  clickedOutsideSubject = new Subject<void>();
+  clickedOutside$ = this.clickedOutsideSubject.asObservable();
 }

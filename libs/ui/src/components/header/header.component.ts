@@ -36,10 +36,10 @@ import { IconModule } from '../icon.module';
         <input class="w-full pl-8" type="search" name="" id="" />
       </div>
       <div class="flex gap-2">
-        <button class="header__icon">
+        <a class="header__icon">
           <rmx-icon name="notification-4-fill"></rmx-icon>
-        </button>
-        <button class="header__icon">
+        </a>
+        <button class="header__icon" routerLink="/checkout/cart">
           <rmx-icon name="shopping-cart-2-fill"></rmx-icon>
         </button>
       </div>
