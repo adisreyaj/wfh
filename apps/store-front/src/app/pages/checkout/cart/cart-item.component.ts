@@ -6,15 +6,14 @@ import { IconModule } from '../../../shared/modules/icon.module';
 @Component({
   selector: 'wfh-cart-item',
   template: `
-    <div class="flex items-center gap-4">
+    <div class="flex items-start">
       <div class="relative">
         <img [src]="product.images[0]" [alt]="product.title" style="height: 150px" />
       </div>
-      <div>
-        <p class="text-sm font-medium">{{ product.title }}</p>
+      <div class="p-4">
+        <p class="text-sm font-medium text-gray-600">{{ product.title }}</p>
         <ng-content select="rating"></ng-content>
         <div class="mt-2">
-          <p class="text-xs text-gray-500">Price</p>
           <div class="flex text-sm items-center">
             <p class="font-medium">{{ product.price | currency: currencyCode }}</p>
             <ng-container *ngIf="product.originalPrice">
@@ -26,26 +25,26 @@ import { IconModule } from '../../../shared/modules/icon.module';
           <ng-container *ngIf="product.originalPrice">
             <div class="text-xs">
               <p>
-                You will save
+                You save
                 <strong class="text-green-600">{{ '3400' | currency: currencyCode }}</strong>
-                ({{ product.price | discount: product.originalPrice }})
-                <span class="text-xs">%</span>
               </p>
             </div>
           </ng-container>
         </div>
       </div>
     </div>
-    <div>
-      <button wfh variant="neutral" size="xsmall" class="icon">
-        <rmx-icon name="delete-bin-5-fill" class="icon-xs"></rmx-icon>
-      </button>
-    </div>
+    <button wfh variant="neutral" size="xsmall" class="icon delete absolute top-1 right-1">
+      <rmx-icon name="delete-bin-5-fill" class="icon-xs"></rmx-icon>
+    </button>
   `,
   styles: [
     `
       :host {
-        @apply flex justify-between gap-4;
+        @apply relative flex justify-between border border-gray-200 gap-4;
+      }
+
+      button.delete rmx-icon {
+        @apply fill-red-500;
       }
     `,
   ],

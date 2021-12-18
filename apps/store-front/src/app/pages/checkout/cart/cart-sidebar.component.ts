@@ -1,6 +1,7 @@
-import { Component, NgModule } from '@angular/core';
+import { Component, EventEmitter, Input, NgModule, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ButtonModule } from '@wfh/ui';
+import { ButtonModule, StepIndicatorModule } from '@wfh/ui';
+import { IconModule } from '../../../shared/modules/icon.module';
 
 @Component({
   selector: 'wfh-cart-sidebar',
@@ -32,7 +33,7 @@ import { ButtonModule } from '@wfh/ui';
                 <td>
                   <p class="text-gray-500">{{ item.label }}</p>
                 </td>
-                <td>
+                <td class="text-right">
                   <p class="font-medium">{{ item.value }}</p>
                 </td>
               </tr>
@@ -41,25 +42,34 @@ import { ButtonModule } from '@wfh/ui';
           <tfoot class="text-md">
             <tr class="border-t h-8 border-gray-200">
               <td>
-                <p class="text-gray-500">Total</p>
+                <p class="font-medium">Total</p>
               </td>
               <td>
-                <p class="font-medium">3000</p>
+                <p class="font-medium text-right">3000</p>
               </td>
             </tr>
           </tfoot>
         </table>
       </div>
     </section>
-    <footer>
-      <button class="w-full" wfh>Place Order</button>
+    <section class="cart-sidebar__section steps">
+      <wfh-step-indicator [completed]="state">
+        <ng-container *ngFor="let step of steps">
+          <ng-template wfh-step-indicator-item [title]="step">
+            <rmx-icon name="check-line" class="icon-sm" style="fill:white"></rmx-icon>
+          </ng-template>
+        </ng-container>
+      </wfh-step-indicator>
+    </section>
+    <footer class="mt-6">
+      <button class="w-full" wfh (click)="clicked.emit()">{{ labels[state] }}</button>
     </footer>
   `,
   styles: [
     // language=SCSS
     `
       :host {
-        @apply block p-4;
+        @apply block p-4 border border-gray-200;
       }
 
       .cart-sidebar {
@@ -78,6 +88,19 @@ import { ButtonModule } from '@wfh/ui';
   ],
 })
 export class CartSidebarComponent {
+  @Input()
+  state = 0;
+
+  @Output()
+  clicked = new EventEmitter<void>();
+
+  labels: Record<number, string> = {
+    0: 'Select Address',
+    1: 'Select Payment',
+    2: 'Review Order',
+  };
+  steps = ['Cart', 'Address', 'Payment'];
+
   priceBreakdown = [
     {
       label: 'Cart Value',
@@ -86,6 +109,10 @@ export class CartSidebarComponent {
     {
       label: 'Discount',
       value: '$10',
+    },
+    {
+      label: 'Coupon Discount',
+      value: '$14.99',
     },
     {
       label: 'Shipping',
@@ -99,7 +126,7 @@ export class CartSidebarComponent {
 }
 
 @NgModule({
-  imports: [CommonModule, ButtonModule],
+  imports: [CommonModule, ButtonModule, IconModule, StepIndicatorModule],
   declarations: [CartSidebarComponent],
   exports: [CartSidebarComponent],
 })

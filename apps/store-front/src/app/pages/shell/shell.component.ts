@@ -6,13 +6,18 @@ import { SHELL_ROUTES } from '../../app.routes';
 @Component({
   template: `
     <wfh-header></wfh-header>
-    <router-outlet></router-outlet>
+    <div class="container mx-auto mt-4">
+      <router-outlet></router-outlet>
+    </div>
   `,
 })
 export class ShellComponent {}
 
 @NgModule({
   declarations: [ShellComponent],
-  imports: [RouterModule.forChild([{ path: '', component: ShellComponent, children: SHELL_ROUTES }]), HeaderModule],
+  imports: [
+    RouterModule.forChild([{ path: '', component: ShellComponent, children: SHELL_ROUTES }]),
+    HeaderModule,
+  ],
 })
 export class ShellModule {}
