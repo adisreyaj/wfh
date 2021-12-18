@@ -8,6 +8,7 @@ import { DOCUMENT } from '@angular/common';
   template: ` <div
       *ngIf="showOverlay$ | async"
       class="w-screen h-screen fixed z-10 bg-black opacity-50"
+      (click)="overlayService.clickedOutsideSubject.next()"
     ></div>
     <router-outlet></router-outlet>`,
 })
@@ -16,10 +17,7 @@ export class AppComponent implements OnDestroy {
 
   readonly destroy$ = new Subject<void>();
 
-  constructor(
-    private overlayService: OverlayService,
-    @Inject(DOCUMENT) private document: Document
-  ) {
+  constructor(public overlayService: OverlayService, @Inject(DOCUMENT) private document: Document) {
     this.showOverlay$ = this.overlayService.showOverlay$;
     this.showOverlay$.pipe(takeUntil(this.destroy$)).subscribe((isOpen) => {
       if (isOpen) {
