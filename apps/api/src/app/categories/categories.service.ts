@@ -5,14 +5,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CategoryModel } from './category.schema';
+import { CategoryModel } from './categories.schema';
 import { Model } from 'mongoose';
 import { CategoryDocument, CategoryRequest } from '@wfh/api-interfaces';
 import { catchError, from, map, of } from 'rxjs';
 import { MONGO_ERROR } from '../core/config/mongo.error';
 
 @Injectable()
-export class CategoryService {
+export class CategoriesService {
   constructor(
     @InjectModel(CategoryModel.name)
     private readonly categoryModel: Model<CategoryDocument>

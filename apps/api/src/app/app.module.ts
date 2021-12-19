@@ -5,9 +5,10 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { OrdersModule } from './orders/orders.module';
 import { ProductsModule } from './products/products.module';
-import { CategoryModule } from './category/category.module';
+import { CategoriesModule } from './categories/categories.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { BrandsModule } from './brands/brands.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -31,7 +32,8 @@ import * as Joi from 'joi';
     UsersModule,
     OrdersModule,
     ProductsModule,
-    CategoryModule,
+    CategoriesModule,
+    BrandsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
