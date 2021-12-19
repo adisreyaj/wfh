@@ -1,6 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiCategoryService } from './api-category.service';
+
 import { CategoryRequest } from '@wfh/api-interfaces';
+
+import { ApiCategoryService } from './api-category.service';
 
 @Controller('categories')
 export class ApiCategoryController {

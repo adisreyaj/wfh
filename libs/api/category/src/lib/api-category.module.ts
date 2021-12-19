@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+
 import { ApiCategoryController } from './api-category.controller';
 import { ApiCategoryService } from './api-category.service';
-import { MongooseModule } from '@nestjs/mongoose';
 import { CategoryModel } from './api-category.schema';
 
 @Module({

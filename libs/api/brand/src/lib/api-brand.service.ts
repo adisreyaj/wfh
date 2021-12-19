@@ -1,10 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { BrandsModel } from './api-brand.schema';
 import { Model } from 'mongoose';
+
 import { BrandDocument, BrandRequest } from '@wfh/api-interfaces';
-import { from, map } from 'rxjs';
 import { handleError } from '@wfh/api/util';
+import { from, map } from 'rxjs';
+
+import { BrandsModel } from './api-brand.schema';
 
 @Injectable()
 export class ApiBrandService {

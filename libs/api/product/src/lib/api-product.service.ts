@@ -1,9 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ProductDocument, ProductRequest } from '@wfh/api-interfaces';
 import { from, map } from 'rxjs';
+
+import { ProductDocument, ProductRequest } from '@wfh/api-interfaces';
 import { handleError } from '@wfh/api/util';
+
 import { ProductModel } from './schemas/products.schema';
 
 @Injectable()

@@ -1,6 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiProductService } from './api-product.service';
+
 import { ProductRequest } from '@wfh/api-interfaces';
+
+import { ApiProductService } from './api-product.service';
 
 @Controller('products')
 export class ApiProductController {
