@@ -9,7 +9,6 @@ export const productsSchema = new Schema(
     category: { type: Schema.Types.ObjectId, ref: 'Category', autopopulate: true },
     brand: { type: Schema.Types.ObjectId, ref: 'Brand', autopopulate: true },
     colors: [String],
-    materials: [String],
   },
   {
     timestamps: true,
