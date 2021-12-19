@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
 
-export const brandsSchema = new Schema(
+export const apiBrandSchema = new Schema(
   {
     name: { type: String, required: true, unique: true },
     logo: String,
@@ -13,5 +13,5 @@ export const brandsSchema = new Schema(
 
 export const BrandsModel = {
   name: 'Brands',
-  schema: brandsSchema,
+  schema: apiBrandSchema,
 };

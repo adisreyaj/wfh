@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import * as Joi from 'joi';
+import { ApiCategoryModule } from '@wfh/api/category';
+import { ApiBrandModule } from '@wfh/api/brand';
+import { ApiProductModule } from '@wfh/api/product';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { OrdersModule } from './orders/orders.module';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { BrandsModule } from './brands/brands.module';
-import * as Joi from 'joi';
-import { ApiCategoryModule } from '@wfh/api/category';
-import { ApiProductModule } from '@wfh/api/product';
 
 @Module({
   imports: [
@@ -33,7 +33,7 @@ import { ApiProductModule } from '@wfh/api/product';
     OrdersModule,
     ApiProductModule,
     ApiCategoryModule,
-    BrandsModule,
+    ApiBrandModule,
   ],
   controllers: [AppController],
   providers: [AppService],

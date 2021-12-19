@@ -1,14 +1,9 @@
-import {
-  HttpException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ProductDocument, ProductRequest } from '@wfh/api-interfaces';
-import { catchError, from, map, of } from 'rxjs';
-import { MONGO_ERROR } from '../../../../../apps/api/src/app/core/config/mongo.error';
+import { from, map } from 'rxjs';
+import { handleError } from '@wfh/api/util';
 import { ProductModel } from './schemas/products.schema';
 
 @Injectable()
@@ -34,11 +29,7 @@ export class ApiProductService {
   }
 
   getAll() {
-    return from(this.productModel.find({})).pipe(
-      catchError((err) => {
-        return of(new InternalServerErrorException(err));
-      })
-    );
+    return from(this.productModel.find({})).pipe(handleError('product'));
   }
 
   get(id: string) {
@@ -49,22 +40,12 @@ export class ApiProductService {
         }
         return product;
       }),
-      catchError((err) => {
-        if (err instanceof HttpException) {
-          return of(err);
-        }
-        return of(new InternalServerErrorException(err));
-      })
+      handleError('product')
     );
   }
 
   create(productReq: ProductRequest) {
-    return from(this.productModel.create(productReq)).pipe(
-      catchError((err) => {
-        const exception = MONGO_ERROR('product')[err.code as string];
-        return exception != null ? of(exception) : of(new InternalServerErrorException(err));
-      })
-    );
+    return from(this.productModel.create(productReq)).pipe(handleError('product'));
   }
 
   update(id: string, productReq: Partial<ProductRequest>) {
@@ -75,10 +56,7 @@ export class ApiProductService {
         }
         return product;
       }),
-      catchError((err) => {
-        const exception = MONGO_ERROR('product')[err.code as string];
-        return exception != null ? of(exception) : of(new InternalServerErrorException(err));
-      })
+      handleError('product')
     );
   }
 
@@ -90,10 +68,7 @@ export class ApiProductService {
         }
         return product;
       }),
-      catchError((err) => {
-        const exception = MONGO_ERROR('product')[err.code as string];
-        return exception != null ? of(exception) : of(new InternalServerErrorException(err));
-      })
+      handleError('product')
     );
   }
 }

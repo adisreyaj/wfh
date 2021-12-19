@@ -1,10 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { BrandsService } from './brands.service';
+import { ApiBrandService } from './api-brand.service';
 import { BrandRequest } from '@wfh/api-interfaces';
 
-@Controller('brands')
-export class BrandsController {
-  constructor(private brandService: BrandsService) {}
+@Controller('api-brand')
+export class ApiBrandController {
+  constructor(private brandService: ApiBrandService) {}
 
   @Get()
   getAll() {

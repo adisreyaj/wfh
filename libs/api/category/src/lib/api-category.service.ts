@@ -1,14 +1,9 @@
-import {
-  HttpException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CategoryDocument, CategoryRequest } from '@wfh/api-interfaces';
-import { catchError, from, map, of } from 'rxjs';
-import { MONGO_ERROR } from '../../../../../apps/api/src/app/core/config/mongo.error';
+import { from, map } from 'rxjs';
+import { handleError } from '@wfh/api/util';
 import { CategoryModel } from './api-category.schema';
 
 @Injectable()
@@ -19,11 +14,7 @@ export class ApiCategoryService {
   ) {}
 
   getAll() {
-    return from(this.categoryModel.find({})).pipe(
-      catchError((err) => {
-        return of(new InternalServerErrorException(err));
-      })
-    );
+    return from(this.categoryModel.find({})).pipe(handleError('category'));
   }
 
   get(id: string) {
@@ -34,22 +25,12 @@ export class ApiCategoryService {
         }
         return category;
       }),
-      catchError((err) => {
-        if (err instanceof HttpException) {
-          return of(err);
-        }
-        return of(new InternalServerErrorException(err));
-      })
+      handleError('category')
     );
   }
 
   create(categoryReq: CategoryRequest) {
-    return from(this.categoryModel.create(categoryReq)).pipe(
-      catchError((err) => {
-        const exception = MONGO_ERROR('category')[err.code as string];
-        return exception != null ? of(exception) : of(new InternalServerErrorException(err));
-      })
-    );
+    return from(this.categoryModel.create(categoryReq)).pipe(handleError('category'));
   }
 
   update(id: string, categoryReq: Partial<CategoryRequest>) {
@@ -60,10 +41,7 @@ export class ApiCategoryService {
         }
         return category;
       }),
-      catchError((err) => {
-        const exception = MONGO_ERROR('category')[err.code as string];
-        return exception != null ? of(exception) : of(new InternalServerErrorException(err));
-      })
+      handleError('category')
     );
   }
 
@@ -75,10 +53,7 @@ export class ApiCategoryService {
         }
         return category;
       }),
-      catchError((err) => {
-        const exception = MONGO_ERROR('category')[err.code as string];
-        return exception != null ? of(exception) : of(new InternalServerErrorException(err));
-      })
+      handleError('category')
     );
   }
 }
