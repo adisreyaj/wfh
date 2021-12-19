@@ -1,13 +1,18 @@
 import { Schema } from 'mongoose';
 
-export const mouseSchema = new Schema({
-  type: {
-    type: String,
-    enum: ['Wireless', 'Bluetooth', 'Wired'],
-    required: true,
+export const mouseSchema = new Schema(
+  {
+    type: {
+      type: String,
+      enum: ['Wireless', 'Bluetooth', 'Wired'],
+      required: true,
+    },
+    buttons: Number,
   },
-  buttons: Number,
-});
+  {
+    discriminatorKey: 'kind',
+  }
+);
 
 export const ProductMouseModel = {
   name: 'ProductMouse',

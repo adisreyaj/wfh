@@ -6,6 +6,7 @@ import { ProductModel } from './schemas/products.schema';
 import { InventoryService } from './inventory/inventory.service';
 import { ProductKeyboardModel } from './schemas/keyboard.schema';
 import { ProductChairModel } from './schemas/chair.schema';
+import { ProductMouseModel } from './schemas/mouse.schema';
 
 @Module({
   imports: [
@@ -18,7 +19,12 @@ import { ProductChairModel } from './schemas/chair.schema';
           schema.plugin(require('mongoose-autopopulate'));
           return schema;
         },
-        discriminators: [ProductKeyboardModel, ProductKeyboardModel, ProductChairModel],
+        discriminators: [
+          ProductKeyboardModel,
+          ProductKeyboardModel,
+          ProductChairModel,
+          ProductMouseModel,
+        ],
       },
     ]),
   ],

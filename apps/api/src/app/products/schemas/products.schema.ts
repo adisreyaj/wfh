@@ -12,6 +12,7 @@ export const productsSchema = new Schema(
   },
   {
     timestamps: true,
+    discriminatorKey: 'kind',
   }
 );
 
