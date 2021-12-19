@@ -18,11 +18,16 @@ export class ProductsService {
     private readonly productModel: Model<ProductDocument>
   ) {}
 
-  search() {
+  autocomplete(searchTerm: string) {
     return from(
       this.productModel.aggregate([
         {
-          $search: {},
+          $search: {
+            text: {
+              query: searchTerm,
+              path: 'name',
+            },
+          },
         },
       ])
     );

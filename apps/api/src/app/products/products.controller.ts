@@ -11,6 +11,11 @@ export class ProductsController {
     return this.productsService.getAll();
   }
 
+  @Get('search/:query')
+  search(@Param('query') query: string) {
+    return this.productsService.autocomplete(query);
+  }
+
   @Get('/:id')
   get(@Param('id') id: string) {
     return this.productsService.get(id);
