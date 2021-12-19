@@ -2,7 +2,7 @@ import { Schema } from 'mongoose';
 
 export const brandsSchema = new Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true, unique: true },
     logo: String,
     colors: [String],
   },
