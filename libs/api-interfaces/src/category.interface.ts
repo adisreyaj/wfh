@@ -1,15 +1,17 @@
+import { Document } from 'mongoose';
+
 export interface CategoryBase {
   name: string;
   description?: string;
   image?: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export type CategoryRequest = CategoryBase;
 
-export interface Category extends CategoryBase {
+export interface CategoryResponse extends CategoryBase {
   id: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface CategoryDocument extends CategoryBase, Document {}
