@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
 
-export const categoriesSchema = new Schema(
+export const apiCategorySchema = new Schema(
   {
     name: {
       type: String,
@@ -15,5 +15,5 @@ export const categoriesSchema = new Schema(
 
 export const CategoryModel = {
   name: 'Category',
-  schema: categoriesSchema,
+  schema: apiCategorySchema,
 };

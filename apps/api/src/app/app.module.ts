@@ -4,12 +4,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { OrdersModule } from './orders/orders.module';
-import { ProductsModule } from './products/products.module';
-import { CategoriesModule } from './categories/categories.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BrandsModule } from './brands/brands.module';
 import * as Joi from 'joi';
+import { ApiCategoryModule } from '@wfh/api/category';
+import { ApiProductModule } from '@wfh/api/product';
 
 @Module({
   imports: [
@@ -31,8 +31,8 @@ import * as Joi from 'joi';
     }),
     UsersModule,
     OrdersModule,
-    ProductsModule,
-    CategoriesModule,
+    ApiProductModule,
+    ApiCategoryModule,
     BrandsModule,
   ],
   controllers: [AppController],

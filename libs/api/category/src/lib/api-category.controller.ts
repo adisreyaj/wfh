@@ -1,10 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { CategoriesService } from './categories.service';
+import { ApiCategoryService } from './api-category.service';
 import { CategoryRequest } from '@wfh/api-interfaces';
 
 @Controller('categories')
-export class CategoriesController {
-  constructor(private categoryService: CategoriesService) {}
+export class ApiCategoryController {
+  constructor(private categoryService: ApiCategoryService) {}
 
   @Get()
   getAll() {
