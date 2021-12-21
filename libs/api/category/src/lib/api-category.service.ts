@@ -15,6 +15,26 @@ export class ApiCategoryService {
     private readonly categoryModel: Model<CategoryDocument>
   ) {}
 
+  autocomplete(searchTerm: string) {
+    return from(
+      this.categoryModel.aggregate([
+        {
+          $search: {
+            autocomplete: {
+              query: searchTerm,
+              path: 'name',
+            },
+          },
+        },
+        {
+          $project: {
+            name: 1,
+          },
+        },
+      ])
+    ).pipe(handleError('category'));
+  }
+
   getAll() {
     return from(this.categoryModel.find({})).pipe(handleError('category'));
   }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 
 import { CategoryRequest } from '@wfh/api-interfaces';
 
@@ -16,6 +16,11 @@ export class ApiCategoryController {
   @Get('/:id')
   get(@Param('id') id: string) {
     return this.categoryService.get(id);
+  }
+
+  @Get('autocomplete')
+  autocomplete(@Query('query') query: string) {
+    return this.categoryService.autocomplete(query);
   }
 
   @Post()
