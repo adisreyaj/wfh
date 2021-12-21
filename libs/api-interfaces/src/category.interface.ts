@@ -14,4 +14,4 @@ export interface CategoryResponse extends CategoryBase {
   updatedAt: Date;
 }
 
-export interface CategoryDocument extends CategoryBase, Document {}
+export interface CategoryDocument extends Omit<CategoryResponse, 'id'>, Document {}
