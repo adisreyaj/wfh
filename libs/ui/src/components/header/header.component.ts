@@ -1,7 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, NgModule } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  NgModule,
+  OnDestroy,
+  Output,
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IconModule } from '../icon.module';
+import { debounceTime, distinctUntilChanged, Observable, Subject, takeUntil } from 'rxjs';
+import { SuggestionsGroupPipeModule } from './suggestion-group.pipe';
 
 @Component({
   selector: 'wfh-header',
@@ -33,7 +43,36 @@ import { IconModule } from '../icon.module';
         <div class="absolute h-full left-8 top-0 grid place-items-center">
           <rmx-icon name="search-2-line"></rmx-icon>
         </div>
-        <input class="w-full pl-8" type="search" name="" id="" />
+        <input
+          class="w-full pl-8"
+          type="search"
+          name="search"
+          id="search"
+          (keyup)="this.searchSubject.next(searchRef.value)"
+          #searchRef
+        />
+        <ng-container *ngIf="suggestions$ | async as suggestions">
+          <div class="suggestions">
+            <ul class="suggestions__list">
+              <ng-container *ngFor="let group of suggestions | suggestionGroup">
+                <li class="suggestions__group">
+                  <header class="px-4 mb-2">
+                    <p class="text-xs text-gray-400 font-semibold">{{ group.key | uppercase }}</p>
+                  </header>
+                  <ul class="px-2">
+                    <li
+                      tabindex="0"
+                      class="suggestions__group-item"
+                      *ngFor="let groupItem of group.value"
+                    >
+                      <p>{{ groupItem.name }}</p>
+                    </li>
+                  </ul>
+                </li>
+              </ng-container>
+            </ul>
+          </div>
+        </ng-container>
       </div>
       <div class="flex gap-2">
         <a class="header__icon">
@@ -46,6 +85,7 @@ import { IconModule } from '../icon.module';
     </header>
   `,
   styles: [
+    // language=SCSS
     `
       .header__icon {
         @apply rounded-full hover:bg-gray-200 p-2;
@@ -56,16 +96,48 @@ import { IconModule } from '../icon.module';
           }
         }
       }
+
       .rmx-icon {
         width: 20px;
         height: 20px;
         @apply fill-gray-600;
       }
+
+      .suggestions {
+        @apply absolute top-12 left-0 mx-6;
+        &__list {
+          @apply bg-white shadow-xl border border-gray-200 text-sm py-4 flex flex-col gap-4;
+        }
+
+        &__group {
+          &-item {
+            @apply relative cursor-pointer px-4 py-2 outline-none;
+            @apply hover:bg-gray-100 hover:text-primary;
+            @apply focus:bg-gray-100 focus:text-primary;
+            &:hover {
+              &:after {
+                content: '';
+                @apply absolute top-0 left-0 w-1 h-full bg-primary;
+              }
+            }
+
+            &--selection {
+              @apply absolute left-1 top-0 h-full hidden place-items-center;
+            }
+
+            &:hover {
+              .suggestions__group-item--selection {
+                @apply grid;
+              }
+            }
+          }
+        }
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnDestroy {
   links = [
     {
       label: 'Home',
@@ -88,11 +160,34 @@ export class HeaderComponent {
       link: 'contact',
     },
   ];
+
+  @Input()
+  suggestions$?: Observable<Record<string, { _id: string; name: string }[]>>;
+
+  @Output()
+  searched = new EventEmitter<string>();
+  searchSubject = new Subject<string>();
+
+  private destroyed$ = new Subject<void>();
+
+  constructor() {
+    this.searchSubject
+      .asObservable()
+      .pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroyed$))
+      .subscribe((searchTerm) => {
+        this.searched.emit(searchTerm);
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
+  }
 }
 
 @NgModule({
   declarations: [HeaderComponent],
-  imports: [CommonModule, IconModule, RouterModule],
+  imports: [CommonModule, IconModule, RouterModule, SuggestionsGroupPipeModule],
   exports: [HeaderComponent],
 })
 export class HeaderModule {}
