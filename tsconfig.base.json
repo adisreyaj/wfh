@@ -10,21 +10,48 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2017", "dom"],
+    "lib": [
+      "es2017",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@wfh/api-interfaces": ["libs/api-interfaces/src/index.ts"],
-      "@wfh/api/brand": ["libs/api/brand/src/index.ts"],
-      "@wfh/api/category": ["libs/api/category/src/index.ts"],
-      "@wfh/api/order": ["libs/api/order/src/index.ts"],
-      "@wfh/api/product": ["libs/api/product/src/index.ts"],
-      "@wfh/api/user": ["libs/api/user/src/index.ts"],
-      "@wfh/api/util": ["libs/api/util/src/index.ts"],
-      "@wfh/ui": ["libs/ui/src/index.ts"],
-      "@wfh/ui/components": ["libs/ui/src/components/index.ts"]
+      "@wfh/api-interfaces": [
+        "libs/api-interfaces/src/index.ts"
+      ],
+      "@wfh/api/brand": [
+        "libs/api/brand/src/index.ts"
+      ],
+      "@wfh/api/category": [
+        "libs/api/category/src/index.ts"
+      ],
+      "@wfh/api/order": [
+        "libs/api/order/src/index.ts"
+      ],
+      "@wfh/api/product": [
+        "libs/api/product/src/index.ts"
+      ],
+      "@wfh/api/user": [
+        "libs/api/user/src/index.ts"
+      ],
+      "@wfh/api/util": [
+        "libs/api/util/src/index.ts"
+      ],
+      "@wfh/ui": [
+        "libs/ui/src/index.ts"
+      ],
+      "@wfh/ui/components": [
+        "libs/ui/src/components/index.ts"
+      ],
+      "@wfh/store-front/core": [
+        "apps/store-front/src/app/core/index.ts"
+      ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }

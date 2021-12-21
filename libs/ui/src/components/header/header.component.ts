@@ -11,7 +11,7 @@ import {
 import { RouterModule } from '@angular/router';
 import { IconModule } from '../icon.module';
 import { debounceTime, distinctUntilChanged, Observable, Subject, takeUntil } from 'rxjs';
-import { SuggestionsGroupPipeModule } from './suggestion-group.pipe';
+import { SuggestionsHelperModule } from './suggestion-helpers.pipe';
 
 @Component({
   selector: 'wfh-header',
@@ -45,17 +45,17 @@ import { SuggestionsGroupPipeModule } from './suggestion-group.pipe';
         </div>
         <input
           class="w-full pl-8"
-          type="search"
+          type="text"
           name="search"
           id="search"
           (keyup)="this.searchSubject.next(searchRef.value)"
           #searchRef
         />
         <ng-container *ngIf="suggestions$ | async as suggestions">
-          <div class="suggestions">
+          <div class="suggestions" *ngIf="suggestions | suggestionVisible">
             <ul class="suggestions__list">
-              <ng-container *ngFor="let group of suggestions | suggestionGroup">
-                <li class="suggestions__group">
+              <ng-container *ngFor="let group of suggestions | suggestionsGroup">
+                <li class="suggestions__group" *ngIf="group.value.length > 0">
                   <header class="px-4 mb-2">
                     <p class="text-xs text-gray-400 font-semibold">{{ group.key | uppercase }}</p>
                   </header>
@@ -105,6 +105,8 @@ import { SuggestionsGroupPipeModule } from './suggestion-group.pipe';
 
       .suggestions {
         @apply absolute top-12 left-0 mx-6 z-10;
+        min-width: 300px;
+
         &__list {
           @apply bg-white shadow-xl border border-gray-200 text-sm py-4 flex flex-col gap-4;
         }
@@ -188,7 +190,7 @@ export class HeaderComponent implements OnDestroy {
 
 @NgModule({
   declarations: [HeaderComponent],
-  imports: [CommonModule, IconModule, RouterModule, SuggestionsGroupPipeModule],
+  imports: [CommonModule, IconModule, RouterModule, SuggestionsHelperModule],
   exports: [HeaderComponent],
 })
 export class HeaderModule {}

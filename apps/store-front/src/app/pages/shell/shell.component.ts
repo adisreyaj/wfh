@@ -3,7 +3,7 @@ import { RouterModule } from '@angular/router';
 import { HeaderModule } from '@wfh/ui';
 import { SHELL_ROUTES } from '../../app.routes';
 import { AutoCompleteResult, SearchService } from './search.service';
-import { Observable, startWith, Subject, switchMap } from 'rxjs';
+import { Observable, Subject, switchMap } from 'rxjs';
 
 @Component({
   template: `
@@ -18,31 +18,9 @@ export class ShellComponent {
   public searched = new Subject<string>();
 
   constructor(private searchService: SearchService) {
-    this.suggestions$ = this.searched.asObservable().pipe(
-      switchMap((searchTerm) => this.searchService.getAutoComplete(searchTerm)),
-      startWith({
-        products: [
-          {
-            _id: '61bf67b36def0db85bc4dd4f',
-            name: 'Razer Huntsman Elite',
-          },
-          {
-            _id: '61bf6abdde8f6deae35c7168',
-            name: 'Razer Huntsman',
-          },
-        ],
-        categories: [
-          {
-            _id: '61bf67b36def0db85bc4dd4f',
-            name: 'Mouse',
-          },
-          {
-            _id: '61bf6abdde8f6deae35c7168',
-            name: 'Keyboard',
-          },
-        ],
-      })
-    );
+    this.suggestions$ = this.searched
+      .asObservable()
+      .pipe(switchMap((searchTerm) => this.searchService.getAutoComplete(searchTerm)));
   }
 
   onSearch(searchTerm: string) {
