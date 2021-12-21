@@ -15,6 +15,26 @@ export class ApiBrandService {
     private readonly brandModel: Model<BrandDocument>
   ) {}
 
+  autocomplete(searchTerm: string) {
+    return from(
+      this.brandModel.aggregate([
+        {
+          $search: {
+            autocomplete: {
+              query: searchTerm,
+              path: 'name',
+            },
+          },
+        },
+        {
+          $project: {
+            name: 1,
+          },
+        },
+      ])
+    ).pipe(handleError('category'));
+  }
+
   getAll() {
     return from(this.brandModel.find({})).pipe(handleError('brand'));
   }
