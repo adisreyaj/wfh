@@ -20,14 +20,19 @@ export class ApiProductService {
       this.productModel.aggregate([
         {
           $search: {
-            text: {
+            autocomplete: {
               query: searchTerm,
               path: 'name',
             },
           },
         },
+        {
+          $project: {
+            name: 1,
+          },
+        },
       ])
-    );
+    ).pipe(handleError('product'));
   }
 
   getAll() {

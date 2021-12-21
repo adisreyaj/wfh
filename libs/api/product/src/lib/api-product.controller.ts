@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 
 import { ProductRequest } from '@wfh/api-interfaces';
 
@@ -13,8 +13,8 @@ export class ApiProductController {
     return this.productsService.getAll();
   }
 
-  @Get('search/:query')
-  search(@Param('query') query: string) {
+  @Get('autocomplete')
+  autocomplete(@Query('query') query: string) {
     return this.productsService.autocomplete(query);
   }
 
