@@ -5,6 +5,8 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CURRENCY_CODE } from '@wfh/ui';
 import { RouterModule } from '@angular/router';
+import { API_URL } from './core/tokens/api.token';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [AppComponent],
@@ -29,6 +31,10 @@ import { RouterModule } from '@angular/router';
     {
       provide: CURRENCY_CODE,
       useValue: 'INR',
+    },
+    {
+      provide: API_URL,
+      useValue: environment.apiUrl,
     },
   ],
 })

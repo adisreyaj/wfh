@@ -19,7 +19,7 @@ import { OverlayService } from '../../common';
   styles: [
     `
       :host {
-        @apply fixed z-20 right-0 top-0 h-screen bg-white shadow-lg overflow-y-auto;
+        @apply fixed z-20 right-0 top-0 h-screen bg-white shadow-lg overflow-y-auto rounded-tl-lg rounded-bl-lg;
         @apply transition-all duration-300 translate-x-80;
       }
 

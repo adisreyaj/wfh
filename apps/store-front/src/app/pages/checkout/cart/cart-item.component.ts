@@ -33,14 +33,14 @@ import { IconModule } from '../../../shared/modules/icon.module';
         </div>
       </div>
     </div>
-    <button wfh variant="neutral" size="xsmall" class="icon delete absolute top-1 right-1">
+    <button wfh variant="neutral" size="xsmall" class="icon delete absolute bottom-1 right-1">
       <rmx-icon name="delete-bin-5-fill" class="icon-xs"></rmx-icon>
     </button>
   `,
   styles: [
     `
       :host {
-        @apply relative flex justify-between border border-gray-200 gap-4;
+        @apply relative flex justify-between border border-gray-200 gap-4 rounded-lg;
       }
 
       button.delete rmx-icon {

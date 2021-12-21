@@ -12,6 +12,8 @@ import { IconModule } from '../../shared/modules/icon.module';
 import { CommonModule } from '@angular/common';
 import { ProductQuickViewComponent } from './product-quick-view/product-quick-view.component';
 import { Product, ProductPromise, ProductSpecification } from './products.interface';
+import { ProductsService } from './services/products.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'wfh-products',
@@ -21,9 +23,9 @@ import { Product, ProductPromise, ProductSpecification } from './products.interf
     </aside>
     <section class="content px-6 pb-10">
       <ul class="grid grid-cols-3 gap-4">
-        <li *ngFor="let product of products">
+        <li *ngFor="let product of products$ | async">
           <wfh-product-card
-            [title]="product.title"
+            [title]="product.name"
             [price]="product.price"
             [originalPrice]="product.originalPrice"
             [images]="product.images"
@@ -99,48 +101,18 @@ export class ProductsPage {
       value: 'Brown',
     },
   ];
-
-  products: Product[] = [
-    {
-      title: 'Helios Study Desk in Brown Colour',
-      price: 4000,
-      originalPrice: 7500,
-      images: [
-        'https://ii1.pepperfry.com/media/catalog/product/h/e/1100x1210/helios-study-desk-in-brown-colour-by-home-centre-helios-study-desk-in-brown-colour-by-home-centre-c1mgui.jpg',
-      ],
-    },
-    {
-      title: 'Helios Study Desk in Brown Colour',
-      price: 4000,
-      originalPrice: 7500,
-      images: [
-        'https://ii1.pepperfry.com/media/catalog/product/h/e/1100x1210/helios-study-desk-in-brown-colour-by-home-centre-helios-study-desk-in-brown-colour-by-home-centre-c1mgui.jpg',
-      ],
-    },
-    {
-      title: 'Helios Study Desk in Brown Colour',
-      price: 4000,
-      originalPrice: 7500,
-      images: [
-        'https://ii1.pepperfry.com/media/catalog/product/h/e/1100x1210/helios-study-desk-in-brown-colour-by-home-centre-helios-study-desk-in-brown-colour-by-home-centre-c1mgui.jpg',
-      ],
-    },
-    {
-      title: 'Helios Study Desk in Brown Colour',
-      price: 4000,
-      originalPrice: 7500,
-      images: [
-        'https://ii1.pepperfry.com/media/catalog/product/h/e/1100x1210/helios-study-desk-in-brown-colour-by-home-centre-helios-study-desk-in-brown-colour-by-home-centre-c1mgui.jpg',
-      ],
-    },
-  ];
-
   @ViewChild(ProductQuickViewComponent) productQuickViewRef?: ProductQuickViewComponent;
+  readonly products$: Observable<any[]>;
 
-  constructor(@Inject(CURRENCY_CODE) public currencyCode: string, private overlay: OverlayService) {
+  constructor(
+    @Inject(CURRENCY_CODE) public currencyCode: string,
+    private overlay: OverlayService,
+    private productService: ProductsService
+  ) {
     overlay.clickedOutside$.subscribe(() => {
       this.productQuickViewRef?.close();
     });
+    this.products$ = productService.getAllProducts();
   }
 
   openQuickView(product: Product) {

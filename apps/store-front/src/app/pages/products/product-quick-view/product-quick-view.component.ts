@@ -77,7 +77,7 @@ import { ProductPromise, ProductSpecification } from '../products.interface';
       </section>
       <div class="pb-24"></div>
       <footer class="sticky w-full bottom-0 mt-4 p-6">
-        <div class="w-full flex bg-white shadow-2xl">
+        <div class="w-full flex bg-white shadow-2xl gap-2">
           <button class="flex-1" wfh>Buy Now</button>
           <button class="flex-1" variant="outline" wfh>WishList</button>
         </div>
