@@ -153,14 +153,14 @@ export class HeaderComponent implements OnDestroy {
       link: 'products',
     },
     {
-      label: 'About',
-      icon: 'about',
-      link: 'about',
+      label: 'Categories',
+      icon: 'categories',
+      link: 'categories',
     },
     {
-      label: 'Contact',
-      icon: 'contact',
-      link: 'contact',
+      label: 'Bundles',
+      icon: 'bundles',
+      link: 'bundles',
     },
   ];
 
