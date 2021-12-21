@@ -10,4 +10,8 @@ export const SHELL_ROUTES: Route[] = [
     path: 'products',
     loadChildren: () => import('./pages/products/products.component').then((m) => m.ProductsModule),
   },
+  {
+    path: 'checkout',
+    loadChildren: () => import('./pages/checkout/checkout.component').then((m) => m.CheckoutModule),
+  },
 ];

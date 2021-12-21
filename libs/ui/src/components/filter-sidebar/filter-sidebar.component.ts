@@ -12,18 +12,12 @@ import { CommonModule } from '@angular/common';
           <div class="form-group">
             <label>From</label>
             <div class="flex justify-start items-stretch">
-              <div class="grid place-items-center w-8 border border-gray-200 bg-gray-100">
-                <p class="">$</p>
-              </div>
               <input type="text" class="flex-1 w-full" />
             </div>
           </div>
           <div class="form-group ">
             <label>To</label>
             <div class="flex justify-start items-stretch">
-              <div class="grid place-items-center w-8 border border-gray-200 bg-gray-100">
-                <p class="">$</p>
-              </div>
               <input type="text" class="flex-1 w-full" />
             </div>
           </div>
@@ -80,7 +74,7 @@ import { CommonModule } from '@angular/common';
   styles: [
     `
       :host {
-        @apply block w-full border border-gray-100;
+        @apply block w-full border border-gray-200 rounded-lg overflow-hidden;
       }
     `,
   ],
@@ -92,4 +86,5 @@ export class FilterSidebarComponent {}
   imports: [CommonModule, AccordionModule, CheckboxModule],
   exports: [FilterSidebarComponent],
 })
-export class FilterSidebarModule {}
+export class FilterSidebarModule {
+}

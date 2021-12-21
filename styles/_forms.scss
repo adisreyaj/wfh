@@ -40,6 +40,7 @@
 
 input[type='checkbox'],
 input[type='radio'] {
+  @apply rounded-md;
   color: var(--primary) !important;
 }
 
@@ -64,7 +65,7 @@ input[type='radio'] {
 textarea,
 select {
   @apply outline-none;
-  @apply border-gray-200 bg-gray-50;
+  @apply border-gray-200 bg-gray-50 rounded-lg;
   @apply focus:border-primary;
   transition: all 0.3s;
 

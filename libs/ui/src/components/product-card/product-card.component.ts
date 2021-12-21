@@ -1,4 +1,13 @@
-import { Component, Inject, Input, NgModule, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  NgModule,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from '../button/button.component';
 import { DiscountPipeModule } from '../../pipes';
@@ -43,14 +52,23 @@ import { IconModule } from '../icon.module';
       </div>
     </div>
     <footer class="flex items-center gap-2 mt-4">
-      <button wfh variant="outline" size="small" class="flex-1">Add to cart</button>
+      <button wfh variant="outline" size="small" class="flex-1" (click)="quickView.emit()">
+        Quick View
+      </button>
+      <button wfh size="small" (click)="addToCart.emit()">
+        <rmx-icon name="shopping-cart-2-fill" class="add-to-cart icon-sm"></rmx-icon>
+      </button>
     </footer>
   `,
   styles: [
     `
       :host {
-        @apply block border border-gray-200 p-4;
+        @apply block border border-gray-200 rounded-lg p-4;
         @apply hover:shadow-xl;
+      }
+
+      footer .add-to-cart {
+        @apply fill-white;
       }
     `,
   ],
@@ -63,16 +81,22 @@ export class ProductCardComponent implements OnChanges {
   title!: string;
 
   @Input()
-  price!: string;
+  price!: number;
 
   @Input()
-  originalPrice?: string;
+  originalPrice?: number;
 
   @Input()
   subtitle?: string;
 
   @Input()
   link?: string;
+
+  @Output()
+  quickView = new EventEmitter<void>();
+
+  @Output()
+  addToCart = new EventEmitter<void>();
 
   public priceDifference = -1;
 

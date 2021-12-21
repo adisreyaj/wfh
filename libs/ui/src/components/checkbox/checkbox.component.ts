@@ -5,15 +5,16 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'wfh-checkbox',
   template: `
-    <div class="checkbox flex items-center gap-2">
+    <div class="checkbox cursor-pointer flex items-center">
       <input
         [id]="label ? label : id"
         type="checkbox"
+        class="cursor-pointer"
         [checked]="checked"
         (change)="onChange($event)"
         [disabled]="disabled"
       />
-      <label [for]="label ? label : id">
+      <label [class.ml-2]="!!label" [for]="label ? label : id">
         <ng-container *ngIf="!label; else labelTpl">
           <ng-content></ng-content>
         </ng-container>
