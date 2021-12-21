@@ -104,7 +104,7 @@ import { SuggestionsGroupPipeModule } from './suggestion-group.pipe';
       }
 
       .suggestions {
-        @apply absolute top-12 left-0 mx-6;
+        @apply absolute top-12 left-0 mx-6 z-10;
         &__list {
           @apply bg-white shadow-xl border border-gray-200 text-sm py-4 flex flex-col gap-4;
         }
@@ -114,7 +114,8 @@ import { SuggestionsGroupPipeModule } from './suggestion-group.pipe';
             @apply relative cursor-pointer px-4 py-2 outline-none;
             @apply hover:bg-gray-100 hover:text-primary;
             @apply focus:bg-gray-100 focus:text-primary;
-            &:hover {
+            &:hover,
+            &:focus {
               &:after {
                 content: '';
                 @apply absolute top-0 left-0 w-1 h-full bg-primary;
