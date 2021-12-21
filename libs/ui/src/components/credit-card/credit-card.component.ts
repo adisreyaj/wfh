@@ -38,7 +38,7 @@ import { number as numberValidator } from 'card-validator';
   styles: [
     `
       :host {
-        @apply flex flex-col items-start;
+        @apply flex flex-col items-start rounded-lg;
         min-height: 180px;
       }
 

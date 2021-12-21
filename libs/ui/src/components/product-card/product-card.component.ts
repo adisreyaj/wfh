@@ -63,7 +63,7 @@ import { IconModule } from '../icon.module';
   styles: [
     `
       :host {
-        @apply block border border-gray-200 p-4;
+        @apply block border border-gray-200 rounded-lg p-4;
         @apply hover:shadow-xl;
       }
 

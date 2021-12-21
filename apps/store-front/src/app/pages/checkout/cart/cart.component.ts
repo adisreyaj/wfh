@@ -101,7 +101,8 @@ import { CartSidebarModule } from './cart-sidebar.component';
     // language=SCSS
     `
       :host {
-        @apply flex items-start max-w-7xl mx-auto px-6 pb-10 gap-4;
+        @apply flex flex-col items-start max-w-7xl mx-auto px-6 pb-10 gap-4;
+        @apply md:flex-row;
       }
 
       .cart {
