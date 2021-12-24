@@ -7,7 +7,7 @@ import { IconModule } from '../../../shared/modules/icon.module';
   selector: 'wfh-cart-item',
   template: `
     <div class="flex items-start">
-      <div class="relative">
+      <div class="relative rounded-tl-md rounded-bl-md overflow-hidden">
         <img [src]="product.images[0]" [alt]="product.title" style="height: 150px" />
       </div>
       <div class="p-4">

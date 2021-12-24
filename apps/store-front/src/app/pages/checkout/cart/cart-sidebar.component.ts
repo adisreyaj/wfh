@@ -69,7 +69,7 @@ import { IconModule } from '../../../shared/modules/icon.module';
     // language=SCSS
     `
       :host {
-        @apply block p-4 border border-gray-200;
+        @apply block p-4 border border-gray-200 rounded-lg;
       }
 
       .cart-sidebar {
