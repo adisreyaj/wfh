@@ -19,7 +19,7 @@ import { IconModule } from '../icon.module';
   selector: 'wfh-product-card',
   template: `
     <header class="relative">
-      <button class="absolute -right-1 -top-1">
+      <button class="absolute -right-1 -top-1" (click)="addToWishlist.emit()">
         <rmx-icon name="heart-3-line"></rmx-icon>
       </button>
       <ng-container *ngIf="images">
@@ -84,6 +84,9 @@ export class ProductCardComponent implements OnChanges {
   price!: number;
 
   @Input()
+  wishlisted?: boolean;
+
+  @Input()
   originalPrice?: number;
 
   @Input()
@@ -97,6 +100,9 @@ export class ProductCardComponent implements OnChanges {
 
   @Output()
   addToCart = new EventEmitter<void>();
+
+  @Output()
+  addToWishlist = new EventEmitter<void>();
 
   public priceDifference = -1;
 

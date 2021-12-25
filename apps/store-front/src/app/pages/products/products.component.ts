@@ -13,7 +13,8 @@ import { CommonModule } from '@angular/common';
 import { ProductQuickViewComponent } from './product-quick-view/product-quick-view.component';
 import { Product, ProductPromise, ProductSpecification } from './products.interface';
 import { ProductsService } from './services/products.service';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
+import { WishlistService } from '../wishlist/wishlist.service';
 
 @Component({
   selector: 'wfh-products',
@@ -30,6 +31,7 @@ import { Observable } from 'rxjs';
             [originalPrice]="product.originalPrice"
             [images]="product.images"
             (quickView)="openQuickView(product)"
+            (addToWishlist)="addToWishlist(product)"
           ></wfh-product-card>
         </li>
       </ul>
@@ -107,7 +109,8 @@ export class ProductsPage {
   constructor(
     @Inject(CURRENCY_CODE) public currencyCode: string,
     private overlay: OverlayService,
-    private productService: ProductsService
+    private productService: ProductsService,
+    private wishlistService: WishlistService
   ) {
     overlay.clickedOutside$.subscribe(() => {
       this.productQuickViewRef?.close();
@@ -117,6 +120,14 @@ export class ProductsPage {
 
   openQuickView(product: Product) {
     this.productQuickViewRef?.open();
+  }
+
+  addToWishlist(product: string) {
+    this.wishlistService.addToWishList(product).pipe(take(1)).subscribe();
+  }
+
+  removeFromWishlist(product: string) {
+    this.wishlistService.removeFromWishList(product).pipe(take(1)).subscribe();
   }
 }
 

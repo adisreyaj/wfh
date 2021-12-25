@@ -14,4 +14,8 @@ export const SHELL_ROUTES: Route[] = [
     path: 'checkout',
     loadChildren: () => import('./pages/checkout/checkout.component').then((m) => m.CheckoutModule),
   },
+  {
+    path: 'wishlist',
+    loadChildren: () => import('./pages/wishlist/wishlist.module').then((m) => m.WishlistModule),
+  },
 ];

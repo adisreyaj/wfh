@@ -7,6 +7,7 @@ import { CURRENCY_CODE } from '@wfh/ui';
 import { RouterModule } from '@angular/router';
 import { API_URL } from './core/tokens/api.token';
 import { environment } from '../environments/environment';
+import { USER_DETAILS } from '@wfh/store-front/core';
 
 @NgModule({
   declarations: [AppComponent],
@@ -35,6 +36,14 @@ import { environment } from '../environments/environment';
     {
       provide: API_URL,
       useValue: environment.apiUrl,
+    },
+    {
+      provide: USER_DETAILS,
+      useValue: {
+        id: '1',
+        name: 'John Doe',
+        email: 'john@adi.so',
+      },
     },
   ],
 })

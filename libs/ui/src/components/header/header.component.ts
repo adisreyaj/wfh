@@ -78,6 +78,9 @@ import { SuggestionsHelperModule } from './suggestion-helpers.pipe';
         <a class="header__icon">
           <rmx-icon name="notification-4-fill"></rmx-icon>
         </a>
+        <a class="header__icon" routerLink="/wishlist">
+          <rmx-icon name="heart-3-fill"></rmx-icon>
+        </a>
         <button class="header__icon" routerLink="/checkout/cart">
           <rmx-icon name="shopping-cart-2-fill"></rmx-icon>
         </button>
