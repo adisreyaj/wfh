@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { WishlistModel } from './api-wishlist.schema';
 import { Model } from 'mongoose';
-import { WishlistDocument, WishlistRequset } from '@wfh/api-interfaces';
+import { WishlistDocument } from '@wfh/api-interfaces';
 import { from } from 'rxjs';
 import { handleError } from '@wfh/api/util';
 
@@ -21,8 +21,8 @@ export class ApiWishlistService {
     return from(this.wishlistModel.findById(id)).pipe(handleError('product'));
   }
 
-  create(wishlist: WishlistRequset) {
-    return from(this.wishlistModel.create(wishlist)).pipe(handleError('product'));
+  create(userId: string) {
+    return from(this.wishlistModel.create({ userId, products: [] })).pipe(handleError('wishlist'));
   }
 
   addProduct(id: string, productId: string) {

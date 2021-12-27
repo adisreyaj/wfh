@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CartModel } from './api-cart.schema';
 import { Model } from 'mongoose';
 import { CartDocument } from '@wfh/api-interfaces';
+import { handleError } from '@wfh/api/util';
+import { from } from 'rxjs';
 
 @Injectable()
 export class ApiCartService {
@@ -12,8 +14,8 @@ export class ApiCartService {
     return this.cartModel.findById(cartId);
   }
 
-  createCart(userId: string) {
-    return this.cartModel.create({ user: userId });
+  create(userId: string) {
+    return from(this.cartModel.create({ user: userId, products: [] })).pipe(handleError('cart'));
   }
 
   addItemToCart(cartId: string, productDetails: { id: string; quantity: number }) {
