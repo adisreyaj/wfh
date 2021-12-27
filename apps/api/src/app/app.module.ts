@@ -9,8 +9,10 @@ import { ApiProductModule } from '@wfh/api/product';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
-import { OrdersModule } from './orders/orders.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './core';
+import { ApiAuthModule } from '@wfh/api/auth';
+import { ApiUserModule } from '@wfh/api/user';
 
 @Module({
   imports: [
@@ -30,13 +32,19 @@ import { OrdersModule } from './orders/orders.module';
       }),
       inject: [ConfigService],
     }),
-    UsersModule,
-    OrdersModule,
+    ApiUserModule,
+    ApiAuthModule,
     ApiProductModule,
     ApiCategoryModule,
     ApiBrandModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule {}

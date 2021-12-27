@@ -6,11 +6,12 @@ import { ApiWishlistService } from './api-wishlist/api-wishlist.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CartModel } from './api-cart/api-cart.schema';
 import { WishlistModel } from './api-wishlist/api-wishlist.schema';
+import { UserModel } from './api-user.schema';
 
 @Module({
   controllers: [ApiUserController],
   providers: [ApiUserService, ApiCartService, ApiWishlistService],
   exports: [ApiUserService],
-  imports: [MongooseModule.forFeature([CartModel, WishlistModel])],
+  imports: [MongooseModule.forFeature([UserModel, CartModel, WishlistModel])],
 })
 export class ApiUserModule {}

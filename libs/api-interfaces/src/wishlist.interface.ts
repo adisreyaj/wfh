@@ -1,7 +1,7 @@
 import { Document } from 'mongoose';
 import { ProductResponse } from './product.interface';
 
-export interface WishlistRequset {
+export interface WishlistRequest {
   user: string;
   products: string[];
 }

@@ -1,8 +1,20 @@
-import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  InternalServerErrorException,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ApiUserService } from './api-user.service';
 import { ApiCartService } from './api-cart/api-cart.service';
 import { ApiWishlistService } from './api-wishlist/api-wishlist.service';
-import { CartRequest } from '@wfh/api-interfaces';
+import { CartRequest, UserAuth0Request } from '@wfh/api-interfaces';
+import { catchError, forkJoin, of, switchMap, throwError } from 'rxjs';
+import { Public } from '@wfh/api/util';
 
 @Controller('users')
 export class ApiUserController {
@@ -11,6 +23,25 @@ export class ApiUserController {
     private readonly cart: ApiCartService,
     private readonly wishlist: ApiWishlistService
   ) {}
+
+  @Public()
+  @Post('')
+  async creatUser(@Body() user: UserAuth0Request) {
+    console.info(user);
+    return this.user.createUserAuth0(user).pipe(
+      switchMap((user) => {
+        return forkJoin([this.cart.create(user.id), this.wishlist.create(user.id)]).pipe(
+          switchMap(() => of(user))
+        );
+      }),
+      catchError((err) => {
+        if (err instanceof HttpException) {
+          return throwError(() => err);
+        }
+        return throwError(() => new InternalServerErrorException());
+      })
+    );
+  }
 
   @Get(':userId/cart')
   async getCart(@Param('id') userId: string) {

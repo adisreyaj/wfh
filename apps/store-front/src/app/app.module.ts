@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { API_URL } from './core/tokens/api.token';
 import { environment } from '../environments/environment';
 import { USER_DETAILS } from '@wfh/store-front/core';
+import { AuthModule } from '@auth0/auth0-angular';
 
 @NgModule({
   declarations: [AppComponent],
@@ -26,6 +27,15 @@ import { USER_DETAILS } from '@wfh/store-front/core';
           import('./pages/looking-for/looking-for.module').then((m) => m.LookingForModule),
       },
     ]),
+    AuthModule.forRoot({
+      domain: environment.auth.domain,
+      audience: environment.auth.audience,
+      clientId: environment.auth.clientId,
+      redirectUri: `${window.location.origin}/app`,
+      errorPath: '/auth/login',
+      cacheLocation: 'localstorage',
+      useRefreshTokens: false,
+    }),
   ],
   bootstrap: [AppComponent],
   providers: [
