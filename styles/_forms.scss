@@ -12,11 +12,11 @@
     @apply text-sm;
   }
 
-  input[type='text'],
-  input[type='email'],
-  input[type='number'],
-  input[type='url'],
-  input[type='password'] {
+  input[type='text']:not([readonly]),
+  input[type='email']:not([readonly]),
+  input[type='number']:not([readonly]),
+  input[type='url']:not([readonly]),
+  input[type='password']:not([readonly]) {
     @apply focus:ring-1;
     @apply focus:border-primary;
     @apply focus:ring-primary;
@@ -66,8 +66,12 @@ textarea,
 select {
   @apply outline-none;
   @apply border-gray-200 bg-gray-50 rounded-lg;
-  @apply focus:border-primary;
   transition: all 0.3s;
+
+
+  &:not(readonly) {
+    @apply focus:border-primary;
+  }
 
   &::placeholder {
     @apply text-gray-300;
@@ -77,6 +81,10 @@ select {
     @apply focus:ring-1;
     @apply focus:border-red-400;
     @apply focus:ring-red-400;
+  }
+
+  &:read-only {
+    @apply focus:border-gray-200 focus:ring-0 cursor-not-allowed;
   }
 }
 

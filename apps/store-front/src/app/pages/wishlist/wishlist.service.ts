@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { API_URL, USER_DETAILS } from '@wfh/store-front/core';
+import { API_URL } from '@wfh/store-front/core';
+import { USER_DETAILS } from '@wfh/ui';
 
 @Injectable({
   providedIn: 'root',

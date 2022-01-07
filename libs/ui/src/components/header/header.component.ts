@@ -3,15 +3,19 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  Inject,
   Input,
   NgModule,
   OnDestroy,
   Output,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { IconModule } from '../icon.module';
+import { AuthService } from '@auth0/auth0-angular';
+import { TippyModule } from '@ngneat/helipopper';
 import { debounceTime, distinctUntilChanged, Observable, Subject, takeUntil } from 'rxjs';
+import { IconModule } from '../icon.module';
 import { SuggestionsHelperModule } from './suggestion-helpers.pipe';
+import { USER_DETAILS, UserDetails } from './user-details.token';
 
 @Component({
   selector: 'wfh-header',
@@ -75,7 +79,7 @@ import { SuggestionsHelperModule } from './suggestion-helpers.pipe';
         </ng-container>
       </div>
       <div class="flex gap-2">
-        <a class="header__icon">
+        <a class="header__icon" (click)="auth.loginWithPopup()" tippy="Notifications">
           <rmx-icon name="notification-4-fill"></rmx-icon>
         </a>
         <a class="header__icon" routerLink="/wishlist">
@@ -85,6 +89,30 @@ import { SuggestionsHelperModule } from './suggestion-helpers.pipe';
           <rmx-icon name="shopping-cart-2-fill"></rmx-icon>
         </button>
       </div>
+      <a
+        routerLink="/profile"
+        class="flex items-center ml-4 gap-2 outline-none"
+        *ngIf="user$ | async as user"
+        [tippy]="profile"
+        variation="menu"
+        [offset]="[-20, 10]"
+      >
+        <img
+          class="rounded-full w-10 h-10 cursor-pointer"
+          [src]="user?.avatar"
+          [alt]="user?.firstName"
+        />
+        <div class="text-xs text-gray-500">
+          <p class="font-semibold">{{ user.firstName }}</p>
+          <p class="text-gray-400">{{ user.lastName }}</p>
+        </div>
+      </a>
+      <ng-template #profile>
+        <div [style.min-width.px]="200">
+          <a class="dropdown-item" href="#">Profile</a>
+          <button class="dropdown-item w-full" (click)="logout.emit()">Logout</button>
+        </div>
+      </ng-template>
     </header>
   `,
   styles: [
@@ -174,9 +202,15 @@ export class HeaderComponent implements OnDestroy {
   searched = new EventEmitter<string>();
   searchSubject = new Subject<string>();
 
+  @Output()
+  logout = new EventEmitter<void>();
+
   private destroyed$ = new Subject<void>();
 
-  constructor() {
+  constructor(
+    public readonly auth: AuthService,
+    @Inject(USER_DETAILS) public readonly user$: Observable<UserDetails>
+  ) {
     this.searchSubject
       .asObservable()
       .pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroyed$))
@@ -193,7 +227,7 @@ export class HeaderComponent implements OnDestroy {
 
 @NgModule({
   declarations: [HeaderComponent],
-  imports: [CommonModule, IconModule, RouterModule, SuggestionsHelperModule],
+  imports: [CommonModule, IconModule, RouterModule, SuggestionsHelperModule, TippyModule],
   exports: [HeaderComponent],
 })
 export class HeaderModule {}

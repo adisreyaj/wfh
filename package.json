@@ -26,6 +26,8 @@
     "@nestjs/mongoose": "^9.0.1",
     "@nestjs/passport": "^8.0.1",
     "@nestjs/platform-express": "^8.0.0",
+    "@ngneat/helipopper": "^5.1.0",
+    "@ngneat/overview": "^3.0.2",
     "@nrwl/angular": "13.3.4",
     "@tailwindcss/forms": "^0.4.0",
     "angular-remix-icon": "^3.0.0",

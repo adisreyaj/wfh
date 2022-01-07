@@ -20,6 +20,13 @@ import { ApiUserModule } from '@wfh/api/user';
       isGlobal: true,
       validationSchema: Joi.object({
         MONGODB_URI: Joi.string().required(),
+        AUTH0_AUDIENCE: Joi.string().required(),
+        AUTH0_ISSUER_URL: Joi.string()
+          .uri({
+            scheme: ['https'],
+          })
+          .required(),
+        AUTH0_DB: Joi.string().required(),
       }),
     }),
     MongooseModule.forRootAsync({
