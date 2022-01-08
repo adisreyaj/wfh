@@ -79,8 +79,8 @@ import { ProductQuickView } from '../products.interface';
           </table>
         </section>
         <div class="pb-16"></div>
-        <footer class="sticky w-full bottom-0 mt-4 p-6">
-          <div class="w-full flex bg-white shadow-2xl gap-2">
+        <footer class="fixed w-full bottom-0 mt-4 p-6">
+          <div class="w-full flex bg-white gap-2">
             <button class="flex-1" wfh>Add to Cart</button>
             <button class="flex-1" variant="outline" wfh>WishList</button>
           </div>

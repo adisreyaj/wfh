@@ -31,6 +31,7 @@ import {
 } from 'rxjs';
 import { WishlistService } from '../wishlist/wishlist.service';
 import { SPECIFICATION_KEYS } from './products.config';
+import { isEmpty } from 'lodash';
 
 @Component({
   selector: 'wfh-products',
@@ -199,7 +200,11 @@ export class ProductsPage implements OnInit {
   applyFilter(filters: any) {
     this.updateFilters(filters);
     const query = this.contsructFiltersQuery(this.filters);
-    this.router.navigate(['/products'], { queryParams: { filters: query } });
+    if (!isEmpty(query)) {
+      this.router.navigate(['/products'], { queryParams: { filters: query } });
+    } else {
+      this.router.navigate(['/products']);
+    }
     this.getProductsTrigger.next(filters);
   }
 
