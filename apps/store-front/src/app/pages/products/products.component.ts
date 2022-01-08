@@ -23,8 +23,8 @@ import {
   filter,
   map,
   Observable,
-  ReplaySubject,
   startWith,
+  Subject,
   switchMap,
   take,
 } from 'rxjs';
@@ -41,7 +41,7 @@ import { SPECIFICATION_KEYS } from './products.config';
       ></wfh-filter-sidebar>
     </aside>
     <section class="content px-6 pb-10">
-      <ul class="grid grid-cols-3 gap-4">
+      <ul class="grid grid-cols-4 gap-4">
         <li *ngFor="let product of products$ | async">
           <wfh-product-card
             [title]="product.name"
@@ -118,12 +118,14 @@ export class ProductsPage implements OnInit {
       value: 'Brown',
     },
   ];
-  @ViewChild(ProductQuickViewComponent) productQuickViewRef?: ProductQuickViewComponent;
+  @ViewChild(ProductQuickViewComponent, { static: true })
+  productQuickViewRef?: ProductQuickViewComponent;
+
   readonly products$: Observable<any[]>;
   readonly brands$: Observable<any[]>;
   filters: any = null;
   private readonly getProductsTrigger = new BehaviorSubject<any>(null);
-  private readonly activeProductSubject = new ReplaySubject<Product>();
+  private readonly activeProductSubject = new Subject<Product>();
   readonly activeProduct$: Observable<ProductQuickView> = this.activeProductSubject
     .asObservable()
     .pipe(
@@ -173,8 +175,8 @@ export class ProductsPage implements OnInit {
   }
 
   openQuickView(product: Product) {
-    this.activeProductSubject.next(product);
     this.productQuickViewRef?.open();
+    this.activeProductSubject.next(product);
   }
 
   addToWishlist(product: string) {
