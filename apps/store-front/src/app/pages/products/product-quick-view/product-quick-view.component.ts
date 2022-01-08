@@ -1,25 +1,25 @@
 import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { CURRENCY_CODE, SideSheetComponent } from '@wfh/ui';
-import { ProductPromise, ProductSpecification } from '../products.interface';
+import { ProductQuickView } from '../products.interface';
 
 @Component({
   selector: 'wfh-product-quick-view',
   template: `
-    <wfh-side-sheet #sideSheetRef class="side-sheet">
+    <wfh-side-sheet #sideSheetRef class="side-sheet" *ngIf="product">
       <header class="relative">
         <section class="flex justify-center">
           <img
-            alt=""
-            src="https://ii1.pepperfry.com/media/catalog/product/h/e/1100x1210/helios-study-desk-in-brown-colour-by-home-centre-helios-study-desk-in-brown-colour-by-home-centre-c1mgui.jpg"
+            [alt]="product.name"
+            [src]="product.images[0]"
             style="max-height: 350px"
+            class="aspect-square object-contain"
           />
         </section>
       </header>
       <div class="px-6">
-        <h2 class="text-lg font-medium">Helios Study Desk</h2>
+        <h2 class="text-lg font-medium">{{ product.name }}</h2>
         <p class="text-gray-500 text-sm">
-          Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an
-          unknown printer took a galley of type and scrambled it to make a type specimen book.
+          {{ product.description }}
         </p>
 
         <section class="mt-4">
@@ -44,7 +44,7 @@ import { ProductPromise, ProductSpecification } from '../products.interface';
       </div>
       <section class="mt-6 border-y border-gray-100 py-2">
         <ul class="grid grid-cols-4">
-          <ng-container *ngFor="let promise of promises">
+          <ng-container *ngFor="let promise of product.promises">
             <li class="flex flex-col items-center">
               <img [alt]="promise.label" [src]="'assets/images/' + promise.img" class="w-6 h-6" />
               <p class="text-center text-xs text-gray-600 mt-2">{{ promise.label }}</p>
@@ -62,7 +62,7 @@ import { ProductPromise, ProductSpecification } from '../products.interface';
             </tr>
           </thead>
           <tbody>
-            <ng-container *ngFor="let spec of specifications">
+            <ng-container *ngFor="let spec of product.specifications">
               <tr class="h-8">
                 <td>
                   <p class="font-medium">{{ spec.label }}</p>
@@ -87,10 +87,7 @@ import { ProductPromise, ProductSpecification } from '../products.interface';
 })
 export class ProductQuickViewComponent implements OnInit {
   @Input()
-  promises: ProductPromise[] = [];
-
-  @Input()
-  specifications: ProductSpecification[] = [];
+  product!: ProductQuickView | null;
 
   @ViewChild(SideSheetComponent) sideSheetRef?: SideSheetComponent;
 

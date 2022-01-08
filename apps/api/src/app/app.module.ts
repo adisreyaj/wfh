@@ -9,10 +9,10 @@ import { ApiProductModule } from '@wfh/api/product';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './core';
 import { ApiAuthModule } from '@wfh/api/auth';
 import { ApiUserModule } from '@wfh/api/user';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './core';
 
 @Module({
   imports: [

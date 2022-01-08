@@ -11,10 +11,25 @@ import {
 import { IconModule } from '../../shared/modules/icon.module';
 import { CommonModule } from '@angular/common';
 import { ProductQuickViewComponent } from './product-quick-view/product-quick-view.component';
-import { Product, ProductPromise, ProductSpecification } from './products.interface';
+import {
+  Product,
+  ProductPromise,
+  ProductQuickView,
+  ProductSpecification,
+} from './products.interface';
 import { ProductsService } from './services/products.service';
-import { BehaviorSubject, map, Observable, startWith, switchMap, take } from 'rxjs';
+import {
+  BehaviorSubject,
+  filter,
+  map,
+  Observable,
+  ReplaySubject,
+  startWith,
+  switchMap,
+  take,
+} from 'rxjs';
 import { WishlistService } from '../wishlist/wishlist.service';
+import { SPECIFICATION_KEYS } from './products.config';
 
 @Component({
   selector: 'wfh-products',
@@ -39,10 +54,7 @@ import { WishlistService } from '../wishlist/wishlist.service';
         </li>
       </ul>
     </section>
-    <wfh-product-quick-view
-      [promises]="promises"
-      [specifications]="specifications"
-    ></wfh-product-quick-view>
+    <wfh-product-quick-view [product]="activeProduct$ | async"></wfh-product-quick-view>
   `,
   styles: [
     //language=SCSS
@@ -110,8 +122,28 @@ export class ProductsPage implements OnInit {
   readonly products$: Observable<any[]>;
   readonly brands$: Observable<any[]>;
   filters: any = null;
-
   private readonly getProductsTrigger = new BehaviorSubject<any>(null);
+  private readonly activeProductSubject = new ReplaySubject<Product>();
+  readonly activeProduct$: Observable<ProductQuickView> = this.activeProductSubject
+    .asObservable()
+    .pipe(
+      filter((product) => !!product),
+      map((product) => {
+        const specificationKeys = SPECIFICATION_KEYS[product.kind];
+        const specifications = specificationKeys.map(({ key, label }) => {
+          return {
+            label: label,
+            // @ts-ignore
+            value: product[key],
+          };
+        });
+        return {
+          ...product,
+          promises: this.promises,
+          specifications: specifications,
+        };
+      })
+    );
 
   constructor(
     @Inject(CURRENCY_CODE) public currencyCode: string,
@@ -141,6 +173,7 @@ export class ProductsPage implements OnInit {
   }
 
   openQuickView(product: Product) {
+    this.activeProductSubject.next(product);
     this.productQuickViewRef?.open();
   }
 

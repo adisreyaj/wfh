@@ -23,11 +23,11 @@ import { IconModule } from '../icon.module';
         <rmx-icon name="heart-3-line"></rmx-icon>
       </button>
       <ng-container *ngIf="images">
-        <img [src]="images[0]" [alt]="title" />
+        <img [src]="images[0]" [alt]="title" class="aspect-square object-contain" />
       </ng-container>
     </header>
     <div>
-      <p class="text-sm font-medium">{{ title }}</p>
+      <p class="text-sm font-medium line-camp-2" [style.min-height.px]="40">{{ title }}</p>
       <ng-content select="rating"></ng-content>
       <div class="mt-2">
         <p class="text-xs text-gray-500">Price</p>
