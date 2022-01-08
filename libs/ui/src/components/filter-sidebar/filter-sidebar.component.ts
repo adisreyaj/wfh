@@ -29,7 +29,7 @@ import { ButtonModule } from '../button/button.component';
             </div>
           </ng-template>
         </wfh-accordion-item>
-        <wfh-accordion-item title="Brands">
+        <wfh-accordion-item title="Brands" [isOpen]="true">
           <ng-template wfhAccordionContent>
             <div class="p-4 flex flex-col gap-2">
               <ng-container *ngFor="let brand of brands">
@@ -42,7 +42,7 @@ import { ButtonModule } from '../button/button.component';
             </div>
           </ng-template>
         </wfh-accordion-item>
-        <wfh-accordion-item title="Rating">
+        <wfh-accordion-item title="Rating" [isOpen]="false">
           <ng-template wfhAccordionContent>
             <div class="p-4"></div>
           </ng-template>
