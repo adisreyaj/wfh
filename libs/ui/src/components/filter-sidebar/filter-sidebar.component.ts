@@ -36,7 +36,8 @@ import { ButtonModule } from '../button/button.component';
                 <wfh-checkbox
                   [label]="brand.label"
                   [value]="brand.value"
-                  (change)="selectBrand(brand)"
+                  [checked]="this.filtersForm.get('brands')?.value?.includes(brand.value)"
+                  (change)="selectBrand(brand.value)"
                 ></wfh-checkbox>
               </ng-container>
             </div>
@@ -54,9 +55,9 @@ import { ButtonModule } from '../button/button.component';
                 <ng-container *ngFor="let item of COLORS">
                   <li>
                     <button
-                      class="bg-gray-100 p-1 rounded-md border border-gray-200 flex items-center gap-1 text-xs"
+                      class="bg-gray-100 p-1 rounded-md border border-gray-100 flex items-center gap-1 text-xs"
                       [class.active]="this.filtersForm.get('colors')?.value?.includes(item.value)"
-                      (click)="selectColor(item)"
+                      (click)="selectColor(item.value)"
                     >
                       <div
                         class="w-4 h-4 rounded-md color-indicator"
@@ -108,10 +109,8 @@ import { ButtonModule } from '../button/button.component';
 export class FilterSidebarComponent {
   @Input()
   brands: { label: string; value: string }[] | null = [];
-
   @Output()
   filterChanged = new EventEmitter();
-
   COLORS = COLORS;
   filtersForm = this.fb.group({
     priceRange: this.fb.group(
@@ -142,27 +141,32 @@ export class FilterSidebarComponent {
 
   constructor(private readonly fb: FormBuilder, private cdr: ChangeDetectorRef) {}
 
-  selectBrand(brand: { label: string; value: string }) {
+  @Input()
+  set filters(filters: any) {
+    this.filtersForm.patchValue(filters);
+  }
+
+  selectBrand(value: string) {
     const brandFormItem = this.filtersForm.get('brands');
     if (!brandFormItem) return;
     const brands = brandFormItem.value ?? [];
-    const isBrandPresent = brands.includes(brand.value);
+    const isBrandPresent = brands.includes(value);
     if (isBrandPresent) {
-      brandFormItem.setValue(brands.filter((b: any) => b !== brand.value));
+      brandFormItem.setValue(brands.filter((b: any) => b !== value));
     } else {
-      brandFormItem.setValue([...brands, brand.value]);
+      brandFormItem.setValue([...brands, value]);
     }
   }
 
-  selectColor(color: { label: string; value: string }) {
+  selectColor(value: string) {
     const colorFormItem = this.filtersForm.get('colors');
     if (!colorFormItem) return;
     const colors = colorFormItem.value ?? [];
-    const isBrandPresent = colors.includes(color.value);
+    const isBrandPresent = colors.includes(value);
     if (isBrandPresent) {
-      colorFormItem.setValue(colors.filter((b: any) => b !== color.value));
+      colorFormItem.setValue(colors.filter((b: any) => b !== value));
     } else {
-      colorFormItem.setValue([...colors, color.value]);
+      colorFormItem.setValue([...colors, value]);
     }
   }
 

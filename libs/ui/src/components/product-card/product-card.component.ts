@@ -27,7 +27,7 @@ import { IconModule } from '../icon.module';
       </ng-container>
     </header>
     <div>
-      <p class="text-sm font-medium" [style.min-height.px]="40">{{ title }}</p>
+      <p class="text-sm font-medium line-clamp-2" [style.min-height.px]="40">{{ title }}</p>
       <ng-content select="rating"></ng-content>
       <div class="mt-2">
         <p class="text-xs text-gray-500">Price</p>

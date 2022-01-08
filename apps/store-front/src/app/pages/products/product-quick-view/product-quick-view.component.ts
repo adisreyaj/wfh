@@ -25,18 +25,20 @@ import { ProductQuickView } from '../products.interface';
 
           <section class="mt-4">
             <div class="flex text-2xl items-center">
-              <p class="font-medium">{{ 4000 | currency: currencyCode }}</p>
-              <ng-container *ngIf="true">
+              <p class="font-medium">{{ product.price | currency: currencyCode }}</p>
+              <ng-container *ngIf="product.originalPrice">
                 <p class="text-gray-500 text-base line-through ml-2">
-                  {{ 4599 | currency: currencyCode }}
+                  {{ product.originalPrice | currency: currencyCode }}
                 </p>
               </ng-container>
             </div>
-            <ng-container *ngIf="true">
+            <ng-container *ngIf="product.originalPrice">
               <div class="">
                 <p>
                   You will save
-                  <strong class="text-green-600">{{ 3400 | currency: currencyCode }}</strong>
+                  <strong class="text-green-600">{{
+                    product.originalPrice - product.price | currency: currencyCode
+                  }}</strong>
                   ({{ 29 }} <span class="text-xs">%</span>)
                 </p>
               </div>
