@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
         type="checkbox"
         class="cursor-pointer"
         [checked]="checked"
+        [value]="value"
         (change)="onChange($event)"
         [disabled]="disabled"
       />
@@ -29,7 +30,8 @@ import { CommonModule } from '@angular/common';
   `,
 })
 export class CheckboxComponent implements ControlValueAccessor {
-  @Input() label?: string;
+  @Input() label!: string;
+  @Input() value!: string;
   @Input() id?: string;
 
   checked = false;

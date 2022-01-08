@@ -1,4 +1,4 @@
-import { Component, Inject, NgModule, ViewChild } from '@angular/core';
+import { Component, Inject, NgModule, OnInit, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import {
   ButtonModule,
@@ -13,14 +13,17 @@ import { CommonModule } from '@angular/common';
 import { ProductQuickViewComponent } from './product-quick-view/product-quick-view.component';
 import { Product, ProductPromise, ProductSpecification } from './products.interface';
 import { ProductsService } from './services/products.service';
-import { Observable, take } from 'rxjs';
+import { BehaviorSubject, map, Observable, startWith, switchMap, take } from 'rxjs';
 import { WishlistService } from '../wishlist/wishlist.service';
 
 @Component({
   selector: 'wfh-products',
   template: `
     <aside class="sticky top-6">
-      <wfh-filter-sidebar></wfh-filter-sidebar>
+      <wfh-filter-sidebar
+        [brands]="brands$ | async"
+        (filterChanged)="applyFilter($event)"
+      ></wfh-filter-sidebar>
     </aside>
     <section class="content px-6 pb-10">
       <ul class="grid grid-cols-3 gap-4">
@@ -57,7 +60,7 @@ import { WishlistService } from '../wishlist/wishlist.service';
     `,
   ],
 })
-export class ProductsPage {
+export class ProductsPage implements OnInit {
   promises: ProductPromise[] = [
     {
       label: '12m warranty',
@@ -105,6 +108,10 @@ export class ProductsPage {
   ];
   @ViewChild(ProductQuickViewComponent) productQuickViewRef?: ProductQuickViewComponent;
   readonly products$: Observable<any[]>;
+  readonly brands$: Observable<any[]>;
+  filters: any = null;
+
+  private readonly getProductsTrigger = new BehaviorSubject<any>(null);
 
   constructor(
     @Inject(CURRENCY_CODE) public currencyCode: string,
@@ -115,7 +122,22 @@ export class ProductsPage {
     overlay.clickedOutside$.subscribe(() => {
       this.productQuickViewRef?.close();
     });
-    this.products$ = productService.getAllProducts();
+    this.products$ = this.getProductsTrigger.asObservable().pipe(
+      switchMap((filters) => productService.getAllProducts(filters)),
+      startWith([])
+    );
+    this.brands$ = productService.getAllBrands().pipe(
+      map((brands) =>
+        brands.map((brand) => ({
+          label: brand.name,
+          value: brand._id,
+        }))
+      )
+    );
+  }
+
+  ngOnInit() {
+    this.getProductsTrigger.next(this.filters);
   }
 
   openQuickView(product: Product) {
@@ -128,6 +150,11 @@ export class ProductsPage {
 
   removeFromWishlist(product: string) {
     this.wishlistService.removeFromWishList(product).pipe(take(1)).subscribe();
+  }
+
+  applyFilter(filters: any) {
+    this.filters = filters;
+    this.getProductsTrigger.next(filters);
   }
 }
 

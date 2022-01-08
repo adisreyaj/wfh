@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/
 import { ApiBrandService } from './api-brand.service';
 import { BrandRequest } from '@wfh/api-interfaces';
 
-@Controller('api-brand')
+@Controller('brands')
 export class ApiBrandController {
   constructor(private brandService: ApiBrandService) {}
 

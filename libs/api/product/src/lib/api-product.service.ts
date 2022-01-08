@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { from, map } from 'rxjs';
 
 import { ProductDocument, ProductRequest } from '@wfh/api-interfaces';
 import { handleError } from '@wfh/api/util';
 
 import { ProductModel } from './schemas/products.schema';
+import { isEmpty } from 'lodash';
 
 @Injectable()
 export class ApiProductService {
@@ -35,8 +36,59 @@ export class ApiProductService {
     ).pipe(handleError('product'));
   }
 
-  getAll() {
-    return from(this.productModel.find({})).pipe(handleError('product'));
+  getAll(filters: any) {
+    if (isEmpty(filters)) {
+      return from(this.productModel.find({})).pipe(handleError('product'));
+    }
+    const pipeline = [];
+    if (filters?.brands) {
+      pipeline.push({
+        $match: {
+          brand: {
+            $in: filters.brands.split(',').map((id) => new Types.ObjectId(id)),
+          },
+        },
+      });
+    }
+    if (filters?.colors) {
+      pipeline.push({
+        $match: {
+          colors: {
+            $in: filters.colors.split(','),
+          },
+        },
+      });
+    }
+    if (filters?.price_from && filters?.price_to) {
+      pipeline.push({
+        $match: {
+          price: {
+            $gte: +filters.price_from,
+            $lte: +filters.price_to,
+          },
+        },
+      });
+    } else {
+      if (filters?.price_from) {
+        pipeline.push({
+          $match: {
+            price: {
+              $gte: +filters.price_from,
+            },
+          },
+        });
+      }
+      if (filters?.price_to) {
+        pipeline.push({
+          $match: {
+            price: {
+              $lte: +filters.price_to,
+            },
+          },
+        });
+      }
+    }
+    return from(this.productModel.aggregate(pipeline)).pipe(handleError('product'));
   }
 
   get(id: string) {

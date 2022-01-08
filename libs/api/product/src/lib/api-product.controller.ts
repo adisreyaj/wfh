@@ -9,8 +9,8 @@ export class ApiProductController {
   constructor(private readonly productsService: ApiProductService) {}
 
   @Get()
-  getAll() {
-    return this.productsService.getAll();
+  getAll(@Query() query: any) {
+    return this.productsService.getAll(query);
   }
 
   @Get('autocomplete')
