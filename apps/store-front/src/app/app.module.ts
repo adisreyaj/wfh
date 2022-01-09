@@ -96,6 +96,7 @@ import { popperVariation, TippyModule, tooltipVariation } from '@ngneat/helipopp
               lastName: user.family_name,
               email: user.email,
               avatar: user.picture,
+              id: user['https://wfh-store.adi.so/id'],
             };
           }),
           catchError(() => {
