@@ -10,13 +10,13 @@ import { IconModule } from '../../../shared/modules/icon.module';
       <div class="relative">
         <img
           [src]="product.images[0]"
-          [alt]="product.title"
+          [alt]="product.name"
           style="height: 150px"
           class="aspect-square object-contain p-2"
         />
       </div>
       <div class="p-4">
-        <p class="text-sm font-medium text-gray-600">{{ product.title }}</p>
+        <p class="text-sm font-medium text-gray-600">{{ product.name }}</p>
         <ng-content select="rating"></ng-content>
         <div class="mt-2">
           <div class="flex text-sm items-center">

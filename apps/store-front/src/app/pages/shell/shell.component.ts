@@ -66,7 +66,13 @@ export class ShellComponent {
   declarations: [ShellComponent],
   imports: [
     CommonModule,
-    RouterModule.forChild([{ path: '', component: ShellComponent, children: SHELL_ROUTES }]),
+    RouterModule.forChild([
+      {
+        path: '',
+        component: ShellComponent,
+        children: SHELL_ROUTES,
+      },
+    ]),
     HeaderModule,
   ],
 })

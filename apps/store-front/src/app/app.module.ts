@@ -5,8 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { AuthHttpInterceptor, AuthModule, AuthService } from '@auth0/auth0-angular';
 import { CURRENCY_CODE, USER_DETAILS } from '@wfh/ui';
-import { isNil } from 'lodash-es';
-import { map, of } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { API_URL } from './core/tokens/api.token';
@@ -38,7 +37,20 @@ import { popperVariation, TippyModule, tooltipVariation } from '@ngneat/helipopp
       cacheLocation: 'localstorage',
       useRefreshTokens: false,
       httpInterceptor: {
-        allowedList: ['*'],
+        allowedList: [
+          {
+            uri: 'api/products/*',
+            httpMethod: 'GET',
+          },
+          {
+            uri: 'api/categories/*',
+            httpMethod: 'GET',
+          },
+          {
+            uri: 'api/brands/*',
+            httpMethod: 'GET',
+          },
+        ],
       },
     }),
     TippyModule.forRoot({
@@ -76,8 +88,7 @@ import { popperVariation, TippyModule, tooltipVariation } from '@ngneat/helipopp
       useFactory: (auth: AuthService) => {
         return auth.user$.pipe(
           map((user) => {
-            console.log('user', user);
-            if (isNil(user)) {
+            if (user == null) {
               return of(null);
             }
             return {
@@ -85,7 +96,11 @@ import { popperVariation, TippyModule, tooltipVariation } from '@ngneat/helipopp
               lastName: user.family_name,
               email: user.email,
               avatar: user.picture,
+              id: user['https://wfh-store.adi.so/id'],
             };
+          }),
+          catchError(() => {
+            return of(null);
           })
         );
       },

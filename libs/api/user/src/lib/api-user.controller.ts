@@ -8,13 +8,13 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ApiUserService } from './api-user.service';
 import { ApiCartService } from './api-cart/api-cart.service';
 import { ApiWishlistService } from './api-wishlist/api-wishlist.service';
 import { CartRequest, UserAuth0Request } from '@wfh/api-interfaces';
 import { catchError, forkJoin, of, switchMap, throwError } from 'rxjs';
-import { Public } from '@wfh/api/util';
 
 @Controller('users')
 export class ApiUserController {
@@ -24,10 +24,8 @@ export class ApiUserController {
     private readonly wishlist: ApiWishlistService
   ) {}
 
-  @Public()
   @Post('')
   async creatUser(@Body() user: UserAuth0Request) {
-    console.info(user);
     return this.user.createUserAuth0(user).pipe(
       switchMap((user) => {
         return forkJoin([this.cart.create(user.id), this.wishlist.create(user.id)]).pipe(
@@ -41,6 +39,11 @@ export class ApiUserController {
         return throwError(() => new InternalServerErrorException());
       })
     );
+  }
+
+  @Get()
+  async getUser(@Query('email') email: string) {
+    return this.user.getUserByEmail(email);
   }
 
   @Get(':userId/cart')
