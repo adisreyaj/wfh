@@ -41,27 +41,26 @@ export class ApiProductService {
       return from(this.productModel.find({})).pipe(handleError('product'));
     }
     const pipeline = [];
+    const searchPipelineItem: Record<string, any> = {
+      $search: {
+        compound: {
+          filter: [],
+          must: [],
+          should: [],
+          minimumShouldMatch: 0,
+        },
+      },
+    };
+    if (!isEmpty(searchTerm)) {
+      searchPipelineItem.$search.compound['must'].push({
+        text: {
+          query: searchTerm,
+          path: ['name', 'description'],
+        },
+      });
+    }
     if (!isEmpty(filters)) {
       let minShouldMatch = 0;
-      const searchPipelineItem: Record<string, any> = {
-        $search: {
-          compound: {
-            filter: [],
-            must: [],
-            should: [],
-            minimumShouldMatch: 0,
-          },
-        },
-      };
-
-      if (!isEmpty(searchTerm)) {
-        searchPipelineItem.$search.compound['must'].push({
-          text: {
-            query: searchTerm,
-            path: ['name', 'description'],
-          },
-        });
-      }
       if (!isEmpty(filters.brands)) {
         minShouldMatch += 1;
         searchPipelineItem.$search.compound['should'].push(
@@ -128,10 +127,8 @@ export class ApiProductService {
         searchPipelineItem.$search.compound.filter.push(priceFilter);
       }
       searchPipelineItem.$search.compound.minimumShouldMatch = minShouldMatch;
-      pipeline.push(searchPipelineItem);
     }
-
-    console.dir(pipeline, { depth: null });
+    pipeline.push(searchPipelineItem);
     return from(this.productModel.aggregate(pipeline)).pipe(handleError('product'));
   }
 

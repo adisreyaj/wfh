@@ -190,16 +190,16 @@ export class HeaderComponent implements OnDestroy {
       icon: 'products',
       link: 'products',
     },
-    {
-      label: 'Categories',
-      icon: 'categories',
-      link: 'categories',
-    },
-    {
-      label: 'Bundles',
-      icon: 'bundles',
-      link: 'bundles',
-    },
+    // {
+    //   label: 'Categories',
+    //   icon: 'categories',
+    //   link: 'categories',
+    // },
+    // {
+    //   label: 'Bundles',
+    //   icon: 'bundles',
+    //   link: 'bundles',
+    // },
   ];
 
   @Input()
