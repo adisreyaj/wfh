@@ -28,12 +28,13 @@ import {
 import { IconModule } from '../icon.module';
 import { SuggestionsHelperModule } from './suggestion-helpers.pipe';
 import { USER_DETAILS, UserDetails } from './user-details.token';
+import { ButtonModule } from '../button/button.component';
 
 @Component({
   selector: 'wfh-header',
   template: `
     <header
-      class="bg-white z-10 h-20 flex justify-between items-center px-4 md:px-6 max-w-7xl mx-auto"
+      class="bg-white z-10 h-20 flex justify-between items-center max-w-screen-2xl px-4 md:px-6 mx-auto"
     >
       <div class="flex items-center gap-2">
         <img src="https://avatar.tobi.sh/tobiaslins?size=30" alt="" />
@@ -94,7 +95,7 @@ import { USER_DETAILS, UserDetails } from './user-details.token';
         </ng-container>
       </div>
       <div class="flex gap-2">
-        <a class="header__icon" (click)="auth.loginWithPopup()" tippy="Notifications">
+        <a class="header__icon" tippy="Notifications">
           <rmx-icon name="notification-4-fill"></rmx-icon>
         </a>
         <a class="header__icon" routerLink="/wishlist">
@@ -110,23 +111,32 @@ import { USER_DETAILS, UserDetails } from './user-details.token';
           </div>
         </button>
       </div>
-      <div
-        class="flex items-center ml-4 gap-2 outline-none"
-        *ngIf="user$ | async as user"
-        [tippy]="profile"
-        variation="menu"
-        [offset]="[-20, 10]"
-      >
-        <img
-          class="rounded-full w-10 h-10 cursor-pointer"
-          [src]="user?.avatar"
-          [alt]="user?.firstName"
-        />
-        <div class="text-xs text-gray-500">
-          <p class="font-semibold">{{ user.firstName }}</p>
-          <p class="text-gray-400">{{ user.lastName }}</p>
+      <ng-container *ngIf="user$ | async as user">
+        <div
+          class="flex items-center ml-4 gap-2 outline-none"
+          *ngIf="user?.email; else signIn"
+          [tippy]="profile"
+          variation="menu"
+          [offset]="[-20, 10]"
+        >
+          <img
+            class="rounded-full w-10 h-10 cursor-pointer"
+            [src]="user?.avatar"
+            [alt]="user?.firstName"
+          />
+          <div class="text-xs text-gray-500">
+            <p class="font-semibold">{{ user.firstName }}</p>
+            <p class="text-gray-400">{{ user.lastName }}</p>
+          </div>
         </div>
-      </div>
+      </ng-container>
+
+      <ng-template #signIn>
+        <div class="ml-4">
+          <button wfh (click)="auth.loginWithPopup()">Login</button>
+        </div>
+      </ng-template>
+
       <ng-template #profile>
         <div [style.min-width.px]="200">
           <a class="dropdown-item" routerLink="/profile">Profile</a>
@@ -289,7 +299,14 @@ export class HeaderComponent implements OnDestroy {
 
 @NgModule({
   declarations: [HeaderComponent],
-  imports: [CommonModule, IconModule, RouterModule, SuggestionsHelperModule, TippyModule],
+  imports: [
+    CommonModule,
+    IconModule,
+    RouterModule,
+    SuggestionsHelperModule,
+    TippyModule,
+    ButtonModule,
+  ],
   exports: [HeaderComponent],
 })
 export class HeaderModule {}

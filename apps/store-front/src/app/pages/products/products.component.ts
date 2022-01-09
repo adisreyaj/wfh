@@ -89,7 +89,7 @@ import { CartService } from '@wfh/store-front/service';
     //language=SCSS
     `
       :host {
-        @apply mx-auto max-w-7xl px-4;
+        @apply mx-auto max-w-screen-2xl px-4 md:px-6;
         aside {
           width: 280px;
         }
