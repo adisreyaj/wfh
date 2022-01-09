@@ -30,6 +30,7 @@ import {
   Subject,
   switchMap,
   take,
+  tap,
 } from 'rxjs';
 import { WishlistService } from '../wishlist/wishlist.service';
 import { SPECIFICATION_KEYS } from './products.config';
@@ -69,6 +70,7 @@ import { CartService } from '@wfh/store-front/service';
         <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           <li *ngFor="let product of products$ | async">
             <wfh-product-card
+              [class.active]="(searchQuery$ | async) === product.name"
               [title]="product.name"
               [price]="product.price"
               [originalPrice]="product.originalPrice"
@@ -94,6 +96,10 @@ import { CartService } from '@wfh/store-front/service';
 
         .content {
           @apply flex-1;
+        }
+
+        wfh-product-card.active {
+          @apply ring-2 ring-primary shadow-lg;
         }
       }
     `,
@@ -155,6 +161,13 @@ export class ProductsPage implements OnInit {
   filters: any = null;
   filtersSubject: Subject<any> = new ReplaySubject();
   filters$: Observable<any> = this.filtersSubject.asObservable();
+  readonly filterQuery$ = this.activatedRoute.queryParams.pipe(
+    map((params) => params.filters),
+    tap(() => {
+      const filtersFormatted = this.parseQueryParams();
+      this.updateFilters(filtersFormatted);
+    })
+  );
   readonly searchQuery$ = this.activatedRoute.queryParams.pipe(map((params) => params?.q));
   private readonly getProductsTrigger = new Subject<void>();
   private readonly activeProductSubject = new Subject<Product>();
@@ -194,6 +207,7 @@ export class ProductsPage implements OnInit {
     this.products$ = combineLatest([
       this.getProductsTrigger.asObservable().pipe(startWith(true)),
       this.searchQuery$,
+      this.filterQuery$,
     ]).pipe(
       map(([, term]) => term),
       switchMap((query: string) =>
@@ -223,7 +237,7 @@ export class ProductsPage implements OnInit {
   }
 
   ngOnInit() {
-    let filtersFormatted = this.parseQueryParams();
+    const filtersFormatted = this.parseQueryParams();
     this.updateFilters(filtersFormatted);
     this.getProductsTrigger.next();
   }

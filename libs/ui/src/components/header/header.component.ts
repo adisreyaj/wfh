@@ -9,10 +9,19 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
 import { TippyModule } from '@ngneat/helipopper';
-import { debounceTime, distinctUntilChanged, Observable, Subject, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  Observable,
+  Subject,
+  takeUntil,
+} from 'rxjs';
 import { IconModule } from '../icon.module';
 import { SuggestionsHelperModule } from './suggestion-helpers.pipe';
 import { USER_DETAILS, UserDetails } from './user-details.token';
@@ -56,7 +65,7 @@ import { USER_DETAILS, UserDetails } from './user-details.token';
           (keyup.enter)="this.searched.emit(searchRef.value)"
           #searchRef
         />
-        <ng-container *ngIf="suggestions$ | async as suggestions">
+        <ng-container *ngIf="suggestionsContent$ | async as suggestions">
           <div class="suggestions" *ngIf="suggestions | suggestionVisible">
             <ul class="suggestions__list">
               <ng-container *ngFor="let group of suggestions | suggestionsGroup">
@@ -69,6 +78,7 @@ import { USER_DETAILS, UserDetails } from './user-details.token';
                       tabindex="0"
                       class="suggestions__group-item"
                       *ngFor="let groupItem of group.value"
+                      (click)="suggestionsClicked(group.key, groupItem)"
                     >
                       <p>{{ groupItem.name }}</p>
                     </li>
@@ -201,29 +211,33 @@ export class HeaderComponent implements OnDestroy {
     //   link: 'bundles',
     // },
   ];
-
-  @Input()
-  suggestions$?: Observable<Record<string, { _id: string; name: string }[]>>;
-
   @Input()
   cartItemsCount: number | null = null;
-
   @Output()
   autoComplete = new EventEmitter<string>();
   autoCompleteSubject = new Subject<string>();
-
   @Output()
   searched = new EventEmitter<string>();
   searchSubject = new Subject<string>();
-
   @Output()
   logout = new EventEmitter<void>();
 
+  @Output()
+  filtered = new EventEmitter<{ key: string; value: string }>();
+
   private destroyed$ = new Subject<void>();
+  private suggestionSubject = new BehaviorSubject<any>([]);
+  private suggestionsVisibleSubject = new BehaviorSubject(false);
+
+  readonly suggestionsContent$: Observable<any> = combineLatest([
+    this.suggestionSubject.asObservable(),
+    this.suggestionsVisibleSubject.asObservable(),
+  ]).pipe(map(([suggestions, visible]) => (visible ? suggestions : {})));
 
   constructor(
     public readonly auth: AuthService,
-    @Inject(USER_DETAILS) public readonly user$: Observable<UserDetails>
+    @Inject(USER_DETAILS) public readonly user$: Observable<UserDetails>,
+    private readonly router: Router
   ) {
     this.autoCompleteSubject
       .asObservable()
@@ -233,9 +247,27 @@ export class HeaderComponent implements OnDestroy {
       });
   }
 
+  @Input()
+  set suggestions(data: Record<string, { _id: string; name: string }[]>) {
+    this.suggestionSubject.next(data ?? {});
+    this.suggestionsVisibleSubject.next(true);
+  }
+
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();
+  }
+
+  suggestionsClicked(group: string, item: any) {
+    switch (group) {
+      case 'products':
+        this.searched.emit(item.name);
+        break;
+      case 'brands':
+        this.filtered.emit({ key: group, value: item._id });
+        break;
+    }
+    this.suggestionsVisibleSubject.next(false);
   }
 }
 

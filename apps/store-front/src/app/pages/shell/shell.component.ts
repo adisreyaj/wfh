@@ -11,10 +11,11 @@ import { CommonModule } from '@angular/common';
 @Component({
   template: `
     <wfh-header
-      [suggestions$]="$any(suggestions$)"
+      [suggestions]="$any(suggestions$ | async)"
       [cartItemsCount]="cartItemsCount$ | async"
       (autoComplete)="this.onAutoComplete($event)"
       (searched)="this.onSearch($event)"
+      (filtered)="this.onFilter($event)"
       (logout)="this.onLogout()"
     ></wfh-header>
     <div class="container mx-auto mt-4">
@@ -49,6 +50,15 @@ export class ShellComponent {
 
   onAutoComplete($event: string) {
     this.autoCompleteSubject.next($event);
+  }
+
+  onFilter({ key, value }: { key: string; value: string }) {
+    this.router.navigate(['/products'], {
+      queryParams: {
+        filters: `${key}=${value}`,
+      },
+      queryParamsHandling: 'merge',
+    });
   }
 }
 
