@@ -7,10 +7,14 @@ import { ChangeDetectionStrategy, Component, HostBinding, Input, NgModule } from
   styles: [
     `
       :host {
-        @apply px-5 h-10 text-base font-medium outline-none rounded-lg;
+        @apply px-5 text-base font-medium outline-none rounded-lg;
         @apply transition duration-150 ease-in-out;
         @apply hover:ring-2 ring-offset-1 hover:ring-primary;
         @apply focus:ring-2 focus:ring-primary;
+      }
+
+      :host-context(.base) {
+        @apply h-10;
       }
 
       :host-context(.icon) {
@@ -76,4 +80,5 @@ export class ButtonComponent {
   imports: [CommonModule],
   exports: [ButtonComponent],
 })
-export class ButtonModule {}
+export class ButtonModule {
+}

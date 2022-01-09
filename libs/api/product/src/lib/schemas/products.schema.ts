@@ -4,6 +4,7 @@ export const productsSchema = new Schema(
   {
     name: String,
     price: Number,
+    originalPrice: Number,
     description: String,
     images: [String],
     category: { type: Schema.Types.ObjectId, ref: 'Category', autopopulate: true },

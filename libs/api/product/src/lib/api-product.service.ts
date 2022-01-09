@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { from, map } from 'rxjs';
 
 import { ProductDocument, ProductRequest } from '@wfh/api-interfaces';
 import { handleError } from '@wfh/api/util';
 
 import { ProductModel } from './schemas/products.schema';
+import { isEmpty } from 'lodash';
 
 @Injectable()
 export class ApiProductService {
@@ -35,8 +36,100 @@ export class ApiProductService {
     ).pipe(handleError('product'));
   }
 
-  getAll() {
-    return from(this.productModel.find({})).pipe(handleError('product'));
+  getAll(filters: any, searchTerm = '') {
+    if (isEmpty(filters) && isEmpty(searchTerm)) {
+      return from(this.productModel.find({})).pipe(handleError('product'));
+    }
+    const pipeline = [];
+    const searchPipelineItem: Record<string, any> = {
+      $search: {
+        compound: {
+          filter: [],
+          must: [],
+          should: [],
+          minimumShouldMatch: 0,
+        },
+      },
+    };
+    if (!isEmpty(searchTerm)) {
+      searchPipelineItem.$search.compound['must'].push({
+        text: {
+          query: searchTerm,
+          path: ['name', 'description'],
+        },
+      });
+    }
+    if (!isEmpty(filters)) {
+      let minShouldMatch = 0;
+      if (!isEmpty(filters.brands)) {
+        minShouldMatch += 1;
+        searchPipelineItem.$search.compound['should'].push(
+          ...filters.brands.split(',').map((brand) => ({
+            equals: {
+              path: 'brand',
+              value: new Types.ObjectId(brand),
+            },
+          }))
+        );
+      }
+      if (!isEmpty(filters.categories)) {
+        minShouldMatch += 1;
+        searchPipelineItem.$search.compound['should'].push(
+          ...filters.categories.split(',').map((category) => ({
+            equals: {
+              path: 'category',
+              value: new Types.ObjectId(category),
+            },
+          }))
+        );
+      }
+
+      if (!isEmpty(filters.colors)) {
+        minShouldMatch += 1;
+        searchPipelineItem.$search.compound['should'].push(
+          ...filters.colors.split(',').map((color) => ({
+            text: {
+              path: 'colors',
+              query: color,
+            },
+          }))
+        );
+      }
+      let priceFilter = {};
+      if (filters?.price_from && filters?.price_to) {
+        priceFilter = {
+          range: {
+            path: 'price',
+            gte: +filters.price_from,
+            lte: +filters.price_to,
+          },
+        };
+      } else {
+        if (filters?.price_from) {
+          priceFilter = {
+            range: {
+              path: 'price',
+              gte: +filters.price_from,
+            },
+          };
+        }
+        if (filters?.price_to) {
+          priceFilter = {
+            range: {
+              path: 'price',
+              lte: +filters.price_to,
+            },
+          };
+        }
+      }
+
+      if (!isEmpty(priceFilter)) {
+        searchPipelineItem.$search.compound.filter.push(priceFilter);
+      }
+      searchPipelineItem.$search.compound.minimumShouldMatch = minShouldMatch;
+    }
+    pipeline.push(searchPipelineItem);
+    return from(this.productModel.aggregate(pipeline)).pipe(handleError('product'));
   }
 
   get(id: string) {
