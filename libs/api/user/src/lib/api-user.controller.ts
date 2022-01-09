@@ -29,7 +29,7 @@ export class ApiUserController {
     return this.user.createUserAuth0(user).pipe(
       switchMap((user) => {
         return forkJoin([this.cart.create(user.id), this.wishlist.create(user.id)]).pipe(
-          switchMap(() => of(user))
+          switchMap(([cart]) => of({ ...user, cart: cart._id }))
         );
       }),
       catchError((err) => {
@@ -46,18 +46,18 @@ export class ApiUserController {
     return this.user.getUserByEmail(email);
   }
 
-  @Get(':userId/cart')
-  async getCart(@Param('id') userId: string) {
-    return this.cart.get(userId);
+  @Get(':userId/cart/:cartId')
+  async getCart(@Param('userId') userId: string, @Param('cartId') cartId: string) {
+    return this.cart.get(userId, cartId);
   }
 
   @Put(':userId/cart')
-  async addToCart(@Param('id') userId: string, @Body() productDetails: CartRequest) {
+  async addToCart(@Param('userId') userId: string, @Body() productDetails: CartRequest) {
     return this.cart.addItemToCart(userId, productDetails);
   }
 
   @Delete(':userId/cart/:productId')
-  async removeFromCart(@Param('id') userId: string, @Param('productId') productId: string) {
+  async removeFromCart(@Param('userId') userId: string, @Param('productId') productId: string) {
     return this.cart.removeItemFromCart(userId, productId);
   }
 
@@ -67,12 +67,15 @@ export class ApiUserController {
   }
 
   @Put(':userId/wishlist/add')
-  async addToWishlist(@Param('id') wishlistId: string, @Body() body: { productId: string }) {
+  async addToWishlist(@Param('userId') wishlistId: string, @Body() body: { productId: string }) {
     return this.wishlist.addProduct(wishlistId, body.productId);
   }
 
   @Delete(':userId/wishlist/:productId')
-  async removeFromWishlist(@Param('id') wishlistId: string, @Param('productId') productId: string) {
+  async removeFromWishlist(
+    @Param('userId') wishlistId: string,
+    @Param('productId') productId: string
+  ) {
     return this.wishlist.removeProduct(wishlistId, productId);
   }
 }

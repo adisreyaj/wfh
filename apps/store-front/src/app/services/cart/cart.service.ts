@@ -1,16 +1,36 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, map } from 'rxjs';
+import { Inject, Injectable } from '@angular/core';
+import {
+  BehaviorSubject,
+  combineLatest,
+  map,
+  Observable,
+  shareReplay,
+  switchMap,
+  take,
+} from 'rxjs';
+import { USER_DETAILS, UserDetails } from '@wfh/ui';
+import { API_URL } from '@wfh/store-front/core';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
-  cartItemsMap: Map<string, unknown> = new Map();
+  cartItemsMap: Map<string, { id: string; quantity: number }> = new Map();
 
   readonly cartItems$ = new BehaviorSubject<unknown[]>([]);
   readonly cartItemsCount$ = this.cartItems$.pipe(map((items) => items.length));
 
-  constructor() {
+  readonly userId$: Observable<string>;
+  readonly cartId$: Observable<string>;
+
+  constructor(
+    @Inject(USER_DETAILS) private readonly user$: Observable<UserDetails>,
+    @Inject(API_URL) private apiUrl: string,
+    private readonly http: HttpClient
+  ) {
+    this.userId$ = this.user$.pipe(map((user) => user.id));
+    this.cartId$ = this.user$.pipe(map((user) => user.cart));
     const cartItemsInStorage = localStorage.getItem('cart');
     if (cartItemsInStorage) {
       this.cartItemsMap = this.mapify(JSON.parse(cartItemsInStorage));
@@ -18,24 +38,44 @@ export class CartService {
     }
   }
 
+  getCart() {
+    return combineLatest([this.userId$, this.cartId$]).pipe(
+      take(1),
+      switchMap(([userId, cartId]) => {
+        return this.http.get(`${this.apiUrl}/users/${userId}/cart/${cartId}`);
+      }),
+      shareReplay(1)
+    );
+  }
+
   add(item: any) {
     const isItemInCart: any = this.cartItemsMap.has(item._id);
     if (isItemInCart) {
-      this.cartItemsMap.set(item._id, { ...isItemInCart, count: isItemInCart.count + 1 });
+      const itemInCart: any = this.cartItemsMap.get(item._id);
+      this.cartItemsMap.set(item._id, { ...itemInCart, quantity: itemInCart.quantity + 1 });
     } else {
-      this.cartItemsMap.set(item._id, { ...item, count: 1 });
+      this.cartItemsMap.set(item._id, { ...item, quantity: 1 });
     }
     this.updateObservable();
+
+    return this.userId$.pipe(
+      switchMap((userId) =>
+        this.http.put(`${this.apiUrl}/users/${userId}/cart`, { id: item._id, quantity: 1 })
+      )
+    );
   }
 
   remove(item: any) {
     const isItemInCart: any = this.cartItemsMap.has(item._id);
-    if (isItemInCart && isItemInCart.count > 1) {
-      this.cartItemsMap.set(item._id, { ...isItemInCart, count: isItemInCart.count - 1 });
-    } else if (isItemInCart && isItemInCart.count === 1) {
+    if (isItemInCart && isItemInCart.quantity > 1) {
+      this.cartItemsMap.set(item._id, { ...isItemInCart, quantity: isItemInCart.quantity - 1 });
+    } else if (isItemInCart && isItemInCart.quantity === 1) {
       this.cartItemsMap.delete(item._id);
     }
     this.updateObservable();
+    return this.userId$.pipe(
+      switchMap((userId) => this.http.delete(`${this.apiUrl}/users/${userId}/cart/${item._id}`))
+    );
   }
 
   updateObservable(cache = true) {

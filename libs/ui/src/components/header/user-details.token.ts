@@ -6,6 +6,8 @@ export interface UserDetails {
   lastName: string;
   email: string;
   avatar: string;
+  id: string;
+  cart: string;
 }
 
 export const USER_DETAILS = new InjectionToken<Observable<UserDetails>>('User details');

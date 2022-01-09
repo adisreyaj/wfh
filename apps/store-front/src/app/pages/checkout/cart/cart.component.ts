@@ -5,7 +5,7 @@ import { IconModule } from '../../../shared/modules/icon.module';
 import { CommonModule } from '@angular/common';
 import { CartItemModule } from './cart-item.component';
 import { CartSidebarModule } from './cart-sidebar.component';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { CartService } from '@wfh/store-front/service';
 
 @Component({
@@ -18,7 +18,7 @@ import { CartService } from '@wfh/store-front/service';
         </header>
         <section class="grid xl:grid-cols-2 gap-4">
           <article class="" *ngFor="let item of items$ | async">
-            <wfh-cart-item [product]="item"></wfh-cart-item>
+            <wfh-cart-item [product]="item" (delete)="onDelete(item)"></wfh-cart-item>
           </article>
         </section>
       </section>
@@ -127,7 +127,11 @@ export class CartComponent implements AfterViewInit {
   elementToNavigateTo!: Record<number, HTMLDivElement | undefined>;
 
   constructor(private cartService: CartService) {
-    this.items$ = this.cartService.cartItems$;
+    this.items$ = this.cartService.getCart().pipe(
+      map((cart: any) => cart.products ?? []),
+      map((items) => items.map((item: any) => item.product)),
+      catchError(() => of([]))
+    );
   }
 
   ngAfterViewInit() {
@@ -141,6 +145,10 @@ export class CartComponent implements AfterViewInit {
     if (this.step < 2) this.step++;
     const element = this.elementToNavigateTo[this.step];
     element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  onDelete(item: any) {
+    this.cartService.remove(item).subscribe();
   }
 }
 

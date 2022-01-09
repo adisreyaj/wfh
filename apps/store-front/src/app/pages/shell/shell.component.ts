@@ -3,7 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import { HeaderModule } from '@wfh/ui';
 import { SHELL_ROUTES } from '../../app.routes';
 import { AutoCompleteResult, SearchService } from './search.service';
-import { Observable, Subject, switchMap } from 'rxjs';
+import { map, Observable, Subject, switchMap } from 'rxjs';
 import { AuthService } from '@auth0/auth0-angular';
 import { CartService } from '@wfh/store-front/service';
 import { CommonModule } from '@angular/common';
@@ -37,7 +37,9 @@ export class ShellComponent {
     this.suggestions$ = this.autoCompleteSubject
       .asObservable()
       .pipe(switchMap((searchTerm) => this.searchService.getAutoComplete(searchTerm)));
-    this.cartItemsCount$ = this.cartService.cartItemsCount$;
+    this.cartItemsCount$ = this.cartService
+      .getCart()
+      .pipe(map((cart: any) => cart.products?.length));
   }
 
   onSearch(searchTerm: string) {

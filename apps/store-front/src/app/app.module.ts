@@ -33,22 +33,16 @@ import { popperVariation, TippyModule, tooltipVariation } from '@ngneat/helipopp
       audience: environment.auth.audience,
       clientId: environment.auth.clientId,
       redirectUri: `${window.location.origin}`,
-      errorPath: '/auth/login',
+      errorPath: '/',
       cacheLocation: 'localstorage',
       useRefreshTokens: false,
       httpInterceptor: {
         allowedList: [
           {
-            uri: 'api/products/*',
-            httpMethod: 'GET',
-          },
-          {
-            uri: 'api/categories/*',
-            httpMethod: 'GET',
-          },
-          {
-            uri: 'api/brands/*',
-            httpMethod: 'GET',
+            uriMatcher: (url: string) => {
+              console.log('Intercepting', url);
+              return url.includes('/api/users/');
+            },
           },
         ],
       },
@@ -97,6 +91,7 @@ import { popperVariation, TippyModule, tooltipVariation } from '@ngneat/helipopp
               email: user.email,
               avatar: user.picture,
               id: user['https://wfh-store.adi.so/id'],
+              cart: user['https://wfh-store.adi.so/cart'],
             };
           }),
           catchError(() => {
