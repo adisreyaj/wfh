@@ -19,10 +19,12 @@ import {
 } from './products.interface';
 import { ProductsService } from './services/products.service';
 import {
+  catchError,
   combineLatest,
   filter,
   map,
   Observable,
+  of,
   ReplaySubject,
   startWith,
   Subject,
@@ -196,7 +198,8 @@ export class ProductsPage implements OnInit {
           ? this.productService.getAllProducts(this.filters)
           : this.productService.getProductsSearch(query, this.filters)
       ),
-      startWith([])
+      startWith([]),
+      catchError(() => of([]))
     );
     this.brands$ = productService.getAllBrands().pipe(
       map((brands) =>

@@ -42,39 +42,14 @@ export class ApiProductService {
     }
     const pipeline = [];
     if (!isEmpty(filters)) {
-      let priceFilter = {};
-      if (filters?.price_from && filters?.price_to) {
-        priceFilter = {
-          range: {
-            path: 'price',
-            gte: filters.price_from,
-            lte: filters.price_to,
-          },
-        };
-      } else {
-        if (filters?.price_from) {
-          priceFilter = {
-            range: {
-              path: 'price',
-              gte: filters.price_from,
-            },
-          };
-        }
-        if (filters?.price_to) {
-          priceFilter = {
-            range: {
-              path: 'price',
-              lte: filters.price_to,
-            },
-          };
-        }
-      }
+      let minShouldMatch = 0;
       const searchPipelineItem: Record<string, any> = {
         $search: {
           compound: {
             filter: [],
             must: [],
             should: [],
+            minimumShouldMatch: 0,
           },
         },
       };
@@ -88,6 +63,7 @@ export class ApiProductService {
         });
       }
       if (!isEmpty(filters.brands)) {
+        minShouldMatch += 1;
         searchPipelineItem.$search.compound['should'].push(
           ...filters.brands.split(',').map((brand) => ({
             equals: {
@@ -98,6 +74,7 @@ export class ApiProductService {
         );
       }
       if (!isEmpty(filters.categories)) {
+        minShouldMatch += 1;
         searchPipelineItem.$search.compound['should'].push(
           ...filters.categories.split(',').map((category) => ({
             equals: {
@@ -109,6 +86,7 @@ export class ApiProductService {
       }
 
       if (!isEmpty(filters.colors)) {
+        minShouldMatch += 1;
         searchPipelineItem.$search.compound['should'].push(
           ...filters.colors.split(',').map((color) => ({
             text: {
@@ -118,11 +96,38 @@ export class ApiProductService {
           }))
         );
       }
+      let priceFilter = {};
+      if (filters?.price_from && filters?.price_to) {
+        priceFilter = {
+          range: {
+            path: 'price',
+            gte: +filters.price_from,
+            lte: +filters.price_to,
+          },
+        };
+      } else {
+        if (filters?.price_from) {
+          priceFilter = {
+            range: {
+              path: 'price',
+              gte: +filters.price_from,
+            },
+          };
+        }
+        if (filters?.price_to) {
+          priceFilter = {
+            range: {
+              path: 'price',
+              lte: +filters.price_to,
+            },
+          };
+        }
+      }
 
       if (!isEmpty(priceFilter)) {
         searchPipelineItem.$search.compound.filter.push(priceFilter);
       }
-
+      searchPipelineItem.$search.compound.minimumShouldMatch = minShouldMatch;
       pipeline.push(searchPipelineItem);
     }
 

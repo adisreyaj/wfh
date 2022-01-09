@@ -43,7 +43,7 @@ export class ProductsService {
       query = { ...query, price_from: priceRange.from };
     }
     if (priceRange?.to) {
-      query = { ...query, price_from: priceRange.to };
+      query = { ...query, price_to: priceRange.to };
     }
     if (brands?.length > 0) {
       query = { ...query, brands: brands.join(',') };
