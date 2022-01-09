@@ -86,8 +86,14 @@ import { USER_DETAILS, UserDetails } from './user-details.token';
         <a class="header__icon" routerLink="/wishlist">
           <rmx-icon name="heart-3-fill"></rmx-icon>
         </a>
-        <button class="header__icon" routerLink="/checkout/cart">
+        <button class="header__icon relative" routerLink="/checkout/cart">
           <rmx-icon name="shopping-cart-2-fill"></rmx-icon>
+          <div
+            *ngIf="cartItemsCount !== null"
+            class="absolute -top-1 h-4 w-4 grid place-items-center -right-1 text-xs bg-primary rounded-md text-white"
+          >
+            {{ cartItemsCount }}
+          </div>
         </button>
       </div>
       <a
@@ -198,6 +204,9 @@ export class HeaderComponent implements OnDestroy {
 
   @Input()
   suggestions$?: Observable<Record<string, { _id: string; name: string }[]>>;
+
+  @Input()
+  cartItemsCount: number | null = null;
 
   @Output()
   autoComplete = new EventEmitter<string>();

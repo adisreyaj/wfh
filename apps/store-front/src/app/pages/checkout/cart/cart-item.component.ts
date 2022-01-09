@@ -8,7 +8,12 @@ import { IconModule } from '../../../shared/modules/icon.module';
   template: `
     <div class="flex items-start">
       <div class="relative">
-        <img [src]="product.images[0]" [alt]="product.title" style="height: 150px" />
+        <img
+          [src]="product.images[0]"
+          [alt]="product.title"
+          style="height: 150px"
+          class="aspect-square object-contain p-2"
+        />
       </div>
       <div class="p-4">
         <p class="text-sm font-medium text-gray-600">{{ product.title }}</p>

@@ -5,14 +5,17 @@ import { SHELL_ROUTES } from '../../app.routes';
 import { AutoCompleteResult, SearchService } from './search.service';
 import { Observable, Subject, switchMap } from 'rxjs';
 import { AuthService } from '@auth0/auth0-angular';
+import { CartService } from '@wfh/store-front/service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   template: `
     <wfh-header
+      [suggestions$]="$any(suggestions$)"
+      [cartItemsCount]="cartItemsCount$ | async"
       (autoComplete)="this.onAutoComplete($event)"
       (searched)="this.onSearch($event)"
       (logout)="this.onLogout()"
-      [suggestions$]="$any(suggestions$)"
     ></wfh-header>
     <div class="container mx-auto mt-4">
       <router-outlet></router-outlet>
@@ -22,15 +25,18 @@ import { AuthService } from '@auth0/auth0-angular';
 export class ShellComponent {
   public readonly suggestions$: Observable<AutoCompleteResult>;
   public autoCompleteSubject = new Subject<string>();
+  readonly cartItemsCount$: Observable<number>;
 
   constructor(
     private searchService: SearchService,
     private auth: AuthService,
-    private router: Router
+    private router: Router,
+    private cartService: CartService
   ) {
     this.suggestions$ = this.autoCompleteSubject
       .asObservable()
       .pipe(switchMap((searchTerm) => this.searchService.getAutoComplete(searchTerm)));
+    this.cartItemsCount$ = this.cartService.cartItemsCount$;
   }
 
   onSearch(searchTerm: string) {
@@ -49,6 +55,7 @@ export class ShellComponent {
 @NgModule({
   declarations: [ShellComponent],
   imports: [
+    CommonModule,
     RouterModule.forChild([{ path: '', component: ShellComponent, children: SHELL_ROUTES }]),
     HeaderModule,
   ],

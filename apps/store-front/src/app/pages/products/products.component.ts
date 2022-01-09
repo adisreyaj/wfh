@@ -34,6 +34,7 @@ import {
 import { WishlistService } from '../wishlist/wishlist.service';
 import { SPECIFICATION_KEYS } from './products.config';
 import { isEmpty } from 'lodash';
+import { CartService } from '@wfh/store-front/service';
 
 @Component({
   selector: 'wfh-products',
@@ -74,6 +75,7 @@ import { isEmpty } from 'lodash';
               [images]="product.images"
               (quickView)="openQuickView(product)"
               (addToWishlist)="addToWishlist(product)"
+              (addToCart)="addToCart(product)"
             ></wfh-product-card>
           </li>
         </ul>
@@ -183,7 +185,8 @@ export class ProductsPage implements OnInit {
     private productService: ProductsService,
     private wishlistService: WishlistService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private cartService: CartService
   ) {
     overlay.clickedOutside$.subscribe(() => {
       this.productQuickViewRef?.close();
@@ -269,6 +272,10 @@ export class ProductsPage implements OnInit {
     } else {
       this.router.navigate(['/products']);
     }
+  }
+
+  addToCart(product: any) {
+    this.cartService.add(product);
   }
 
   private parseQueryParams() {
