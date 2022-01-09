@@ -110,8 +110,7 @@ import { USER_DETAILS, UserDetails } from './user-details.token';
           </div>
         </button>
       </div>
-      <a
-        routerLink="/profile"
+      <div
         class="flex items-center ml-4 gap-2 outline-none"
         *ngIf="user$ | async as user"
         [tippy]="profile"
@@ -127,10 +126,10 @@ import { USER_DETAILS, UserDetails } from './user-details.token';
           <p class="font-semibold">{{ user.firstName }}</p>
           <p class="text-gray-400">{{ user.lastName }}</p>
         </div>
-      </a>
+      </div>
       <ng-template #profile>
         <div [style.min-width.px]="200">
-          <a class="dropdown-item" href="#">Profile</a>
+          <a class="dropdown-item" routerLink="/profile">Profile</a>
           <button class="dropdown-item w-full" (click)="logout.emit()">Logout</button>
         </div>
       </ng-template>
