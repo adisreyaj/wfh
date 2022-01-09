@@ -1,13 +1,16 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   EventEmitter,
+  HostListener,
   Inject,
   Input,
   NgModule,
   OnDestroy,
   Output,
+  ViewChild,
 } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
@@ -63,10 +66,11 @@ import { USER_DETAILS, UserDetails } from './user-details.token';
           id="search"
           (keyup)="this.autoCompleteSubject.next(searchRef.value)"
           (keyup.enter)="this.searched.emit(searchRef.value)"
+          (focus)="this.suggestionsVisibleSubject.next(true)"
           #searchRef
         />
         <ng-container *ngIf="suggestionsContent$ | async as suggestions">
-          <div class="suggestions" *ngIf="suggestions | suggestionVisible">
+          <div id="suggestions" class="suggestions" *ngIf="suggestions | suggestionVisible">
             <ul class="suggestions__list">
               <ng-container *ngFor="let group of suggestions | suggestionsGroup">
                 <li class="suggestions__group" *ngIf="group.value.length > 0">
@@ -224,11 +228,10 @@ export class HeaderComponent implements OnDestroy {
 
   @Output()
   filtered = new EventEmitter<{ key: string; value: string }>();
-
+  @ViewChild('searchRef') searchRef: ElementRef<HTMLInputElement> | null = null;
+  suggestionsVisibleSubject = new BehaviorSubject(false);
   private destroyed$ = new Subject<void>();
   private suggestionSubject = new BehaviorSubject<any>([]);
-  private suggestionsVisibleSubject = new BehaviorSubject(false);
-
   readonly suggestionsContent$: Observable<any> = combineLatest([
     this.suggestionSubject.asObservable(),
     this.suggestionsVisibleSubject.asObservable(),
@@ -237,7 +240,8 @@ export class HeaderComponent implements OnDestroy {
   constructor(
     public readonly auth: AuthService,
     @Inject(USER_DETAILS) public readonly user$: Observable<UserDetails>,
-    private readonly router: Router
+    private readonly router: Router,
+    @Inject(DOCUMENT) private readonly document: Document
   ) {
     this.autoCompleteSubject
       .asObservable()
@@ -251,6 +255,18 @@ export class HeaderComponent implements OnDestroy {
   set suggestions(data: Record<string, { _id: string; name: string }[]>) {
     this.suggestionSubject.next(data ?? {});
     this.suggestionsVisibleSubject.next(true);
+  }
+
+  @HostListener('window:click', ['$event'])
+  onClick(event: MouseEvent) {
+    const autoComplete = this.document.getElementById('suggestions');
+    if (
+      autoComplete &&
+      !autoComplete.contains(event.target as Node) &&
+      !this.searchRef?.nativeElement.contains(event.target as Node)
+    ) {
+      this.suggestionsVisibleSubject.next(false);
+    }
   }
 
   ngOnDestroy(): void {
