@@ -22,7 +22,6 @@ export class AuthGuard extends PassportAuthGuard('jwt') {
     if (isPublic || internalTokenPresent === internalToken) {
       return true;
     }
-    console.log(context.switchToHttp().getRequest().headers);
     return super.canActivate(context);
   }
 }

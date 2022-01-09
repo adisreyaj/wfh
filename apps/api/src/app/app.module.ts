@@ -1,3 +1,4 @@
+import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -6,12 +7,12 @@ import * as Joi from 'joi';
 import { ApiCategoryModule } from '@wfh/api/category';
 import { ApiBrandModule } from '@wfh/api/brand';
 import { ApiProductModule } from '@wfh/api/product';
+import { ApiAuthModule } from '@wfh/api/auth';
+import { ApiUserModule } from '@wfh/api/user';
+import { ApiSearchModule } from '@wfh/api/search';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ApiAuthModule } from '@wfh/api/auth';
-import { ApiUserModule } from '@wfh/api/user';
-import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './core';
 
 @Module({
@@ -44,6 +45,7 @@ import { AuthGuard } from './core';
     ApiProductModule,
     ApiCategoryModule,
     ApiBrandModule,
+    ApiSearchModule,
   ],
   controllers: [AppController],
   providers: [

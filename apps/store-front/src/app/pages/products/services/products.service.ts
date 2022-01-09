@@ -10,39 +10,57 @@ export class ProductsService {
 
   getAllProducts(filters: any) {
     const filterQuery = this.contsructFiltersQuery(filters);
-    let url = `${this.apiUrl}/products`;
-    if (filterQuery) url += `?${filterQuery}`;
-    return this.http.get<any[]>(url);
+    console.log({ filterQuery });
+    return this.http.get<any[]>(`${this.apiUrl}/products`, {
+      params: filterQuery ?? '',
+    });
+  }
+
+  getProductsSearch(searchTerm: string, filters: unknown) {
+    const filterQuery = this.contsructFiltersQuery(filters);
+    const params = {
+      query: searchTerm,
+      ...(filterQuery ?? {}),
+    };
+
+    return this.http.get<unknown[]>(`${this.apiUrl}/search`, { params });
   }
 
   getAllBrands() {
     return this.http.get<any[]>(`${this.apiUrl}/brands`);
   }
 
+  getAllCategories() {
+    return this.http.get<any[]>(`${this.apiUrl}/categories`);
+  }
+
   private contsructFiltersQuery(filters: any) {
     if (!filters) return null;
-    const { priceRange, brands, colors, rating, stock } = filters;
-    const query = [];
+    const { priceRange, brands, colors, ratings, stock, categories } = filters;
+    let query = {};
 
     if (priceRange?.from) {
-      query.push(`price_from=${priceRange.from}`);
+      query = { ...query, price_from: priceRange.from };
     }
     if (priceRange?.to) {
-      query.push(`price_to=${priceRange.to}`);
+      query = { ...query, price_from: priceRange.to };
     }
     if (brands?.length > 0) {
-      query.push(`brands=${brands.join(',')}`);
+      query = { ...query, brands: brands.join(',') };
     }
-    if (rating?.length > 0) {
-      query.push(`rating=${rating.join(',')}`);
+    if (categories?.length > 0) {
+      query = { ...query, categories: categories.join(',') };
+    }
+    if (ratings?.length > 0) {
+      query = { ...query, rating: ratings.join(',') };
     }
     if (colors?.length > 0) {
-      query.push(`colors=${colors.join(',')}`);
+      query = { ...query, colors: colors.join(',') };
     }
     if (stock?.length > 0) {
-      query.push(`stock=${stock.join(',')}`);
+      query = { ...query, stock };
     }
 
-    return query.join('&');
+    return query;
   }
 }

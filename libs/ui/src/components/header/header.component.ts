@@ -52,7 +52,8 @@ import { USER_DETAILS, UserDetails } from './user-details.token';
           type="text"
           name="search"
           id="search"
-          (keyup)="this.searchSubject.next(searchRef.value)"
+          (keyup)="this.autoCompleteSubject.next(searchRef.value)"
+          (keyup.enter)="this.searched.emit(searchRef.value)"
           #searchRef
         />
         <ng-container *ngIf="suggestions$ | async as suggestions">
@@ -199,6 +200,10 @@ export class HeaderComponent implements OnDestroy {
   suggestions$?: Observable<Record<string, { _id: string; name: string }[]>>;
 
   @Output()
+  autoComplete = new EventEmitter<string>();
+  autoCompleteSubject = new Subject<string>();
+
+  @Output()
   searched = new EventEmitter<string>();
   searchSubject = new Subject<string>();
 
@@ -211,11 +216,11 @@ export class HeaderComponent implements OnDestroy {
     public readonly auth: AuthService,
     @Inject(USER_DETAILS) public readonly user$: Observable<UserDetails>
   ) {
-    this.searchSubject
+    this.autoCompleteSubject
       .asObservable()
       .pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroyed$))
       .subscribe((searchTerm) => {
-        this.searched.emit(searchTerm);
+        this.autoComplete.emit(searchTerm);
       });
   }
 

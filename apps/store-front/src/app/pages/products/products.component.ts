@@ -19,7 +19,7 @@ import {
 } from './products.interface';
 import { ProductsService } from './services/products.service';
 import {
-  BehaviorSubject,
+  combineLatest,
   filter,
   map,
   Observable,
@@ -36,26 +36,46 @@ import { isEmpty } from 'lodash';
 @Component({
   selector: 'wfh-products',
   template: `
-    <aside class="sticky top-6">
-      <wfh-filter-sidebar
-        [filters]="filters$ | async"
-        [brands]="brands$ | async"
-        (filterChanged)="applyFilter($event)"
-      ></wfh-filter-sidebar>
-    </aside>
-    <section class="content px-6 pb-10">
-      <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        <li *ngFor="let product of products$ | async">
-          <wfh-product-card
-            [title]="product.name"
-            [price]="product.price"
-            [originalPrice]="product.originalPrice"
-            [images]="product.images"
-            (quickView)="openQuickView(product)"
-            (addToWishlist)="addToWishlist(product)"
-          ></wfh-product-card>
-        </li>
-      </ul>
+    <header class="mb-4">
+      <h1 class="text-2xl font-semibold">Products</h1>
+      <ng-container *ngIf="searchQuery$ | async as searchQuery; else defaultSubtitle">
+        <p>
+          Searching for <strong>{{ searchQuery }}</strong>
+          <span class="ml-2"
+            ><button (click)="clearSearch()" wfh size="xsmall" variant="neutral">
+              Clear Search
+            </button></span
+          >
+        </p>
+      </ng-container>
+
+      <ng-template #defaultSubtitle>
+        <p>Showing all available products. Use the filters to narrow down the results!</p>
+      </ng-template>
+    </header>
+    <section class="content flex">
+      <aside class="sticky top-6">
+        <wfh-filter-sidebar
+          [filters]="filters$ | async"
+          [brands]="brands$ | async"
+          [categories]="categories$ | async"
+          (filterChanged)="applyFilter($event)"
+        ></wfh-filter-sidebar>
+      </aside>
+      <section class="content px-6 pb-10">
+        <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <li *ngFor="let product of products$ | async">
+            <wfh-product-card
+              [title]="product.name"
+              [price]="product.price"
+              [originalPrice]="product.originalPrice"
+              [images]="product.images"
+              (quickView)="openQuickView(product)"
+              (addToWishlist)="addToWishlist(product)"
+            ></wfh-product-card>
+          </li>
+        </ul>
+      </section>
     </section>
     <wfh-product-quick-view [product]="activeProduct$ | async"></wfh-product-quick-view>
   `,
@@ -63,7 +83,7 @@ import { isEmpty } from 'lodash';
     //language=SCSS
     `
       :host {
-        @apply flex mx-auto max-w-7xl px-4 items-start;
+        @apply mx-auto max-w-7xl px-4;
         aside {
           width: 280px;
         }
@@ -126,11 +146,13 @@ export class ProductsPage implements OnInit {
 
   readonly products$: Observable<any[]>;
   readonly brands$: Observable<any[]>;
+  readonly categories$: Observable<any[]>;
+
   filters: any = null;
   filtersSubject: Subject<any> = new ReplaySubject();
   filters$: Observable<any> = this.filtersSubject.asObservable();
-
-  private readonly getProductsTrigger = new BehaviorSubject<any>(null);
+  readonly searchQuery$ = this.activatedRoute.queryParams.pipe(map((params) => params?.q));
+  private readonly getProductsTrigger = new Subject<void>();
   private readonly activeProductSubject = new Subject<Product>();
   readonly activeProduct$: Observable<ProductQuickView> = this.activeProductSubject
     .asObservable()
@@ -164,8 +186,16 @@ export class ProductsPage implements OnInit {
     overlay.clickedOutside$.subscribe(() => {
       this.productQuickViewRef?.close();
     });
-    this.products$ = this.getProductsTrigger.asObservable().pipe(
-      switchMap((filters) => productService.getAllProducts(filters)),
+    this.products$ = combineLatest([
+      this.getProductsTrigger.asObservable().pipe(startWith(true)),
+      this.searchQuery$,
+    ]).pipe(
+      map(([, term]) => term),
+      switchMap((query: string) =>
+        isEmpty(query)
+          ? this.productService.getAllProducts(this.filters)
+          : this.productService.getProductsSearch(query, this.filters)
+      ),
       startWith([])
     );
     this.brands$ = productService.getAllBrands().pipe(
@@ -176,12 +206,20 @@ export class ProductsPage implements OnInit {
         }))
       )
     );
+    this.categories$ = productService.getAllCategories().pipe(
+      map((categories) =>
+        categories.map((category) => ({
+          label: category.name,
+          value: category._id,
+        }))
+      )
+    );
   }
 
   ngOnInit() {
     let filtersFormatted = this.parseQueryParams();
     this.updateFilters(filtersFormatted);
-    this.getProductsTrigger.next(this.filters);
+    this.getProductsTrigger.next();
   }
 
   openQuickView(product: Product) {
@@ -201,11 +239,17 @@ export class ProductsPage implements OnInit {
     this.updateFilters(filters);
     const query = this.contsructFiltersQuery(this.filters);
     if (!isEmpty(query)) {
-      this.router.navigate(['/products'], { queryParams: { filters: query } });
+      this.router.navigate(['/products'], {
+        queryParams: { filters: query },
+        queryParamsHandling: 'merge',
+      });
     } else {
-      this.router.navigate(['/products']);
+      const search = this.activatedRoute.snapshot.queryParams.q ?? null;
+      this.router.navigate(['/products'], {
+        queryParams: { q: search },
+      });
     }
-    this.getProductsTrigger.next(filters);
+    this.getProductsTrigger.next();
   }
 
   updateFilters(filters: unknown) {
@@ -213,9 +257,20 @@ export class ProductsPage implements OnInit {
     this.filtersSubject.next(this.filters);
   }
 
+  clearSearch() {
+    const query = this.contsructFiltersQuery(this.filters);
+    if (!isEmpty(query)) {
+      this.router.navigate(['/products'], {
+        queryParams: { filters: query },
+      });
+    } else {
+      this.router.navigate(['/products']);
+    }
+  }
+
   private parseQueryParams() {
     const filtersApplied: string[] =
-      this.activatedRoute.snapshot.queryParams.filters.split('&') ?? [];
+      this.activatedRoute.snapshot.queryParams?.filters?.split('&') ?? [];
     const filters: Record<string, string[] | string> = filtersApplied.reduce((acc, curr) => {
       const [key, value] = curr.split('=');
       return { ...acc, [key]: value.split(',') };
@@ -235,7 +290,7 @@ export class ProductsPage implements OnInit {
 
   private contsructFiltersQuery(filters: any) {
     if (!filters) return null;
-    const { priceRange, brands, colors, rating, stock } = filters;
+    const { priceRange, brands, colors, rating, stock, categories } = filters;
     const query = [];
 
     if (priceRange?.from) {
@@ -246,6 +301,9 @@ export class ProductsPage implements OnInit {
     }
     if (brands?.length > 0) {
       query.push(`brands=${brands.join(',')}`);
+    }
+    if (categories?.length > 0) {
+      query.push(`categories=${categories.join(',')}`);
     }
     if (rating?.length > 0) {
       query.push(`rating=${rating.join(',')}`);

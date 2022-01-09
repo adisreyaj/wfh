@@ -183,6 +183,29 @@
       },
       "tags": []
     },
+    "api-search": {
+      "root": "libs/api/search",
+      "sourceRoot": "libs/api/search/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/api/search/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/search"],
+          "options": {
+            "jestConfig": "libs/api/search/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
     "api-user": {
       "root": "libs/api/user",
       "sourceRoot": "libs/api/user/src",

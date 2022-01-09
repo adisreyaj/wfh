@@ -43,6 +43,20 @@ import { ButtonModule } from '../button/button.component';
             </div>
           </ng-template>
         </wfh-accordion-item>
+        <wfh-accordion-item title="Categories" [isOpen]="true">
+          <ng-template wfhAccordionContent>
+            <div class="p-4 flex flex-col gap-2">
+              <ng-container *ngFor="let category of categories">
+                <wfh-checkbox
+                  [label]="category.label"
+                  [value]="category.value"
+                  [checked]="this.filtersForm.get('categories')?.value?.includes(category.value)"
+                  (change)="selectCategory(category.value)"
+                ></wfh-checkbox>
+              </ng-container>
+            </div>
+          </ng-template>
+        </wfh-accordion-item>
         <wfh-accordion-item title="Rating" [isOpen]="false">
           <ng-template wfhAccordionContent>
             <div class="p-4"></div>
@@ -109,6 +123,9 @@ import { ButtonModule } from '../button/button.component';
 export class FilterSidebarComponent {
   @Input()
   brands: { label: string; value: string }[] | null = [];
+  @Input()
+  categories: { label: string; value: string }[] | null = [];
+
   @Output()
   filterChanged = new EventEmitter();
   COLORS = COLORS;
@@ -134,6 +151,7 @@ export class FilterSidebarComponent {
       }
     ),
     brands: [[]],
+    categories: [[]],
     rating: [[]],
     colors: [[]],
     stock: [[]],
@@ -178,6 +196,18 @@ export class FilterSidebarComponent {
     this.filtersForm.reset();
     this.cdr.detectChanges();
     this.triggerChange();
+  }
+
+  selectCategory(value: string) {
+    const categoryFormItem = this.filtersForm.get('categories');
+    if (!categoryFormItem) return;
+    const categories = categoryFormItem.value ?? [];
+    const isCategoryPresent = categories.includes(value);
+    if (isCategoryPresent) {
+      categoryFormItem.setValue(categories.filter((b: any) => b !== value));
+    } else {
+      categoryFormItem.setValue([...categories, value]);
+    }
   }
 }
 

@@ -36,58 +36,97 @@ export class ApiProductService {
     ).pipe(handleError('product'));
   }
 
-  getAll(filters: any) {
-    if (isEmpty(filters)) {
+  getAll(filters: any, searchTerm = '') {
+    if (isEmpty(filters) && isEmpty(searchTerm)) {
       return from(this.productModel.find({})).pipe(handleError('product'));
     }
     const pipeline = [];
-    if (filters?.brands) {
-      pipeline.push({
-        $match: {
-          brand: {
-            $in: filters.brands.split(',').map((id) => new Types.ObjectId(id)),
+    if (!isEmpty(filters)) {
+      let priceFilter = {};
+      if (filters?.price_from && filters?.price_to) {
+        priceFilter = {
+          range: {
+            path: 'price',
+            gte: filters.price_from,
+            lte: filters.price_to,
           },
-        },
-      });
-    }
-    if (filters?.colors) {
-      pipeline.push({
-        $match: {
-          colors: {
-            $in: filters.colors.split(','),
-          },
-        },
-      });
-    }
-    if (filters?.price_from && filters?.price_to) {
-      pipeline.push({
-        $match: {
-          price: {
-            $gte: +filters.price_from,
-            $lte: +filters.price_to,
-          },
-        },
-      });
-    } else {
-      if (filters?.price_from) {
-        pipeline.push({
-          $match: {
-            price: {
-              $gte: +filters.price_from,
+        };
+      } else {
+        if (filters?.price_from) {
+          priceFilter = {
+            range: {
+              path: 'price',
+              gte: filters.price_from,
             },
+          };
+        }
+        if (filters?.price_to) {
+          priceFilter = {
+            range: {
+              path: 'price',
+              lte: filters.price_to,
+            },
+          };
+        }
+      }
+      const searchPipelineItem: Record<string, any> = {
+        $search: {
+          compound: {
+            filter: [],
+            must: [],
+            should: [],
+          },
+        },
+      };
+
+      if (!isEmpty(searchTerm)) {
+        searchPipelineItem.$search.compound['must'].push({
+          text: {
+            query: searchTerm,
+            path: ['name', 'description'],
           },
         });
       }
-      if (filters?.price_to) {
-        pipeline.push({
-          $match: {
-            price: {
-              $lte: +filters.price_to,
+      if (!isEmpty(filters.brands)) {
+        searchPipelineItem.$search.compound['should'].push(
+          ...filters.brands.split(',').map((brand) => ({
+            equals: {
+              path: 'brand',
+              value: new Types.ObjectId(brand),
             },
-          },
-        });
+          }))
+        );
       }
+      if (!isEmpty(filters.categories)) {
+        searchPipelineItem.$search.compound['should'].push(
+          ...filters.categories.split(',').map((category) => ({
+            equals: {
+              path: 'category',
+              value: new Types.ObjectId(category),
+            },
+          }))
+        );
+      }
+
+      if (!isEmpty(filters.colors)) {
+        searchPipelineItem.$search.compound['should'].push(
+          ...filters.colors.split(',').map((color) => ({
+            text: {
+              path: 'colors',
+              query: color,
+            },
+          }))
+        );
+      }
+
+      if (!isEmpty(priceFilter)) {
+        searchPipelineItem.$search.compound.filter.push(priceFilter);
+      }
+
+      pipeline.push(searchPipelineItem);
     }
+
+    console.dir(pipeline, { depth: null });
     return from(this.productModel.aggregate(pipeline)).pipe(handleError('product'));
   }
 

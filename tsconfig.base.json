@@ -21,6 +21,7 @@
       "@wfh/api/category": ["libs/api/category/src/index.ts"],
       "@wfh/api/order": ["libs/api/order/src/index.ts"],
       "@wfh/api/product": ["libs/api/product/src/index.ts"],
+      "@wfh/api/search": ["libs/api/search/src/index.ts"],
       "@wfh/api/user": ["libs/api/user/src/index.ts"],
       "@wfh/api/util": ["libs/api/util/src/index.ts"],
       "@wfh/store-front/core": ["apps/store-front/src/app/core/index.ts"],
