@@ -94,7 +94,9 @@ import { ButtonModule } from '../button/button.component';
         </wfh-accordion-item>
       </wfh-accordion>
     </section>
-    <footer class="mt-4 flex gap-2">
+    <footer
+      class="mt-4 flex gap-2 shadow-lg rounded-md sticky bottom-2 p-4 bg-white border border-gray-200"
+    >
       <button wfh size="small" class="flex-1" (click)="triggerChange()">Apply Filters</button>
       <button wfh variant="neutral" size="small" (click)="resetFilters()">Reset</button>
     </footer>

@@ -280,6 +280,7 @@ export class HeaderComponent implements OnDestroy {
         this.searched.emit(item.name);
         break;
       case 'brands':
+      case 'categories':
         this.filtered.emit({ key: group, value: item._id });
         break;
     }

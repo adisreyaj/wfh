@@ -13,14 +13,14 @@ export class ApiCategoryController {
     return this.categoryService.getAll();
   }
 
-  @Get('/:id')
-  get(@Param('id') id: string) {
-    return this.categoryService.get(id);
-  }
-
   @Get('autocomplete')
   autocomplete(@Query('query') query: string) {
     return this.categoryService.autocomplete(query);
+  }
+
+  @Get('/:id')
+  get(@Param('id') id: string) {
+    return this.categoryService.get(id);
   }
 
   @Post()
