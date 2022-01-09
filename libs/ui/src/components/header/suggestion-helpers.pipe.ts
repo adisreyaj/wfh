@@ -1,5 +1,5 @@
 import { NgModule, Pipe, PipeTransform } from '@angular/core';
-import { isNil } from 'lodash-es';
+import { isEmpty, isNil } from 'lodash-es';
 
 @Pipe({
   name: 'suggestionsGroup',
@@ -23,7 +23,7 @@ export class SuggestionsGroupPipe implements PipeTransform {
 })
 export class SuggestionsVisiblePipe implements PipeTransform {
   transform(value: Record<string, any[]>): boolean {
-    if (isNil(value)) {
+    if (isNil(value) || isEmpty(value)) {
       return false;
     }
     return Object.keys(value).some((key) => {

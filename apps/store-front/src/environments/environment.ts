@@ -5,6 +5,12 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:3333/api',
+  auth: {
+    audience: 'wfh-store-api',
+    domain: 'wfh-dev.us.auth0.com',
+    clientId: 'cGy0vVAZXK91DZ4EK5jcf9hP6d8yiPN7',
+    redirectUri: 'http://localhost:4200',
+  },
 };
 
 /*
@@ -14,4 +20,4 @@ export const environment = {
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.
  */
-// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.
+import 'zone.js/plugins/zone-error'; // Included with Angular CLI.

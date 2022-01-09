@@ -1,6 +1,11 @@
 import { ProductResponse } from './product.interface';
 import { Document } from 'mongoose';
 
+export interface CartRequest {
+  id: string;
+  quantity: number;
+}
+
 export interface CartResponse {
   id: string;
   user: any;

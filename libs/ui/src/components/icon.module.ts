@@ -3,6 +3,7 @@ import {
   RemixIconModule,
   RiCloseLine,
   RiEyeLine,
+  RiHeart3Fill,
   RiHeart3Line,
   RiNotification4Fill,
   RiSearch2Line,
@@ -16,6 +17,7 @@ const ICONS = {
   RiHeart3Line,
   RiCloseLine,
   RiSearch2Line,
+  RiHeart3Fill,
 };
 
 @NgModule({

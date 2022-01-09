@@ -1,17 +1,33 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   EventEmitter,
+  HostListener,
+  Inject,
   Input,
   NgModule,
   OnDestroy,
   Output,
+  ViewChild,
 } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '@auth0/auth0-angular';
+import { TippyModule } from '@ngneat/helipopper';
+import {
+  BehaviorSubject,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  Observable,
+  Subject,
+  takeUntil,
+} from 'rxjs';
 import { IconModule } from '../icon.module';
-import { debounceTime, distinctUntilChanged, Observable, Subject, takeUntil } from 'rxjs';
 import { SuggestionsHelperModule } from './suggestion-helpers.pipe';
+import { USER_DETAILS, UserDetails } from './user-details.token';
 
 @Component({
   selector: 'wfh-header',
@@ -48,11 +64,13 @@ import { SuggestionsHelperModule } from './suggestion-helpers.pipe';
           type="text"
           name="search"
           id="search"
-          (keyup)="this.searchSubject.next(searchRef.value)"
+          (keyup)="this.autoCompleteSubject.next(searchRef.value)"
+          (keyup.enter)="this.searched.emit(searchRef.value)"
+          (focus)="this.suggestionsVisibleSubject.next(true)"
           #searchRef
         />
-        <ng-container *ngIf="suggestions$ | async as suggestions">
-          <div class="suggestions" *ngIf="suggestions | suggestionVisible">
+        <ng-container *ngIf="suggestionsContent$ | async as suggestions">
+          <div id="suggestions" class="suggestions" *ngIf="suggestions | suggestionVisible">
             <ul class="suggestions__list">
               <ng-container *ngFor="let group of suggestions | suggestionsGroup">
                 <li class="suggestions__group" *ngIf="group.value.length > 0">
@@ -64,6 +82,7 @@ import { SuggestionsHelperModule } from './suggestion-helpers.pipe';
                       tabindex="0"
                       class="suggestions__group-item"
                       *ngFor="let groupItem of group.value"
+                      (click)="suggestionsClicked(group.key, groupItem)"
                     >
                       <p>{{ groupItem.name }}</p>
                     </li>
@@ -75,13 +94,46 @@ import { SuggestionsHelperModule } from './suggestion-helpers.pipe';
         </ng-container>
       </div>
       <div class="flex gap-2">
-        <a class="header__icon">
+        <a class="header__icon" (click)="auth.loginWithPopup()" tippy="Notifications">
           <rmx-icon name="notification-4-fill"></rmx-icon>
         </a>
-        <button class="header__icon" routerLink="/checkout/cart">
+        <a class="header__icon" routerLink="/wishlist">
+          <rmx-icon name="heart-3-fill"></rmx-icon>
+        </a>
+        <button class="header__icon relative" routerLink="/checkout/cart">
           <rmx-icon name="shopping-cart-2-fill"></rmx-icon>
+          <div
+            *ngIf="cartItemsCount !== null"
+            class="absolute -top-1 h-4 w-4 grid place-items-center -right-1 text-xs bg-primary rounded-md text-white"
+          >
+            {{ cartItemsCount }}
+          </div>
         </button>
       </div>
+      <a
+        routerLink="/profile"
+        class="flex items-center ml-4 gap-2 outline-none"
+        *ngIf="user$ | async as user"
+        [tippy]="profile"
+        variation="menu"
+        [offset]="[-20, 10]"
+      >
+        <img
+          class="rounded-full w-10 h-10 cursor-pointer"
+          [src]="user?.avatar"
+          [alt]="user?.firstName"
+        />
+        <div class="text-xs text-gray-500">
+          <p class="font-semibold">{{ user.firstName }}</p>
+          <p class="text-gray-400">{{ user.lastName }}</p>
+        </div>
+      </a>
+      <ng-template #profile>
+        <div [style.min-width.px]="200">
+          <a class="dropdown-item" href="#">Profile</a>
+          <button class="dropdown-item w-full" (click)="logout.emit()">Logout</button>
+        </div>
+      </ng-template>
     </header>
   `,
   styles: [
@@ -152,45 +204,92 @@ export class HeaderComponent implements OnDestroy {
       icon: 'products',
       link: 'products',
     },
-    {
-      label: 'Categories',
-      icon: 'categories',
-      link: 'categories',
-    },
-    {
-      label: 'Bundles',
-      icon: 'bundles',
-      link: 'bundles',
-    },
+    // {
+    //   label: 'Categories',
+    //   icon: 'categories',
+    //   link: 'categories',
+    // },
+    // {
+    //   label: 'Bundles',
+    //   icon: 'bundles',
+    //   link: 'bundles',
+    // },
   ];
-
   @Input()
-  suggestions$?: Observable<Record<string, { _id: string; name: string }[]>>;
-
+  cartItemsCount: number | null = null;
+  @Output()
+  autoComplete = new EventEmitter<string>();
+  autoCompleteSubject = new Subject<string>();
   @Output()
   searched = new EventEmitter<string>();
   searchSubject = new Subject<string>();
+  @Output()
+  logout = new EventEmitter<void>();
 
+  @Output()
+  filtered = new EventEmitter<{ key: string; value: string }>();
+  @ViewChild('searchRef') searchRef: ElementRef<HTMLInputElement> | null = null;
+  suggestionsVisibleSubject = new BehaviorSubject(false);
   private destroyed$ = new Subject<void>();
+  private suggestionSubject = new BehaviorSubject<any>([]);
+  readonly suggestionsContent$: Observable<any> = combineLatest([
+    this.suggestionSubject.asObservable(),
+    this.suggestionsVisibleSubject.asObservable(),
+  ]).pipe(map(([suggestions, visible]) => (visible ? suggestions : {})));
 
-  constructor() {
-    this.searchSubject
+  constructor(
+    public readonly auth: AuthService,
+    @Inject(USER_DETAILS) public readonly user$: Observable<UserDetails>,
+    private readonly router: Router,
+    @Inject(DOCUMENT) private readonly document: Document
+  ) {
+    this.autoCompleteSubject
       .asObservable()
       .pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroyed$))
       .subscribe((searchTerm) => {
-        this.searched.emit(searchTerm);
+        this.autoComplete.emit(searchTerm);
       });
+  }
+
+  @Input()
+  set suggestions(data: Record<string, { _id: string; name: string }[]>) {
+    this.suggestionSubject.next(data ?? {});
+    this.suggestionsVisibleSubject.next(true);
+  }
+
+  @HostListener('window:click', ['$event'])
+  onClick(event: MouseEvent) {
+    const autoComplete = this.document.getElementById('suggestions');
+    if (
+      autoComplete &&
+      !autoComplete.contains(event.target as Node) &&
+      !this.searchRef?.nativeElement.contains(event.target as Node)
+    ) {
+      this.suggestionsVisibleSubject.next(false);
+    }
   }
 
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();
   }
+
+  suggestionsClicked(group: string, item: any) {
+    switch (group) {
+      case 'products':
+        this.searched.emit(item.name);
+        break;
+      case 'brands':
+        this.filtered.emit({ key: group, value: item._id });
+        break;
+    }
+    this.suggestionsVisibleSubject.next(false);
+  }
 }
 
 @NgModule({
   declarations: [HeaderComponent],
-  imports: [CommonModule, IconModule, RouterModule, SuggestionsHelperModule],
+  imports: [CommonModule, IconModule, RouterModule, SuggestionsHelperModule, TippyModule],
   exports: [HeaderComponent],
 })
 export class HeaderModule {}

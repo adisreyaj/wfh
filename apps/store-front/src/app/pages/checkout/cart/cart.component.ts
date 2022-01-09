@@ -5,6 +5,8 @@ import { IconModule } from '../../../shared/modules/icon.module';
 import { CommonModule } from '@angular/common';
 import { CartItemModule } from './cart-item.component';
 import { CartSidebarModule } from './cart-sidebar.component';
+import { Observable } from 'rxjs';
+import { CartService } from '@wfh/store-front/service';
 
 @Component({
   selector: 'wfh-cart',
@@ -15,35 +17,8 @@ import { CartSidebarModule } from './cart-sidebar.component';
           <h2 class="text-xl font-bold text-gray-500">In Cart</h2>
         </header>
         <section class="grid xl:grid-cols-2 gap-4">
-          <article class="">
-            <header class="mb-4">
-              <h3 class="text-base font-semibold">Desk</h3>
-            </header>
-            <div class="flex flex-col gap-2">
-              <section class="">
-                <wfh-cart-item [product]="product"></wfh-cart-item>
-              </section>
-            </div>
-          </article>
-          <article class="">
-            <header class="mb-4">
-              <h3 class="text-base font-semibold">Chair</h3>
-            </header>
-            <div class="flex flex-col gap-2">
-              <section class="">
-                <wfh-cart-item [product]="product"></wfh-cart-item>
-              </section>
-            </div>
-          </article>
-          <article class="">
-            <header class="mb-4">
-              <h3 class="text-base font-semibold">Monitor</h3>
-            </header>
-            <div class="flex flex-col gap-2">
-              <section class="">
-                <wfh-cart-item [product]="product"></wfh-cart-item>
-              </section>
-            </div>
+          <article class="" *ngFor="let item of items$ | async">
+            <wfh-cart-item [product]="item"></wfh-cart-item>
           </article>
         </section>
       </section>
@@ -53,7 +28,8 @@ import { CartSidebarModule } from './cart-sidebar.component';
         </header>
         <div class="grid lg:grid-cols-2 gap-4">
           <article
-            class="border text-gray-600 hover:shadow-lg hover:-translate-y-1 relative border-gray-200 p-4"
+            (click)="step = 1"
+            class="border cursor-pointer text-gray-600 hover:shadow-lg hover:-translate-y-1 relative border-gray-200 p-4"
           >
             <div class="absolute top-2 right-2">
               <wfh-checkbox></wfh-checkbox>
@@ -66,13 +42,14 @@ import { CartSidebarModule } from './cart-sidebar.component';
           </article>
         </div>
       </section>
-      <section class="cart__section" #payments>
+      <section class="cart__section" #payments *ngIf="step > 0">
         <header class="mb-4">
           <h2 class="text-xl font-bold text-gray-500">Payment</h2>
         </header>
         <div class="grid lg:grid-cols-3 gap-4">
           <ng-container *ngFor="let card of cards; index as i">
             <label
+              (click)="step = 2"
               [for]="'card=' + i"
               class="text-gray-600 relative hover:-translate-y-1 hover:shadow-lg cursor-pointer transition-all duration-200"
             >
@@ -119,14 +96,7 @@ import { CartSidebarModule } from './cart-sidebar.component';
   ],
 })
 export class CartComponent implements AfterViewInit {
-  product = {
-    title: 'Helios Study Desk in Brown Colour',
-    price: 4000,
-    originalPrice: 7500,
-    images: [
-      'https://ii1.pepperfry.com/media/catalog/product/h/e/1100x1210/helios-study-desk-in-brown-colour-by-home-centre-helios-study-desk-in-brown-colour-by-home-centre-c1mgui.jpg',
-    ],
-  };
+  readonly items$: Observable<any>;
 
   cards = [
     {
@@ -155,6 +125,10 @@ export class CartComponent implements AfterViewInit {
   @ViewChild('address') address?: ElementRef;
   @ViewChild('payments') payments?: ElementRef;
   elementToNavigateTo!: Record<number, HTMLDivElement | undefined>;
+
+  constructor(private cartService: CartService) {
+    this.items$ = this.cartService.cartItems$;
+  }
 
   ngAfterViewInit() {
     this.elementToNavigateTo = {

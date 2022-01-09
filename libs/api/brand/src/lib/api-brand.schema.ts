@@ -12,6 +12,6 @@ export const apiBrandSchema = new Schema(
 );
 
 export const BrandsModel = {
-  name: 'Brands',
+  name: 'Brand',
   schema: apiBrandSchema,
 };

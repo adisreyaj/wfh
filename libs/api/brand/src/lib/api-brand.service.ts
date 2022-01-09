@@ -32,7 +32,7 @@ export class ApiBrandService {
           },
         },
       ])
-    ).pipe(handleError('category'));
+    ).pipe(handleError('brand'));
   }
 
   getAll() {

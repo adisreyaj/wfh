@@ -11,7 +11,7 @@ import { OverlayService } from '../../common';
       <button variant="neutral" size="small" wfh class="fixed top-4 right-4 z-10" (click)="close()">
         <rmx-icon name="close-line"></rmx-icon>
       </button>
-      <div>
+      <div class="h-full">
         <ng-content></ng-content>
       </div>
     </ng-container>

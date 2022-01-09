@@ -4,10 +4,17 @@
 @use 'forms';
 @use 'icons';
 
+@import '~tippy.js/dist/tippy.css';
+@import '~tippy.js/animations/scale.css';
+
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+
+}
+
+p {
   @apply text-gray-800;
 }
 
@@ -15,4 +22,62 @@ html,
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans,
   sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+
+
+@import '~tippy.js/dist/tippy.css';
+@import '~tippy.js/animations/scale.css';
+.tippy-box[data-theme~=light] {
+  background-color: #fff;
+  color: #26323d;
+}
+
+.tippy-box[data-theme~=light][data-placement^=top] > .tippy-arrow:before {
+  border-top-color: #fff;
+}
+
+.tippy-box[data-theme~=light][data-placement^=bottom] > .tippy-arrow:before {
+  border-bottom-color: #fff;
+}
+
+.tippy-box[data-theme~=light][data-placement^=left] > .tippy-arrow:before {
+  border-left-color: #fff;
+}
+
+.tippy-box[data-theme~=light][data-placement^=right] > .tippy-arrow:before {
+  border-right-color: #fff;
+}
+
+.tippy-box[data-theme~=light] > .tippy-backdrop {
+  background-color: #fff;
+}
+
+.tippy-box[data-theme~=light] > .tippy-svg-arrow {
+  fill: #fff;
+}
+
+.tippy-box {
+  @apply rounded-md;
+  @apply shadow-md;
+  @apply border border-gray-100;
+}
+
+.tippy-box[role='dropdown'],
+.tippy-box[role='menu'] {
+  .tippy-content {
+    padding: 6px;
+  }
+}
+
+.dropdown-item {
+  @apply px-4 py-2;
+  @apply flex;
+  @apply rounded-md;
+  @apply space-x-2;
+  @apply items-center;
+  cursor: pointer;
+
+  &:hover {
+    @apply bg-gray-100;
+  }
 }

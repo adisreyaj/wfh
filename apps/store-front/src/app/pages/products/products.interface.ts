@@ -1,11 +1,19 @@
 export interface Product {
   id?: string;
-  title: string;
-  subtitle?: string;
+  name: string;
+  description?: string;
   price: number;
-  originalPrice: number;
+  kind: ProductKind;
+  originalPrice?: number;
   images: string[];
   link?: string;
+}
+
+export enum ProductKind {
+  Keyboard = 'ProductKeyboard',
+  Mouse = 'ProductMouse',
+  Monitor = 'ProductMonitor',
+  Chair = 'ProductChair',
 }
 
 export interface ProductQuickView extends Product {

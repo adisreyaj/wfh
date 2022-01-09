@@ -27,7 +27,7 @@
           "error",
           {
             "type": "component",
-            "suffix": [
+            "suffixes": [
               "Component",
               "Page"
             ]
