@@ -35,4 +35,17 @@ export class ApiUserService {
       handleError('user')
     );
   }
+
+  getAddresses(userId: string) {
+    return from(this.userModel.findById(userId).select('addresses').populate('addresses')).pipe(
+      map((resp) => resp.addresses ?? []),
+      handleError('address')
+    );
+  }
+
+  addUserAddress(userId: string, addressId: string) {
+    return from(
+      this.userModel.findByIdAndUpdate(userId, { $push: { addresses: addressId } }, { new: true })
+    ).pipe(handleError('address'));
+  }
 }

@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 
-export interface UserBaseRequest {
+interface UserBaseRequest {
   auth0Id: string;
   email: string;
   password: string;
@@ -13,8 +13,29 @@ export type UserAuth0Request = UserBaseRequest;
 
 export interface UserResponse extends Omit<UserBaseRequest, 'auth0Id'> {
   id: string;
+  addresses: AddressResponse[];
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface UserDocument extends Document, Omit<UserResponse, 'id'> {}
+
+interface AddressBaseRequest {
+  apartment: string;
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  phone: string;
+}
+
+export type AddressRequest = AddressBaseRequest;
+
+export interface AddressResponse extends AddressBaseRequest {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AddressDocument extends Document, Omit<AddressResponse, 'id'> {}

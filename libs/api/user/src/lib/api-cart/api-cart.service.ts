@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CartModel } from './api-cart.schema';
 import { Model } from 'mongoose';
-import { CartDocument } from '@wfh/api-interfaces';
+import { CartDocument, CartRequest } from '@wfh/api-interfaces';
 import { handleError } from '@wfh/api/util';
 import { from } from 'rxjs';
 
@@ -39,5 +39,11 @@ export class ApiCartService {
       { user: userId },
       { $pull: { products: { product: productId } } }
     );
+  }
+
+  syncLocalCart(userId: string, products: CartRequest[]) {
+    return from(
+      this.cartModel.findOneAndUpdate({ user: userId }, { products }, { new: true })
+    ).pipe(handleError('cart'));
   }
 }
