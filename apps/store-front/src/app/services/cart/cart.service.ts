@@ -1,16 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
-import {
-  BehaviorSubject,
-  combineLatest,
-  map,
-  Observable,
-  shareReplay,
-  switchMap,
-  take,
-} from 'rxjs';
+import { BehaviorSubject, EMPTY, map, Observable, of } from 'rxjs';
 import { USER_DETAILS, UserDetails } from '@wfh/ui';
 import { API_URL } from '@wfh/store-front/core';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '@auth0/auth0-angular';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +20,7 @@ export class CartService {
   constructor(
     @Inject(USER_DETAILS) private readonly user$: Observable<UserDetails>,
     @Inject(API_URL) private apiUrl: string,
+    private auth: AuthService,
     private readonly http: HttpClient
   ) {
     this.userId$ = this.user$.pipe(map((user) => user.id));
@@ -38,15 +32,30 @@ export class CartService {
     }
   }
 
-  getCart() {
-    return combineLatest([this.userId$, this.cartId$]).pipe(
-      take(1),
-      switchMap(([userId, cartId]) => {
-        return this.http.get(`${this.apiUrl}/users/${userId}/cart/${cartId}`);
-      }),
-      shareReplay(1)
-    );
+  refreshCart() {
+    return of(EMPTY);
+    // return combineLatest([this.userId$, this.cartId$]).pipe(
+    //   take(1),
+    //   filter(([userId, cartId]) => !!userId && !!cartId),
+    //   switchMap(([userId, cartId]) => {
+    //     return this.http.get(`${this.apiUrl}/users/${userId}/cart/${cartId}`).pipe(
+    //       map((cart: any) => cart.products ?? []),
+    //       map((items) => items.map((item: any) => item.product))
+    //     );
+    //   }),
+    //   tap((items) => {
+    //     console.log({ items });
+    //     if (!isEmpty(items)) {
+    //       items.forEach((item: any) => {
+    //         this.cartItemsMap.set(item._id, item);
+    //       });
+    //     }
+    //     this.updateObservable(true);
+    //   })
+    // );
   }
+
+  syncLocalCart() {}
 
   add(item: any) {
     const isItemInCart: any = this.cartItemsMap.has(item._id);
@@ -58,11 +67,11 @@ export class CartService {
     }
     this.updateObservable();
 
-    return this.userId$.pipe(
-      switchMap((userId) =>
-        this.http.put(`${this.apiUrl}/users/${userId}/cart`, { id: item._id, quantity: 1 })
-      )
-    );
+    // return this.userId$.pipe(
+    //   switchMap((userId) =>
+    //     this.http.put(`${this.apiUrl}/users/${userId}/cart`, { id: item._id, quantity: 1 })
+    //   )
+    // );
   }
 
   remove(item: any) {
@@ -73,9 +82,10 @@ export class CartService {
       this.cartItemsMap.delete(item._id);
     }
     this.updateObservable();
-    return this.userId$.pipe(
-      switchMap((userId) => this.http.delete(`${this.apiUrl}/users/${userId}/cart/${item._id}`))
-    );
+    // return this.userId$.pipe(
+    //   filter((userId) => !!userId),
+    //   switchMap((userId) => this.http.delete(`${this.apiUrl}/users/${userId}/cart/${item._id}`))
+    // );
   }
 
   updateObservable(cache = true) {

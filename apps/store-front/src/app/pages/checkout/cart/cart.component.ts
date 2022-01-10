@@ -6,7 +6,9 @@ import { CommonModule } from '@angular/common';
 import { CartItemModule } from './cart-item.component';
 import { CartSidebarModule } from './cart-sidebar.component';
 import { catchError, map, Observable, of } from 'rxjs';
-import { CartService } from '@wfh/store-front/service';
+import { CartService, UserService } from '@wfh/store-front/service';
+import { AddressResponse } from '@wfh/api-interfaces';
+import { AuthService } from '@auth0/auth0-angular';
 
 @Component({
   selector: 'wfh-cart',
@@ -22,56 +24,75 @@ import { CartService } from '@wfh/store-front/service';
           </article>
         </section>
       </section>
-      <section class="cart__section" #address>
-        <header class="mb-4">
-          <h2 class="text-xl font-bold text-gray-500">Address</h2>
-        </header>
-        <div class="grid lg:grid-cols-2 gap-4">
-          <article
-            (click)="step = 1"
-            class="border cursor-pointer text-gray-600 hover:shadow-lg hover:-translate-y-1 relative border-gray-200 p-4"
-          >
-            <div class="absolute top-2 right-2">
-              <wfh-checkbox></wfh-checkbox>
-            </div>
-            <p class="font-semibold text-gray-800">Adithya Sreyaj</p>
-            <p>A123, Stone Avenue, St Johns Church Road</p>
-            <p>ABC Street</p>
-            <p>Bangalore, Karnataka</p>
-            <p class="font-semibold">560088</p>
-          </article>
-        </div>
-      </section>
-      <section class="cart__section" #payments *ngIf="step > 0">
-        <header class="mb-4">
-          <h2 class="text-xl font-bold text-gray-500">Payment</h2>
-        </header>
-        <div class="grid lg:grid-cols-3 gap-4">
-          <ng-container *ngFor="let card of cards; index as i">
-            <label
-              (click)="step = 2"
-              [for]="'card=' + i"
-              class="text-gray-600 relative hover:-translate-y-1 hover:shadow-lg cursor-pointer transition-all duration-200"
+      <ng-container *ngIf="auth.isAuthenticated$ | async; else login">
+        <section class="cart__section" #address>
+          <header class="mb-4">
+            <h2 class="text-xl font-bold text-gray-500">Address</h2>
+          </header>
+          <div class="grid lg:grid-cols-2 gap-4">
+            <article
+              (click)="step = 1"
+              class="border cursor-pointer text-gray-600 hover:shadow-lg hover:-translate-y-1 relative border-gray-200 p-4"
             >
               <div class="absolute top-2 right-2">
-                <input type="radio" name="card" [id]="'card=' + i" />
+                <wfh-checkbox></wfh-checkbox>
               </div>
-              <wfh-credit-card
-                [attr.data-id]="i + 1"
-                [number]="card.number"
-                [expiry]="card.expiry"
-                [name]="card.name"
-              ></wfh-credit-card>
-            </label>
-          </ng-container>
-        </div>
-      </section>
+              <ng-container *ngFor="let address of addresses$ | async">
+                <p>{{ address?.apartment }}, {{ address?.street }}</p>
+                <p>{{ address?.city }}</p>
+                <p>{{ address?.state }}, {{ address?.country }}</p>
+                <p class="font-semibold">{{ address?.zip }}</p>
+                <p>{{ address?.phone }}</p>
+              </ng-container>
+            </article>
+          </div>
+        </section>
+        <section class="cart__section" #payments *ngIf="step > 0">
+          <header class="mb-4">
+            <h2 class="text-xl font-bold text-gray-500">Payment</h2>
+          </header>
+          <div class="grid lg:grid-cols-3 gap-4">
+            <ng-container *ngFor="let card of cards; index as i">
+              <label
+                (click)="step = 2"
+                [for]="'card=' + i"
+                class="text-gray-600 relative hover:-translate-y-1 hover:shadow-lg cursor-pointer transition-all duration-200"
+              >
+                <div class="absolute top-2 right-2">
+                  <input type="radio" name="card" [id]="'card=' + i" />
+                </div>
+                <wfh-credit-card
+                  [attr.data-id]="i + 1"
+                  [number]="card.number"
+                  [expiry]="card.expiry"
+                  [name]="card.name"
+                ></wfh-credit-card>
+              </label>
+            </ng-container>
+          </div>
+        </section>
+      </ng-container>
+      <ng-template #login>
+        <section class="flex flex-col items-center py-4">
+          <img src="assets/images/girl-cart.svg" alt="SHopping" class="h-60" />
+          <p class="mb-4 text-md">
+            Please login or signup to continue.<br />
+            <span class="text-gray-500 text-sm"> You will need to choose/add an address.</span>
+          </p>
+
+          <button wfh>Login or Signup</button>
+        </section>
+      </ng-template>
     </section>
     <aside class="cart__sidebar">
       <header class="mb-4">
         <h2 class="text-xl font-bold text-gray-500">Summary</h2>
       </header>
-      <wfh-cart-sidebar (clicked)="onClicked()" [state]="step"></wfh-cart-sidebar>
+      <wfh-cart-sidebar
+        (clicked)="onClicked()"
+        [state]="step"
+        [priceBreakdown]="priceBreakdown$ | async"
+      ></wfh-cart-sidebar>
     </aside>
   `,
   styles: [
@@ -96,8 +117,6 @@ import { CartService } from '@wfh/store-front/service';
   ],
 })
 export class CartComponent implements AfterViewInit {
-  readonly items$: Observable<any>;
-
   cards = [
     {
       number: '4532641283337400',
@@ -126,12 +145,60 @@ export class CartComponent implements AfterViewInit {
   @ViewChild('payments') payments?: ElementRef;
   elementToNavigateTo!: Record<number, HTMLDivElement | undefined>;
 
-  constructor(private cartService: CartService) {
-    this.items$ = this.cartService.getCart().pipe(
-      map((cart: any) => cart.products ?? []),
-      map((items) => items.map((item: any) => item.product)),
-      catchError(() => of([]))
+  readonly addresses$: Observable<AddressResponse[]>;
+  readonly items$: Observable<any>;
+  readonly priceBreakdown$: Observable<any>;
+
+  constructor(
+    private cartService: CartService,
+    private userService: UserService,
+    public readonly auth: AuthService
+  ) {
+    this.cartService.refreshCart().subscribe();
+    this.items$ = this.cartService.cartItems$.pipe(catchError(() => of([])));
+    this.priceBreakdown$ = this.items$.pipe(
+      map((items) => {
+        let cartPriceTotal = 0;
+        let cartOriginalPriceTotal = 0;
+
+        items.forEach((item: any) => {
+          cartPriceTotal += item.price;
+          cartOriginalPriceTotal += item.originalPrice;
+        });
+
+        const discounts = cartOriginalPriceTotal - cartPriceTotal;
+        const couponDiscount = cartPriceTotal * 0.01;
+        const shipping = 299;
+        const tax = cartPriceTotal * 0.05;
+        const total = cartPriceTotal + shipping + tax - couponDiscount;
+        return {
+          breakdown: [
+            {
+              label: 'Cart Value',
+              value: cartOriginalPriceTotal,
+            },
+            {
+              label: 'Discount',
+              value: discounts,
+            },
+            {
+              label: 'Coupon Discount',
+              value: couponDiscount,
+            },
+            {
+              label: 'Shipping',
+              value: 299,
+            },
+            {
+              label: 'Tax/VAT',
+              value: tax,
+            },
+          ],
+          total,
+        };
+      })
     );
+    this.addresses$ = this.userService.getAddresses();
   }
 
   ngAfterViewInit() {
@@ -148,7 +215,7 @@ export class CartComponent implements AfterViewInit {
   }
 
   onDelete(item: any) {
-    this.cartService.remove(item).subscribe();
+    this.cartService.remove(item);
   }
 }
 
@@ -156,7 +223,7 @@ export class CartComponent implements AfterViewInit {
   declarations: [CartComponent],
   imports: [
     CommonModule,
-    RouterModule.forChild([{ path: '', component: CartComponent }]),
+    RouterModule.forChild([{path: '', component: CartComponent}]),
     ButtonModule,
     IconModule,
     DiscountPipeModule,
@@ -167,4 +234,5 @@ export class CartComponent implements AfterViewInit {
   ],
   exports: [CartComponent],
 })
-export class CartModule {}
+export class CartModule {
+}

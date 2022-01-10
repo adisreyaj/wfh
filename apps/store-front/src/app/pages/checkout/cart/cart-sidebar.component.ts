@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, NgModule, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, NgModule, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ButtonModule, StepIndicatorModule } from '@wfh/ui';
+import { ButtonModule, CURRENCY_CODE, StepIndicatorModule } from '@wfh/ui';
 import { IconModule } from '../../../shared/modules/icon.module';
+import { AuthService } from '@auth0/auth0-angular';
 
 @Component({
   selector: 'wfh-cart-sidebar',
@@ -28,13 +29,13 @@ import { IconModule } from '../../../shared/modules/icon.module';
             </tr>
           </thead>
           <tbody>
-            <ng-container *ngFor="let item of priceBreakdown">
+            <ng-container *ngFor="let item of priceBreakdown.breakdown">
               <tr class="h-8">
                 <td>
                   <p class="text-gray-500">{{ item.label }}</p>
                 </td>
                 <td class="text-right">
-                  <p class="font-medium">{{ item.value }}</p>
+                  <p class="font-medium">{{ item.value | currency: currencyCode }}</p>
                 </td>
               </tr>
             </ng-container>
@@ -45,7 +46,9 @@ import { IconModule } from '../../../shared/modules/icon.module';
                 <p class="font-medium">Total</p>
               </td>
               <td>
-                <p class="font-medium text-right">3000</p>
+                <p class="font-medium text-right">
+                  {{ priceBreakdown.total | currency: currencyCode }}
+                </p>
               </td>
             </tr>
           </tfoot>
@@ -62,7 +65,12 @@ import { IconModule } from '../../../shared/modules/icon.module';
       </wfh-step-indicator>
     </section>
     <footer class="mt-6">
-      <button class="w-full" wfh (click)="clicked.emit()">{{ labels[state] }}</button>
+      <ng-container *ngIf="auth.isAuthenticated$ | async; else login">
+        <button class="w-full" wfh (click)="clicked.emit()">{{ labels[state] }}</button>
+      </ng-container>
+      <ng-template #login>
+        <button class="w-full" wfh (click)="auth.loginWithPopup()">Login to Continue</button>
+      </ng-template>
     </footer>
   `,
   styles: [
@@ -91,6 +99,9 @@ export class CartSidebarComponent {
   @Input()
   state = 0;
 
+  @Input()
+  priceBreakdown: any = [];
+
   @Output()
   clicked = new EventEmitter<void>();
 
@@ -101,28 +112,10 @@ export class CartSidebarComponent {
   };
   steps = ['Cart', 'Address', 'Payment'];
 
-  priceBreakdown = [
-    {
-      label: 'Cart Value',
-      value: '$100',
-    },
-    {
-      label: 'Discount',
-      value: '$10',
-    },
-    {
-      label: 'Coupon Discount',
-      value: '$14.99',
-    },
-    {
-      label: 'Shipping',
-      value: '$10',
-    },
-    {
-      label: 'Tax/VAT',
-      value: '$10',
-    },
-  ];
+  constructor(
+    public readonly auth: AuthService,
+    @Inject(CURRENCY_CODE) public readonly currencyCode: string
+  ) {}
 }
 
 @NgModule({

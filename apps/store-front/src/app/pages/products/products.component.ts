@@ -289,7 +289,7 @@ export class ProductsPage implements OnInit {
   }
 
   addToCart(product: any) {
-    this.cartService.add(product).subscribe();
+    this.cartService.add(product);
   }
 
   private parseQueryParams() {
