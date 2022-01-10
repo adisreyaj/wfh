@@ -13,17 +13,19 @@ import {
 import { ApiUserService } from './api-user.service';
 import { ApiCartService } from './api-cart/api-cart.service';
 import { ApiWishlistService } from './api-wishlist/api-wishlist.service';
-import { AddressRequest, CartRequest, UserAuth0Request } from '@wfh/api-interfaces';
+import { AddressRequest, CartRequest, OrderRequest, UserAuth0Request } from '@wfh/api-interfaces';
 import { catchError, forkJoin, of, switchMap, throwError } from 'rxjs';
 import { ApiAddressService } from './api-address/api-address.service';
+import { ApiOrderService } from '@wfh/api/order';
 
 @Controller('users')
 export class ApiUserController {
   constructor(
-    private user: ApiUserService,
+    private readonly user: ApiUserService,
     private readonly cart: ApiCartService,
     private readonly wishlist: ApiWishlistService,
-    private readonly address: ApiAddressService
+    private readonly address: ApiAddressService,
+    private readonly orders: ApiOrderService
   ) {}
 
   @Post('')
@@ -46,6 +48,16 @@ export class ApiUserController {
   @Get()
   async getUser(@Query('email') email: string) {
     return this.user.getUserByEmail(email);
+  }
+
+  @Get('/:userId/orders')
+  getOrders(@Param('userId') userId: string) {
+    return this.orders.getOrdersByUserId(userId);
+  }
+
+  @Post('/:userId/orders')
+  newOrder(@Param('userId') userId: string, @Body() order: OrderRequest) {
+    return this.orders.newOrder(userId, order);
   }
 
   @Get(':userId/address')
