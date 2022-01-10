@@ -10,6 +10,7 @@ import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { API_URL } from './core/tokens/api.token';
 import { popperVariation, TippyModule, tooltipVariation } from '@ngneat/helipopper';
+import { HotToastModule } from '@ngneat/hot-toast';
 
 @NgModule({
   declarations: [AppComponent],
@@ -46,6 +47,9 @@ import { popperVariation, TippyModule, tooltipVariation } from '@ngneat/helipopp
           },
         ],
       },
+    }),
+    HotToastModule.forRoot({
+      duration: 2000,
     }),
     TippyModule.forRoot({
       defaultVariation: 'tooltip',

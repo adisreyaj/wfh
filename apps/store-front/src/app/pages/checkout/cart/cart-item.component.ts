@@ -65,7 +65,7 @@ export class CartItemComponent {
   product: any;
 
   @Output()
-  delete = new EventEmitter();
+  delete = new EventEmitter<void>();
 
   constructor(@Inject(CURRENCY_CODE) public currencyCode: string) {}
 }
@@ -75,5 +75,4 @@ export class CartItemComponent {
   declarations: [CartItemComponent],
   exports: [CartItemComponent],
 })
-export class CartItemModule {
-}
+export class CartItemModule {}

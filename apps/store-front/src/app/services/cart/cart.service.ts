@@ -55,14 +55,9 @@ export class CartService {
     // );
   }
 
-  syncLocalCart() {}
-
   add(item: any) {
     const isItemInCart: any = this.cartItemsMap.has(item._id);
-    if (isItemInCart) {
-      const itemInCart: any = this.cartItemsMap.get(item._id);
-      this.cartItemsMap.set(item._id, { ...itemInCart, quantity: itemInCart.quantity + 1 });
-    } else {
+    if (!isItemInCart) {
       this.cartItemsMap.set(item._id, { ...item, quantity: 1 });
     }
     this.updateObservable();
@@ -76,9 +71,7 @@ export class CartService {
 
   remove(item: any) {
     const isItemInCart: any = this.cartItemsMap.has(item._id);
-    if (isItemInCart && isItemInCart.quantity > 1) {
-      this.cartItemsMap.set(item._id, { ...isItemInCart, quantity: isItemInCart.quantity - 1 });
-    } else if (isItemInCart && isItemInCart.quantity === 1) {
+    if (isItemInCart) {
       this.cartItemsMap.delete(item._id);
     }
     this.updateObservable();
@@ -94,6 +87,11 @@ export class CartService {
       const itemsToSave = this.objectify(this.cartItemsMap);
       localStorage.setItem('cart', JSON.stringify(itemsToSave));
     }
+  }
+
+  reset() {
+    this.cartItemsMap.clear();
+    this.updateObservable();
   }
 
   private objectify(map: Map<string, unknown>): any {

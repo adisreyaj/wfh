@@ -36,6 +36,7 @@ import { WishlistService } from '../wishlist/wishlist.service';
 import { SPECIFICATION_KEYS } from './products.config';
 import { isEmpty } from 'lodash';
 import { CartService } from '@wfh/store-front/service';
+import { HotToastService } from '@ngneat/hot-toast';
 
 @Component({
   selector: 'wfh-products',
@@ -199,7 +200,8 @@ export class ProductsPage implements OnInit {
     private wishlistService: WishlistService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private cartService: CartService
+    private cartService: CartService,
+    private toast: HotToastService
   ) {
     overlay.clickedOutside$.subscribe(() => {
       this.productQuickViewRef?.close();
@@ -290,6 +292,7 @@ export class ProductsPage implements OnInit {
 
   addToCart(product: any) {
     this.cartService.add(product);
+    this.toast.success(`${product.name} Added to cart!`);
   }
 
   private parseQueryParams() {

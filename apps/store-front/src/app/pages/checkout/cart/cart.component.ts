@@ -1,14 +1,15 @@
 import { AfterViewInit, Component, ElementRef, NgModule, ViewChild } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ButtonModule, CheckboxModule, CreditCardModule, DiscountPipeModule } from '@wfh/ui';
 import { IconModule } from '../../../shared/modules/icon.module';
 import { CommonModule } from '@angular/common';
 import { CartItemModule } from './cart-item.component';
 import { CartSidebarModule } from './cart-sidebar.component';
-import { catchError, map, Observable, of } from 'rxjs';
-import { CartService, UserService } from '@wfh/store-front/service';
+import { catchError, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { CartService, OrderService, UserService } from '@wfh/store-front/service';
 import { AddressResponse } from '@wfh/api-interfaces';
 import { AuthService } from '@auth0/auth0-angular';
+import { HotToastService } from '@ngneat/hot-toast';
 
 @Component({
   selector: 'wfh-cart',
@@ -30,21 +31,21 @@ import { AuthService } from '@auth0/auth0-angular';
             <h2 class="text-xl font-bold text-gray-500">Address</h2>
           </header>
           <div class="grid lg:grid-cols-2 gap-4">
-            <article
-              (click)="step = 1"
-              class="border cursor-pointer text-gray-600 hover:shadow-lg hover:-translate-y-1 relative border-gray-200 p-4"
-            >
-              <div class="absolute top-2 right-2">
-                <wfh-checkbox></wfh-checkbox>
-              </div>
-              <ng-container *ngFor="let address of addresses$ | async">
+            <ng-container *ngFor="let address of addresses$ | async">
+              <article
+                (click)="step = 1; addressSelected = address.id"
+                class="border cursor-pointer text-gray-600 hover:shadow-lg hover:-translate-y-1 relative border-gray-200 p-4"
+              >
+                <div class="absolute top-2 right-2">
+                  <wfh-checkbox [checked]="addressSelected === address.id"></wfh-checkbox>
+                </div>
                 <p>{{ address?.apartment }}, {{ address?.street }}</p>
                 <p>{{ address?.city }}</p>
                 <p>{{ address?.state }}, {{ address?.country }}</p>
                 <p class="font-semibold">{{ address?.zip }}</p>
                 <p>{{ address?.phone }}</p>
-              </ng-container>
-            </article>
+              </article>
+            </ng-container>
           </div>
         </section>
         <section class="cart__section" #payments *ngIf="step > 0">
@@ -52,7 +53,7 @@ import { AuthService } from '@auth0/auth0-angular';
             <h2 class="text-xl font-bold text-gray-500">Payment</h2>
           </header>
           <div class="grid lg:grid-cols-3 gap-4">
-            <ng-container *ngFor="let card of cards; index as i">
+            <ng-container *ngFor="let card of cards$ | async; index as i">
               <label
                 (click)="step = 2"
                 [for]="'card=' + i"
@@ -80,7 +81,7 @@ import { AuthService } from '@auth0/auth0-angular';
             <span class="text-gray-500 text-sm"> You will need to choose/add an address.</span>
           </p>
 
-          <button wfh>Login or Signup</button>
+          <button wfh (click)="auth.loginWithPopup()">Login or Signup</button>
         </section>
       </ng-template>
     </section>
@@ -117,42 +118,49 @@ import { AuthService } from '@auth0/auth0-angular';
   ],
 })
 export class CartComponent implements AfterViewInit {
-  cards = [
-    {
-      number: '4532641283337400',
-      expiry: '12/23',
-      name: 'Adithya Sreyaj',
-    },
-    {
-      number: '3530111333300000',
-      expiry: '12/23',
-      name: 'Adithya Sreyaj',
-    },
-    {
-      number: '5425233430109903',
-      expiry: '12/23',
-      name: 'Adithya Sreyaj',
-    },
-    {
-      number: '60115564485789458',
-      expiry: '12/23',
-      name: 'Adithya Sreyaj',
-    },
-  ];
+  cards$ = this.auth.user$.pipe(
+    filter((user) => !!user),
+    map((user) => [
+      {
+        number: '4532641283337400',
+        expiry: '12/23',
+        name: `${user?.given_name} ${user?.family_name}`,
+      },
+      {
+        number: '3530111333300000',
+        expiry: '12/23',
+        name: `${user?.given_name} ${user?.family_name}`,
+      },
+      {
+        number: '5425233430109903',
+        expiry: '12/23',
+        name: `${user?.given_name} ${user?.family_name}`,
+      },
+      {
+        number: '60115564485789458',
+        expiry: '12/23',
+        name: `${user?.given_name} ${user?.family_name}`,
+      },
+    ])
+  );
 
   step = 0;
   @ViewChild('address') address?: ElementRef;
   @ViewChild('payments') payments?: ElementRef;
   elementToNavigateTo!: Record<number, HTMLDivElement | undefined>;
+  addressSelected: string = '';
 
   readonly addresses$: Observable<AddressResponse[]>;
   readonly items$: Observable<any>;
   readonly priceBreakdown$: Observable<any>;
 
   constructor(
-    private cartService: CartService,
-    private userService: UserService,
-    public readonly auth: AuthService
+    private readonly cartService: CartService,
+    private readonly userService: UserService,
+    private readonly orderService: OrderService,
+    public readonly auth: AuthService,
+    private router: Router,
+    private toast: HotToastService
   ) {
     this.cartService.refreshCart().subscribe();
     this.items$ = this.cartService.cartItems$.pipe(catchError(() => of([])));
@@ -198,7 +206,15 @@ export class CartComponent implements AfterViewInit {
         };
       })
     );
-    this.addresses$ = this.userService.getAddresses();
+    this.addresses$ = this.auth.isAuthenticated$.pipe(
+      switchMap(() => this.userService.getAddresses()),
+      tap((addresses) => {
+        if (addresses.length) {
+          this.addressSelected = addresses[0].id;
+          this.step = 1;
+        }
+      })
+    );
   }
 
   ngAfterViewInit() {
@@ -209,9 +225,30 @@ export class CartComponent implements AfterViewInit {
   }
 
   onClicked() {
-    if (this.step < 2) this.step++;
+    if (this.step < 2) {
+      if ((this.step = 1)) {
+        if (this.addressSelected !== '') {
+          this.step++;
+        }
+      } else {
+        this.step++;
+      }
+    }
     const element = this.elementToNavigateTo[this.step];
     element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (this.step === 2) {
+      this.items$
+        .pipe(
+          take(1),
+          map((items) => items.map((item: any) => item._id)),
+          switchMap((items) => this.orderService.order(items, this.addressSelected))
+        )
+        .subscribe(() => {
+          this.toast.success('Order placed successfully');
+          this.cartService.reset();
+          this.router.navigate(['/products']);
+        });
+    }
   }
 
   onDelete(item: any) {
@@ -223,7 +260,7 @@ export class CartComponent implements AfterViewInit {
   declarations: [CartComponent],
   imports: [
     CommonModule,
-    RouterModule.forChild([{path: '', component: CartComponent}]),
+    RouterModule.forChild([{ path: '', component: CartComponent }]),
     ButtonModule,
     IconModule,
     DiscountPipeModule,
@@ -234,5 +271,4 @@ export class CartComponent implements AfterViewInit {
   ],
   exports: [CartComponent],
 })
-export class CartModule {
-}
+export class CartModule {}

@@ -55,7 +55,7 @@ import { AuthService } from '@auth0/auth0-angular';
         </table>
       </div>
     </section>
-    <section class="cart-sidebar__section steps">
+    <section class="cart-sidebar__section steps" *ngIf="auth.isAuthenticated$ | async">
       <wfh-step-indicator [completed]="state">
         <ng-container *ngFor="let step of steps">
           <ng-template wfh-step-indicator-item [title]="step">
@@ -108,7 +108,7 @@ export class CartSidebarComponent {
   labels: Record<number, string> = {
     0: 'Select Address',
     1: 'Select Payment',
-    2: 'Review Order',
+    2: 'Complete Order',
   };
   steps = ['Cart', 'Address', 'Payment'];
 
