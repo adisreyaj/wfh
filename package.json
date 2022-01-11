@@ -7,7 +7,8 @@
     "postinstall": "node ./decorate-angular-cli.js && ngcc --properties es2015 browser module main",
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "tunnel": "cloudflared tunnel --config ./.cloudflared/config.yaml run"
   },
   "private": false,
   "dependencies": {
@@ -27,7 +28,8 @@
     "@nestjs/passport": "^8.0.1",
     "@nestjs/platform-express": "^8.0.0",
     "@ngneat/helipopper": "^5.1.0",
-    "@ngneat/overview": "^3.0.2",
+    "@ngneat/hot-toast": "^4.1.0",
+    "@ngneat/overview": "^3.0.0",
     "@nrwl/angular": "13.3.4",
     "@tailwindcss/forms": "^0.4.0",
     "@tailwindcss/line-clamp": "^0.3.0",

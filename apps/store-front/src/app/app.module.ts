@@ -10,6 +10,7 @@ import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { API_URL } from './core/tokens/api.token';
 import { popperVariation, TippyModule, tooltipVariation } from '@ngneat/helipopper';
+import { HotToastModule } from '@ngneat/hot-toast';
 
 @NgModule({
   declarations: [AppComponent],
@@ -33,25 +34,22 @@ import { popperVariation, TippyModule, tooltipVariation } from '@ngneat/helipopp
       audience: environment.auth.audience,
       clientId: environment.auth.clientId,
       redirectUri: `${window.location.origin}`,
-      errorPath: '/auth/login',
+      errorPath: '/',
       cacheLocation: 'localstorage',
       useRefreshTokens: false,
       httpInterceptor: {
         allowedList: [
           {
-            uri: 'api/products/*',
-            httpMethod: 'GET',
-          },
-          {
-            uri: 'api/categories/*',
-            httpMethod: 'GET',
-          },
-          {
-            uri: 'api/brands/*',
-            httpMethod: 'GET',
+            uriMatcher: (url: string) => {
+              console.log('Intercepting', url);
+              return url.includes('/api/users/');
+            },
           },
         ],
       },
+    }),
+    HotToastModule.forRoot({
+      duration: 2000,
     }),
     TippyModule.forRoot({
       defaultVariation: 'tooltip',
@@ -97,6 +95,7 @@ import { popperVariation, TippyModule, tooltipVariation } from '@ngneat/helipopp
               email: user.email,
               avatar: user.picture,
               id: user['https://wfh-store.adi.so/id'],
+              cart: user['https://wfh-store.adi.so/cart'],
             };
           }),
           catchError(() => {

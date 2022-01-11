@@ -11,6 +11,8 @@ export const carSchema = new Schema(
         product: {
           type: Schema.Types.ObjectId,
           ref: 'Product',
+          autopopulate: true,
+          _id: false,
         },
         quantity: Number,
         addedOn: {

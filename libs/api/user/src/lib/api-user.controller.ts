@@ -13,15 +13,19 @@ import {
 import { ApiUserService } from './api-user.service';
 import { ApiCartService } from './api-cart/api-cart.service';
 import { ApiWishlistService } from './api-wishlist/api-wishlist.service';
-import { CartRequest, UserAuth0Request } from '@wfh/api-interfaces';
+import { AddressRequest, CartRequest, OrderRequest, UserAuth0Request } from '@wfh/api-interfaces';
 import { catchError, forkJoin, of, switchMap, throwError } from 'rxjs';
+import { ApiAddressService } from './api-address/api-address.service';
+import { ApiOrderService } from '@wfh/api/order';
 
 @Controller('users')
 export class ApiUserController {
   constructor(
-    private user: ApiUserService,
+    private readonly user: ApiUserService,
     private readonly cart: ApiCartService,
-    private readonly wishlist: ApiWishlistService
+    private readonly wishlist: ApiWishlistService,
+    private readonly address: ApiAddressService,
+    private readonly orders: ApiOrderService
   ) {}
 
   @Post('')
@@ -29,7 +33,7 @@ export class ApiUserController {
     return this.user.createUserAuth0(user).pipe(
       switchMap((user) => {
         return forkJoin([this.cart.create(user.id), this.wishlist.create(user.id)]).pipe(
-          switchMap(() => of(user))
+          switchMap(([cart]) => of({ ...user, cart: cart._id }))
         );
       }),
       catchError((err) => {
@@ -46,18 +50,45 @@ export class ApiUserController {
     return this.user.getUserByEmail(email);
   }
 
-  @Get(':userId/cart')
-  async getCart(@Param('id') userId: string) {
-    return this.cart.get(userId);
+  @Get('/:userId/orders')
+  getOrders(@Param('userId') userId: string) {
+    return this.orders.getOrdersByUserId(userId);
   }
 
-  @Put(':userId/cart')
-  async addToCart(@Param('id') userId: string, @Body() productDetails: CartRequest) {
+  @Post('/:userId/orders')
+  newOrder(@Param('userId') userId: string, @Body() order: OrderRequest) {
+    return this.orders.newOrder(userId, order);
+  }
+
+  @Get(':userId/address')
+  async getAddresses(@Param('userId') userId: string) {
+    return this.user.getAddresses(userId);
+  }
+
+  @Post(':userId/address')
+  async addAddress(@Param('userId') userId: string, @Body() address: AddressRequest) {
+    return this.address
+      .add(address)
+      .pipe(switchMap((address) => this.user.addUserAddress(userId, address._id)));
+  }
+
+  @Get(':userId/cart/:cartId')
+  async getCart(@Param('userId') userId: string, @Param('cartId') cartId: string) {
+    return this.cart.get(userId, cartId);
+  }
+
+  @Put(':userId/cart/add')
+  async addToCart(@Param('userId') userId: string, @Body() productDetails: CartRequest) {
     return this.cart.addItemToCart(userId, productDetails);
   }
 
+  @Put(':userId/cart/sync')
+  async syncLocalCart(@Param('userId') userId: string, @Body() productDetails: CartRequest[]) {
+    return this.cart.syncLocalCart(userId, productDetails);
+  }
+
   @Delete(':userId/cart/:productId')
-  async removeFromCart(@Param('id') userId: string, @Param('productId') productId: string) {
+  async removeFromCart(@Param('userId') userId: string, @Param('productId') productId: string) {
     return this.cart.removeItemFromCart(userId, productId);
   }
 
@@ -67,12 +98,15 @@ export class ApiUserController {
   }
 
   @Put(':userId/wishlist/add')
-  async addToWishlist(@Param('id') wishlistId: string, @Body() body: { productId: string }) {
+  async addToWishlist(@Param('userId') wishlistId: string, @Body() body: { productId: string }) {
     return this.wishlist.addProduct(wishlistId, body.productId);
   }
 
   @Delete(':userId/wishlist/:productId')
-  async removeFromWishlist(@Param('id') wishlistId: string, @Param('productId') productId: string) {
+  async removeFromWishlist(
+    @Param('userId') wishlistId: string,
+    @Param('productId') productId: string
+  ) {
     return this.wishlist.removeProduct(wishlistId, productId);
   }
 }

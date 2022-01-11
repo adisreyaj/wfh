@@ -1,4 +1,4 @@
-import { Component, Inject, Input, NgModule } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, NgModule, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule, CURRENCY_CODE, DiscountPipeModule } from '@wfh/ui';
 import { IconModule } from '../../../shared/modules/icon.module';
@@ -38,7 +38,13 @@ import { IconModule } from '../../../shared/modules/icon.module';
         </div>
       </div>
     </div>
-    <button wfh variant="neutral" size="xsmall" class="icon delete absolute bottom-1 right-1">
+    <button
+      wfh
+      variant="neutral"
+      size="xsmall"
+      class="icon delete absolute bottom-1 right-1"
+      (click)="delete.emit()"
+    >
       <rmx-icon name="delete-bin-5-fill" class="icon-xs"></rmx-icon>
     </button>
   `,
@@ -57,6 +63,9 @@ import { IconModule } from '../../../shared/modules/icon.module';
 export class CartItemComponent {
   @Input()
   product: any;
+
+  @Output()
+  delete = new EventEmitter<void>();
 
   constructor(@Inject(CURRENCY_CODE) public currencyCode: string) {}
 }

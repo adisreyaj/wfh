@@ -97,10 +97,10 @@ import { ButtonModule } from '../button/button.component';
         <a class="header__icon" tippy="Notifications">
           <rmx-icon name="notification-4-fill"></rmx-icon>
         </a>
-        <a class="header__icon" routerLink="/wishlist">
+        <a class="header__icon" tippy="Wishlist">
           <rmx-icon name="heart-3-fill"></rmx-icon>
         </a>
-        <button class="header__icon relative" routerLink="/checkout/cart">
+        <button class="header__icon relative" routerLink="/checkout/cart" tippy="Cart">
           <rmx-icon name="shopping-cart-2-fill"></rmx-icon>
           <div
             *ngIf="cartItemsCount !== null"
@@ -212,31 +212,26 @@ export class HeaderComponent implements OnDestroy {
       icon: 'products',
       link: 'products',
     },
-    // {
-    //   label: 'Categories',
-    //   icon: 'categories',
-    //   link: 'categories',
-    // },
-    // {
-    //   label: 'Bundles',
-    //   icon: 'bundles',
-    //   link: 'bundles',
-    // },
   ];
   @Input()
   cartItemsCount: number | null = null;
+
   @Output()
   autoComplete = new EventEmitter<string>();
   autoCompleteSubject = new Subject<string>();
+
   @Output()
   searched = new EventEmitter<string>();
   searchSubject = new Subject<string>();
+
   @Output()
   logout = new EventEmitter<void>();
 
   @Output()
   filtered = new EventEmitter<{ key: string; value: string }>();
+
   @ViewChild('searchRef') searchRef: ElementRef<HTMLInputElement> | null = null;
+
   suggestionsVisibleSubject = new BehaviorSubject(false);
   private destroyed$ = new Subject<void>();
   private suggestionSubject = new BehaviorSubject<any>([]);

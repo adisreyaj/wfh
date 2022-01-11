@@ -16,6 +16,12 @@ export const userSchema = new Schema(
       unique: true,
       required: true,
     },
+    addresses: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Address',
+      },
+    ],
     image: String,
   },
   {

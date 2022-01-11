@@ -1,9 +1,11 @@
 import { ProductResponse } from './product.interface';
 import { Document } from 'mongoose';
+import { AddressResponse } from './user.interface';
 
 export interface CartRequest {
   id: string;
   quantity: number;
+  address: string;
 }
 
 export interface CartResponse {
@@ -14,6 +16,7 @@ export interface CartResponse {
     quantity: number;
     addedOn: Date;
   };
+  address: AddressResponse;
   createdAt: Date;
   updatedAt: Date;
 }
