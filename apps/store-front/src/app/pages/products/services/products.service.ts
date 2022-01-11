@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { API_URL } from '@wfh/store-front/core';
+import { shareReplay } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -11,9 +12,11 @@ export class ProductsService {
   getAllProducts(filters: any) {
     const filterQuery = this.contsructFiltersQuery(filters);
     console.log({ filterQuery });
-    return this.http.get<any[]>(`${this.apiUrl}/products`, {
-      params: filterQuery ?? '',
-    });
+    return this.http
+      .get<any[]>(`${this.apiUrl}/products`, {
+        params: filterQuery ?? '',
+      })
+      .pipe(shareReplay(1));
   }
 
   getProductsSearch(searchTerm: string, filters: unknown) {

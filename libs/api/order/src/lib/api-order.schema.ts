@@ -9,12 +9,22 @@ export const orderSchema = new Schema(
       autopopulate: true,
     },
     products: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'Product',
-        required: true,
-        autopopulate: true,
-      },
+      new Schema(
+        {
+          productId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Product',
+            required: true,
+            autopopulate: true,
+          },
+          name: String,
+          description: String,
+          price: Number,
+        },
+        {
+          versionKey: false,
+        }
+      ),
     ],
     address: {
       type: Schema.Types.ObjectId,
@@ -25,6 +35,8 @@ export const orderSchema = new Schema(
       status: String,
       expectedDate: Date,
     },
+    total: Number,
+    breakdown: [{ label: String, value: Number }],
   },
   {
     timestamps: true,

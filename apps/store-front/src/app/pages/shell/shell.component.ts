@@ -18,7 +18,7 @@ import { CommonModule } from '@angular/common';
       (filtered)="this.onFilter($event)"
       (logout)="this.onLogout()"
     ></wfh-header>
-    <div class="container mx-auto mt-4">
+    <div class="mx-auto mt-4">
       <router-outlet></router-outlet>
     </div>
   `,

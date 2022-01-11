@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
-
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ApiCategoryModule } from '@wfh/api/category';
 import { ApiBrandModule } from '@wfh/api/brand';
 import { ApiProductModule } from '@wfh/api/product';
@@ -40,6 +40,10 @@ import { AuthGuard } from './core';
       }),
       inject: [ConfigService],
     }),
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 30,
+    }),
     ApiUserModule,
     ApiAuthModule,
     ApiProductModule,
@@ -53,6 +57,10 @@ import { AuthGuard } from './core';
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })

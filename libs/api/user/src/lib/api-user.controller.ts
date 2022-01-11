@@ -17,6 +17,7 @@ import { AddressRequest, CartRequest, OrderRequest, UserAuth0Request } from '@wf
 import { catchError, forkJoin, of, switchMap, throwError } from 'rxjs';
 import { ApiAddressService } from './api-address/api-address.service';
 import { ApiOrderService } from '@wfh/api/order';
+import { isEmpty } from 'lodash';
 
 @Controller('users')
 export class ApiUserController {
@@ -51,7 +52,11 @@ export class ApiUserController {
   }
 
   @Get('/:userId/orders')
-  getOrders(@Param('userId') userId: string) {
+  getOrders(@Param('userId') userId: string, @Query('query') query: string) {
+    if (!isEmpty(query)) {
+      console.log('Searching for orders with', query);
+      return this.orders.searchOrders(userId, query);
+    }
     return this.orders.getOrdersByUserId(userId);
   }
 

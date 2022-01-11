@@ -35,7 +35,7 @@ import {
 import { WishlistService } from '../wishlist/wishlist.service';
 import { SPECIFICATION_KEYS } from './products.config';
 import { isEmpty } from 'lodash';
-import { CartService } from '@wfh/store-front/service';
+import { CartService, LoaderService } from '@wfh/store-front/service';
 import { HotToastService } from '@ngneat/hot-toast';
 
 @Component({
@@ -44,7 +44,7 @@ import { HotToastService } from '@ngneat/hot-toast';
     <header class="mb-4">
       <h1 class="text-2xl font-semibold">Products</h1>
       <ng-container *ngIf="searchQuery$ | async as searchQuery; else defaultSubtitle">
-        <p>
+        <p class="text-gray-500">
           Searching for <strong>{{ searchQuery }}</strong>
           <span class="ml-2"
             ><button (click)="clearSearch()" wfh size="xsmall" variant="neutral">
@@ -55,7 +55,9 @@ import { HotToastService } from '@ngneat/hot-toast';
       </ng-container>
 
       <ng-template #defaultSubtitle>
-        <p>Showing all available products. Use the filters to narrow down the results!</p>
+        <p class="text-gray-500">
+          Showing all available products. Use the filters to narrow down the results!
+        </p>
       </ng-template>
     </header>
     <section class="content flex">
@@ -84,13 +86,16 @@ import { HotToastService } from '@ngneat/hot-toast';
         </ul>
       </section>
     </section>
-    <wfh-product-quick-view [product]="activeProduct$ | async"></wfh-product-quick-view>
+    <wfh-product-quick-view
+      [product]="activeProduct$ | async"
+      (addToCart)="addToCart($event)"
+    ></wfh-product-quick-view>
   `,
   styles: [
     //language=SCSS
     `
       :host {
-        @apply mx-auto max-w-screen-2xl px-4 md:px-6;
+        @apply block mx-auto max-w-screen-2xl px-4 md:px-6;
         aside {
           width: 280px;
         }
@@ -201,7 +206,8 @@ export class ProductsPage implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private cartService: CartService,
-    private toast: HotToastService
+    private toast: HotToastService,
+    private loader: LoaderService
   ) {
     overlay.clickedOutside$.subscribe(() => {
       this.productQuickViewRef?.close();
@@ -212,13 +218,22 @@ export class ProductsPage implements OnInit {
       this.filterQuery$,
     ]).pipe(
       map(([, term]) => term),
+      tap(() => {
+        this.loader.show();
+      }),
       switchMap((query: string) =>
         isEmpty(query)
           ? this.productService.getAllProducts(this.filters)
           : this.productService.getProductsSearch(query, this.filters)
       ),
+      tap(() => {
+        this.loader.hide();
+      }),
       startWith([]),
-      catchError(() => of([]))
+      catchError(() => {
+        this.loader.hide();
+        return of([]);
+      })
     );
     this.brands$ = productService.getAllBrands().pipe(
       map((brands) =>
