@@ -65,8 +65,7 @@ import { CommonModule } from '@angular/common';
   styles: [
     `
       :host {
-        display: block;
-        @apply mx-6;
+        @apply block mx-auto max-w-screen-2xl px-4 md:px-6;
       }
     `,
   ],
@@ -103,10 +102,11 @@ export class ProfileComponent implements OnInit {
   declarations: [ProfileComponent],
   imports: [
     CommonModule,
-    RouterModule.forChild([{ path: '', component: ProfileComponent }]),
+    RouterModule.forChild([{path: '', component: ProfileComponent}]),
     ButtonModule,
     ReactiveFormsModule,
     FormsModule,
   ],
 })
-export class ProfileModule {}
+export class ProfileModule {
+}

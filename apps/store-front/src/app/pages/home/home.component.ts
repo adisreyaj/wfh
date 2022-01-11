@@ -22,7 +22,7 @@ const typeMap: Record<string, string> = {
   styles: [
     `
       :host {
-        @apply block mx-auto max-w-screen-2xl px-4 md:px-6;
+        @apply block mx-auto xl:max-w-screen-2xl;
       }
     `,
   ],
