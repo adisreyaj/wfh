@@ -1,28 +1,19 @@
 import { Schema } from 'mongoose';
 
-export const monitorSchema = new Schema(
+export const headphoneSchema = new Schema(
   {
     type: {
       type: String,
       required: true,
     },
-    size: {
-      type: String,
-      required: true,
-    },
-    resolution: { type: String, required: true },
-    inputs: [
-      {
-        type: String,
-      },
-    ],
+    connectivity: String,
   },
   {
     discriminatorKey: 'kind',
   }
 );
 
-export const ProductMonitorModel = {
-  name: 'ProductMonitor',
-  schema: monitorSchema,
+export const ProductHeadphoneModel = {
+  name: 'ProductHeadphone',
+  schema: headphoneSchema,
 };

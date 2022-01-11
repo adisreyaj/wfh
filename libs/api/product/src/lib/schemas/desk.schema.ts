@@ -1,16 +1,16 @@
 import { Schema } from 'mongoose';
 
-export const chairSchema = new Schema(
+export const deskSchema = new Schema(
   {
-    headSupport: Boolean,
-    upholstery: String,
+    material: String,
+    heightAdjustable: Boolean,
   },
   {
     discriminatorKey: 'kind',
   }
 );
 
-export const ProductChairModel = {
-  name: 'ProductChair',
-  schema: chairSchema,
+export const ProductDeskModel = {
+  name: 'ProductDesk',
+  schema: deskSchema,
 };
