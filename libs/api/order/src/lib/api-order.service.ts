@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { OrderModel } from './api-order.schema';
 import { OrderDocument, OrderRequest } from '@wfh/api-interfaces';
-import { from } from 'rxjs';
+import { from, switchMap } from 'rxjs';
 import { handleError } from '@wfh/api/util';
 
 @Injectable()
@@ -16,15 +16,13 @@ export class ApiOrderService {
         {
           $search: {
             compound: {
-              must: [
+              filter: [
                 {
                   equals: {
                     path: 'user',
                     value: new Types.ObjectId(userId),
                   },
                 },
-              ],
-              should: [
                 {
                   text: {
                     query: query,
@@ -32,12 +30,21 @@ export class ApiOrderService {
                   },
                 },
               ],
-              minimumShouldMatch: 0,
             },
           },
         },
       ])
-    ).pipe(handleError('orders', 'searchOrders'));
+    ).pipe(
+      switchMap((orders) => {
+        return from(
+          this.ordersModel.populate(orders, {
+            path: 'products.productId',
+            select: 'name description images category',
+          })
+        );
+      }),
+      handleError('orders', 'searchOrders')
+    );
   }
 
   getOrdersByUserId(userId: string) {
@@ -57,6 +64,7 @@ export class ApiOrderService {
           price: product.price,
           name: product.name,
         })),
+        total: order.products.reduce((acc, cur) => acc + cur.price, 0),
         delivery: {
           status: 'RECEIVED',
           expectedDate: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000),

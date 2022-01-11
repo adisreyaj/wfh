@@ -23,15 +23,20 @@ import { IconModule } from '../../../shared/modules/icon.module';
             <p class="font-medium">{{ product.price | currency: currencyCode }}</p>
             <ng-container *ngIf="product.originalPrice">
               <p class="text-gray-500 text-xs line-through ml-2">
-                {{ product.originalPrice | currency: currencyCode }}
+                {{ product.originalPrice | currency: currencyCode:'code':'1.0-0' }}
               </p>
             </ng-container>
           </div>
           <ng-container *ngIf="product.originalPrice">
             <div class="text-xs">
               <p>
-                You save
-                <strong class="text-green-600">{{ '3400' | currency: currencyCode }}</strong>
+                Savings
+                <strong class="text-green-600">{{
+                  product.originalPrice - product.price
+                    | currency: currencyCode:'symbol-narrow':'1.0-0'
+                }}</strong>
+                ({{ product.price | discount: product.originalPrice }}
+                <span class="text-xs">%</span>)
               </p>
             </div>
           </ng-container>

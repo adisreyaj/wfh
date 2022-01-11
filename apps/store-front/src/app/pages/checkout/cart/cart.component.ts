@@ -5,7 +5,17 @@ import { IconModule } from '../../../shared/modules/icon.module';
 import { CommonModule } from '@angular/common';
 import { CartItemModule } from './cart-item.component';
 import { CartSidebarModule } from './cart-sidebar.component';
-import { catchError, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import {
+  catchError,
+  filter,
+  map,
+  Observable,
+  of,
+  switchMap,
+  take,
+  tap,
+  withLatestFrom,
+} from 'rxjs';
 import { CartService, OrderService, UserService } from '@wfh/store-front/service';
 import { AddressResponse } from '@wfh/api-interfaces';
 import { AuthService } from '@auth0/auth0-angular';
@@ -170,7 +180,10 @@ export class CartComponent implements AfterViewInit {
 
   readonly addresses$: Observable<AddressResponse[]>;
   readonly items$: Observable<any>;
-  readonly priceBreakdown$: Observable<any>;
+  readonly priceBreakdown$: Observable<{
+    breakdown: { label: string; value: number }[];
+    total: number;
+  }>;
 
   constructor(
     private readonly cartService: CartService,
@@ -266,7 +279,10 @@ export class CartComponent implements AfterViewInit {
               price: item.price,
             }))
           ),
-          switchMap((items) => this.orderService.order(items, this.addressSelected))
+          withLatestFrom(this.priceBreakdown$),
+          switchMap(([items, breakdown]) =>
+            this.orderService.order(items, this.addressSelected, breakdown.breakdown)
+          )
         )
         .subscribe(() => {
           this.toast.success('Order placed successfully');

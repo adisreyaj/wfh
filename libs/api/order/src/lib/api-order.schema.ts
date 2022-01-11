@@ -35,6 +35,8 @@ export const orderSchema = new Schema(
       status: String,
       expectedDate: Date,
     },
+    total: Number,
+    breakdown: [{ label: String, value: Number }],
   },
   {
     timestamps: true,

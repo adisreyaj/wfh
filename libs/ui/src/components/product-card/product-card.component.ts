@@ -32,7 +32,7 @@ import { IconModule } from '../icon.module';
       <div class="mt-2">
         <p class="text-xs text-gray-500">Price</p>
         <div class="flex text-sm items-center">
-          <p class="font-medium">{{ price | currency: currencyCode }}</p>
+          <p class="font-medium">{{ price | currency: currencyCode:'symbol-narrow':'1.0-0' }}</p>
           <ng-container *ngIf="originalPrice">
             <p class="text-gray-500 text-xs line-through ml-2">
               {{ originalPrice | currency: currencyCode }}
@@ -42,10 +42,11 @@ import { IconModule } from '../icon.module';
         <ng-container *ngIf="originalPrice">
           <div class="text-xs">
             <p>
-              You will save
-              <strong class="text-green-600">{{ priceDifference | currency: currencyCode }}</strong>
-              ({{ price | discount: originalPrice }})
-              <span class="text-xs">%</span>
+              Savings
+              <strong class="text-green-600">{{
+                priceDifference | currency: currencyCode:'symbol-narrow':'1.0-0'
+              }}</strong>
+              ({{ price | discount: originalPrice }}<span class="text-xs">%</span>)
             </p>
           </div>
         </ng-container>

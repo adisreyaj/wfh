@@ -53,6 +53,10 @@ import { ChangeDetectionStrategy, Component, HostBinding, Input, NgModule } from
       :host-context(.icon.xsmall) {
         @apply h-8 w-8;
       }
+
+      :host:disabled {
+        @apply bg-gray-300 cursor-not-allowed opacity-50 hover:bg-gray-300 focus:ring-0;
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -80,5 +84,4 @@ export class ButtonComponent {
   imports: [CommonModule],
   exports: [ButtonComponent],
 })
-export class ButtonModule {
-}
+export class ButtonModule {}
