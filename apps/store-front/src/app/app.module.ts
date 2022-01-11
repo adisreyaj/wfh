@@ -41,7 +41,6 @@ import { HotToastModule } from '@ngneat/hot-toast';
         allowedList: [
           {
             uriMatcher: (url: string) => {
-              console.log('Intercepting', url);
               return url.includes('/api/users/');
             },
           },
