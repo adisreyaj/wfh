@@ -12,6 +12,25 @@ export const SPECIFICATION_KEYS = {
     { key: 'type', label: 'Type' },
     { key: 'buttons', label: 'Num of Buttons' },
   ],
-  ProductMonitor: [],
-  ProductChair: [],
+  ProductMonitor: [
+    { key: 'type', label: 'Type' },
+    { key: 'resolution', label: 'Resolution' },
+    { key: 'size', label: 'Size' },
+  ],
+  ProductChair: [
+    { key: 'headSupport', label: 'Head Support' },
+    {
+      key: 'upholstery',
+      label: 'Upholstery',
+    },
+  ],
+
+  ProductDesk: [
+    { key: 'type', label: 'Type' },
+    { key: 'material', label: 'Material' },
+  ],
+  ProductHeadphone: [
+    { key: 'type', label: 'Type' },
+    { key: 'connectivity', label: 'Connectivity' },
+  ],
 };

@@ -30,9 +30,9 @@ export class ApiUserService {
       switchMap((user: any) => {
         console.log(user);
         const id = user._id;
-        return this.cart.getCartByUserId(id).pipe(map((cart) => ({ ...user, cart: cart._id })));
+        return this.cart.getCartByUserId(id).pipe(map((cart) => ({ ...user, cart: '' })));
       }),
-      handleError('user')
+      handleError('user', 'getUserByEmail')
     );
   }
 

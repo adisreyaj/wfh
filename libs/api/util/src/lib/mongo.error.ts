@@ -6,11 +6,11 @@ export const MONGO_ERROR = (...args: string[]): Record<string, HttpException> =>
 });
 
 export const handleError =
-  <T>(entity: string) =>
+  <T>(entity: string, method = '') =>
   (source: Observable<T>) =>
     source.pipe(
       catchError((err) => {
-        console.error('Handling error', err?.message);
+        console.error(`Handling error @ ${entity}: ${method}`, err?.message);
         if (err instanceof HttpException) {
           return throwError(() => err);
         }

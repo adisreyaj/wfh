@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import {
   RemixIconModule,
+  RiArrowRightLine,
   RiCheckboxCircleFill,
   RiCheckLine,
   RiDeleteBin5Fill,
@@ -10,6 +11,7 @@ const ICONS = {
   RiCheckboxCircleFill,
   RiDeleteBin5Fill,
   RiCheckLine,
+  RiArrowRightLine,
 };
 
 @NgModule({

@@ -37,7 +37,12 @@ import { ButtonModule } from '../button/button.component';
       class="bg-white z-10 h-20 flex justify-between items-center max-w-screen-2xl px-4 md:px-6 mx-auto"
     >
       <div class="flex items-center gap-2">
-        <img src="assets/images/logo.svg" alt="WFH Store" class="h-12 w-12 aspect-square" />
+        <img
+          routerLink="/"
+          src="assets/images/logo.svg"
+          alt="WFH Store"
+          class="h-12 w-12 aspect-square cursor-pointer"
+        />
         <nav class="ml-4">
           <ul class="flex items-center gap-8">
             <ng-container *ngFor="let item of links">
