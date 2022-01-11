@@ -55,6 +55,11 @@ export class ApiUserController {
     return this.orders.getOrdersByUserId(userId);
   }
 
+  @Get('/:userId/orders')
+  searchOrders(@Param('userId') userId: string, @Query('query') query: string) {
+    return this.orders.searchOrders(userId, query);
+  }
+
   @Post('/:userId/orders')
   newOrder(@Param('userId') userId: string, @Body() order: OrderRequest) {
     return this.orders.newOrder(userId, order);

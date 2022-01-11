@@ -84,13 +84,16 @@ import { HotToastService } from '@ngneat/hot-toast';
         </ul>
       </section>
     </section>
-    <wfh-product-quick-view [product]="activeProduct$ | async"></wfh-product-quick-view>
+    <wfh-product-quick-view
+      [product]="activeProduct$ | async"
+      (addToCart)="addToCart($event)"
+    ></wfh-product-quick-view>
   `,
   styles: [
     //language=SCSS
     `
       :host {
-        @apply mx-auto max-w-screen-2xl px-4 md:px-6;
+        @apply block mx-auto max-w-screen-2xl px-4 md:px-6;
         aside {
           width: 280px;
         }

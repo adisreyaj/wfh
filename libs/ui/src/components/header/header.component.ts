@@ -143,6 +143,7 @@ import { ButtonModule } from '../button/button.component';
 
       <ng-template #profile>
         <div [style.min-width.px]="200">
+          <a class="dropdown-item" routerLink="/orders">My Orders</a>
           <a class="dropdown-item" routerLink="/profile">Profile</a>
           <button class="dropdown-item w-full" (click)="logout.emit()">Logout</button>
         </div>

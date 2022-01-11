@@ -1,7 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { USER_DETAILS, UserDetails } from '@wfh/ui';
+import { Component, Inject, NgModule, OnInit } from '@angular/core';
+import { ButtonModule, USER_DETAILS, UserDetails } from '@wfh/ui';
 import { Observable } from 'rxjs';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'wfh-profile',
@@ -96,3 +98,15 @@ export class ProfileComponent implements OnInit {
     });
   }
 }
+
+@NgModule({
+  declarations: [ProfileComponent],
+  imports: [
+    CommonModule,
+    RouterModule.forChild([{ path: '', component: ProfileComponent }]),
+    ButtonModule,
+    ReactiveFormsModule,
+    FormsModule,
+  ],
+})
+export class ProfileModule {}

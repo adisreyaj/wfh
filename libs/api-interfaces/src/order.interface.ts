@@ -3,7 +3,7 @@ import { ProductResponse } from './product.interface';
 import { Document } from 'mongoose';
 
 export interface OrderRequest {
-  products: string[];
+  products: { id: string; name: string; description: string; price: number }[];
   address: string;
 }
 

@@ -258,7 +258,14 @@ export class CartComponent implements AfterViewInit {
       this.items$
         .pipe(
           take(1),
-          map((items) => items.map((item: any) => item._id)),
+          map((items) =>
+            items.map((item: any) => ({
+              id: item._id,
+              name: item.name,
+              description: item.description,
+              price: item.price,
+            }))
+          ),
           switchMap((items) => this.orderService.order(items, this.addressSelected))
         )
         .subscribe(() => {

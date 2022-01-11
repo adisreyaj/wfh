@@ -15,7 +15,7 @@ export class OrderService {
     private readonly http: HttpClient
   ) {}
 
-  order(products: string[], address: any): Observable<any> {
+  order(products: OrderRequest['products'], address: any): Observable<any> {
     return this.user$.pipe(
       switchMap((user) =>
         this.http.post(`${this.apiUrl}/users/${user.id}/orders`, {

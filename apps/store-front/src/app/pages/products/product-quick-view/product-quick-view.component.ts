@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { CURRENCY_CODE, SideSheetComponent } from '@wfh/ui';
 import { ProductQuickView } from '../products.interface';
 
@@ -81,7 +81,7 @@ import { ProductQuickView } from '../products.interface';
         <div class="pb-16"></div>
         <footer class="fixed w-full bottom-0 mt-4 p-6">
           <div class="w-full flex bg-white gap-2">
-            <button class="flex-1" wfh>Add to Cart</button>
+            <button class="flex-1" wfh (click)="addToCart.emit(product)">Add to Cart</button>
             <button class="flex-1" variant="outline" wfh>WishList</button>
           </div>
         </footer>
@@ -92,6 +92,9 @@ import { ProductQuickView } from '../products.interface';
 export class ProductQuickViewComponent implements OnInit {
   @Input()
   product!: ProductQuickView | null;
+
+  @Output()
+  addToCart = new EventEmitter<ProductQuickView>();
 
   @ViewChild(SideSheetComponent) sideSheetRef!: SideSheetComponent;
 

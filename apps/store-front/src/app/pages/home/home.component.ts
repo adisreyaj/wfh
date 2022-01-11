@@ -19,6 +19,13 @@ const typeMap: Record<string, string> = {
       <wfh-home-section [type]="section.type" [products]="section.products"></wfh-home-section>
     </ng-container>
   `,
+  styles: [
+    `
+      :host {
+        @apply block mx-auto max-w-screen-2xl px-4 md:px-6;
+      }
+    `,
+  ],
 })
 export class HomePage {
   sections$: Observable<{ type: string; products: any[] }[]>;
