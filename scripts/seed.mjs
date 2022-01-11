@@ -87,7 +87,7 @@ class Seeder {
         },
       });
       const data = await response.json();
-      console.log(chalk.green('Brands fetched successfully'));
+      console.log(chalk.green(`${data?.length} Brands fetched successfully`));
       return data;
     } catch (e) {
       console.log(chalk.red('Error fetching brands', e));
@@ -116,12 +116,16 @@ class Seeder {
       id: brand._id,
     }));
     await fs.promises.writeFile('./brands.json', JSON.stringify(this.brands));
+    this.status.seedStatus.brand = true;
     const categories = (await this.#getCategories()) ?? [];
     this.categories = categories.map((brand) => ({
       name: brand.name,
       id: brand._id,
     }));
     await fs.promises.writeFile('./categories.json', JSON.stringify(this.categories));
+    this.status.seedStatus.category = true;
+
+    await fs.promises.writeFile('./result.json', JSON.stringify(this.status));
   };
 
   seed = async () => {
@@ -136,6 +140,12 @@ class Seeder {
 
   #seedProducts = async () => {
     if (this.status.seedStatus.product) return;
+    console.info(
+      chalk.blue(
+        `Seeding products. ${this.brands?.length} Brands and ${this.categories?.length} Categories`
+      )
+    );
+    if (this.brands?.length === 0 || this.categories?.length === 0) return;
     try {
       await Promise.all(
         PRODUCTS.reduce((acc, curr) => {
@@ -145,18 +155,20 @@ class Seeder {
               const category = this.categories.find(
                 (category) => category.name === product.category
               );
+              const body = {
+                ...product,
+                kind: curr.kind,
+                brand: brand.id,
+                category: category.id,
+              };
+              console.info(chalk.blue(`Seeding product ${body.name}`));
               return fetch('http://localhost:3333/api/products', {
                 method: 'POST',
                 headers: {
                   ...this.AUTH_HEADER,
                   'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                  ...product,
-                  kind: curr.kind,
-                  brand: brand.id,
-                  category: category.id,
-                }),
+                body: JSON.stringify(body),
               });
             })
           );

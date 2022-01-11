@@ -14,4 +14,7 @@ export const CATEGORIES = [
   {
     name: 'Monitor',
   },
+  {
+    name: 'Headphone',
+  },
 ];

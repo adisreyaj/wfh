@@ -1,38 +1,46 @@
 export const BRANDS = [
   {
+    name: 'Sony',
+    logo: '',
+  },
+  {
     name: 'Logitech',
     logo: '',
-    colors: ['red'],
   },
   {
-    name: 'Microsoft',
+    name: 'Razer',
     logo: '',
-    colors: ['blue'],
   },
   {
-    name: 'HomeCenter',
+    name: 'Acer',
     logo: '',
-    colors: ['green'],
+  },
+  {
+    name: 'Dell',
+    logo: '',
   },
   {
     name: 'Secret Labs',
     logo: '',
-    colors: ['yellow'],
+  },
+  {
+    name: 'Redgear',
+    logo: '',
+  },
+  {
+    name: 'Secretlab',
+    logo: '',
   },
   {
     name: 'Keychron',
     logo: '',
-    colors: ['orange'],
   },
   {
-    name: 'SteelSeries',
+    name: 'Samsung',
     logo: '',
-    colors: ['purple'],
   },
   {
     name: 'Ikea',
     logo: '',
-    colors: ['pink'],
   },
-  { name: 'ErgoShere', logo: '', colors: ['black'] },
 ];
