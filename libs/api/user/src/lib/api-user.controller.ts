@@ -18,6 +18,7 @@ import { catchError, forkJoin, of, switchMap, throwError } from 'rxjs';
 import { ApiAddressService } from './api-address/api-address.service';
 import { ApiOrderService } from '@wfh/api/order';
 import { isEmpty } from 'lodash';
+import { Internal } from '@wfh/api/util';
 
 @Controller('users')
 export class ApiUserController {
@@ -29,6 +30,7 @@ export class ApiUserController {
     private readonly orders: ApiOrderService
   ) {}
 
+  @Internal()
   @Post('')
   async creatUser(@Body() user: UserAuth0Request) {
     return this.user.createUserAuth0(user).pipe(

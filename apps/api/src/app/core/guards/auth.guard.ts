@@ -1,7 +1,7 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard as PassportAuthGuard } from '@nestjs/passport';
-import { IS_PUBLIC_KEY } from '@wfh/api/util';
+import { IS_INTERNAL, IS_PUBLIC_KEY } from '@wfh/api/util';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -15,10 +15,21 @@ export class AuthGuard extends PassportAuthGuard('jwt') {
       context.getHandler(),
       context.getClass(),
     ]);
+
+    const isInternal = this.reflector.getAllAndOverride<boolean>(IS_INTERNAL, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
     // Internal seeding and other scripts should be allowed to run without auth
     const internalToken = this.cfg.get('INTERNAL_TOKEN') ?? '';
     const internalTokenPresent =
       context.switchToHttp().getRequest().headers['x-internal-token'] ?? null;
+    console.log(
+      `isPublic: ${isPublic}, isInternal: ${isInternal}, internalTokenPresent: ${internalTokenPresent}`
+    );
+    if (isInternal) {
+      return internalTokenPresent && internalToken === internalTokenPresent;
+    }
     if (isPublic || internalTokenPresent === internalToken) {
       return true;
     }

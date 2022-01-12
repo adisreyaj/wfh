@@ -3,7 +3,7 @@ import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/
 import { CategoryRequest } from '@wfh/api-interfaces';
 
 import { ApiCategoryService } from './api-category.service';
-import { Public } from '@wfh/api/util';
+import { Internal, Public } from '@wfh/api/util';
 
 @Controller('categories')
 export class ApiCategoryController {
@@ -27,16 +27,19 @@ export class ApiCategoryController {
     return this.categoryService.get(id);
   }
 
+  @Internal()
   @Post()
   create(@Body() categoryReq: CategoryRequest) {
     return this.categoryService.create(categoryReq);
   }
 
+  @Internal()
   @Put('/:id')
   update(@Param('id') id: string, @Body() categoryReq: Partial<CategoryRequest>) {
     return this.categoryService.update(id, categoryReq);
   }
 
+  @Internal()
   @Delete('/:id')
   delete(@Param('id') id: string) {
     return this.categoryService.delete(id);

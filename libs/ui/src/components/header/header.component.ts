@@ -70,7 +70,9 @@ import { ButtonModule } from '../button/button.component';
           name="search"
           id="search"
           (keyup)="this.autoCompleteSubject.next(searchRef.value)"
-          (keyup.enter)="this.searched.emit(searchRef.value)"
+          (keyup.enter)="
+            this.searched.emit(searchRef.value); this.suggestionsVisibleSubject.next(false)
+          "
           (focus)="this.suggestionsVisibleSubject.next(true)"
           #searchRef
         />

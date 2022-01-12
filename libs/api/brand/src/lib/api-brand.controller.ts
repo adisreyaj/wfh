@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiBrandService } from './api-brand.service';
 import { BrandRequest } from '@wfh/api-interfaces';
-import { Public } from '@wfh/api/util';
+import { Internal, Public } from '@wfh/api/util';
 
 @Controller('brands')
 export class ApiBrandController {
@@ -25,16 +25,19 @@ export class ApiBrandController {
     return this.brandService.get(id);
   }
 
+  @Internal()
   @Post()
   create(@Body() brandReq: BrandRequest) {
     return this.brandService.create(brandReq);
   }
 
+  @Internal()
   @Put('/:id')
   update(@Param('id') id: string, @Body() brandReq: Partial<BrandRequest>) {
     return this.brandService.update(id, brandReq);
   }
 
+  @Internal()
   @Delete('/:id')
   delete(@Param('id') id: string) {
     return this.brandService.delete(id);
