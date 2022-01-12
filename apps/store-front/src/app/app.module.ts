@@ -11,6 +11,8 @@ import { AppComponent } from './app.component';
 import { API_URL } from './core/tokens/api.token';
 import { popperVariation, TippyModule, tooltipVariation } from '@ngneat/helipopper';
 import { HotToastModule } from '@ngneat/hot-toast';
+import { DialogModule } from '@ngneat/dialog';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [AppComponent],
@@ -50,6 +52,9 @@ import { HotToastModule } from '@ngneat/hot-toast';
     HotToastModule.forRoot({
       duration: 2000,
     }),
+    DialogModule.forRoot(),
+    FormsModule,
+    ReactiveFormsModule,
     TippyModule.forRoot({
       defaultVariation: 'tooltip',
       variations: {

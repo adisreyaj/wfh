@@ -33,9 +33,9 @@ interface AddressBaseRequest {
 export type AddressRequest = AddressBaseRequest;
 
 export interface AddressResponse extends AddressBaseRequest {
-  id: string;
+  _id: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface AddressDocument extends Document, Omit<AddressResponse, 'id'> {}
+export interface AddressDocument extends Document, Omit<AddressResponse, '_id'> {}

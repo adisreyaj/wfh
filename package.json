@@ -28,6 +28,7 @@
     "@nestjs/passport": "^8.0.1",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/throttler": "^2.0.0",
+    "@ngneat/dialog": "^1.7.1",
     "@ngneat/helipopper": "^5.1.0",
     "@ngneat/hot-toast": "^4.1.0",
     "@ngneat/overview": "^3.0.0",

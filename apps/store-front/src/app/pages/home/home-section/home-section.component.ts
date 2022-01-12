@@ -19,7 +19,7 @@ import { CURRENCY_CODE } from '@wfh/ui';
             routerLink="/products"
             [queryParams]="{ q: product.name }"
             *ngFor="let product of products | slice: 0:5"
-            class="p-2 bg-white rounded-md cursor-pointer hover:-translate-y-1 shadow-lg hover:shadow-2xl transition-all duration-200"
+            class="product-card p-2 bg-white rounded-md cursor-pointer hover:-translate-y-1 shadow-lg hover:shadow-2xl transition-all duration-200"
             style="width: 200px; height: 250px"
           >
             <header class="flex flex-col items-center">

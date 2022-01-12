@@ -45,11 +45,11 @@ import { HotToastService } from '@ngneat/hot-toast';
               <div class="grid lg:grid-cols-2 gap-4">
                 <ng-container *ngFor="let address of addresses$ | async">
                   <article
-                    (click)="step = 1; addressSelected = address.id"
+                    (click)="step = 1; addressSelected = address._id"
                     class="border cursor-pointer text-gray-600 hover:shadow-lg hover:-translate-y-1 relative border-gray-200 p-4"
                   >
                     <div class="absolute top-2 right-2">
-                      <wfh-checkbox [checked]="addressSelected === address.id"></wfh-checkbox>
+                      <wfh-checkbox [checked]="addressSelected === address._id"></wfh-checkbox>
                     </div>
                     <p>{{ address?.apartment }}, {{ address?.street }}</p>
                     <p>{{ address?.city }}</p>
@@ -241,7 +241,7 @@ export class CartComponent implements AfterViewInit {
       switchMap(() => this.userService.getAddresses()),
       tap((addresses) => {
         if (addresses.length) {
-          this.addressSelected = addresses[0].id;
+          this.addressSelected = addresses[0]._id;
           this.step = 1;
         }
       })
