@@ -11,7 +11,7 @@ import { OrderRequest, OrderResponse } from '@wfh/api-interfaces';
 export class OrderService {
   constructor(
     @Inject(USER_DETAILS) private readonly user$: Observable<UserDetails>,
-    @Inject(API_URL) private apiUrl: string,
+    @Inject(API_URL) private readonly apiUrl: string,
     private readonly http: HttpClient
   ) {}
 

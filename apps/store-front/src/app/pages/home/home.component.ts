@@ -15,7 +15,7 @@ const typeMap: Record<string, string> = {
 @Component({
   selector: 'wfh-home',
   template: `
-    <ng-container *ngFor="let section of sections$ | async">
+    <ng-container *ngFor="let section of this.sections$ | async">
       <wfh-home-section [type]="section.type" [products]="section.products"></wfh-home-section>
     </ng-container>
   `,
@@ -30,7 +30,7 @@ const typeMap: Record<string, string> = {
 export class HomePage {
   sections$: Observable<{ type: string; products: any[] }[]>;
 
-  constructor(private productService: ProductsService) {
+  constructor(private readonly productService: ProductsService) {
     this.sections$ = this.productService.getAllProducts({}).pipe(
       map((products) => {
         const grouped = groupBy(products, 'kind');

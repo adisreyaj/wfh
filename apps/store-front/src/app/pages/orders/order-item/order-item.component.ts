@@ -25,7 +25,7 @@ import { CURRENCY_CODE } from '@wfh/ui';
             <ng-template wfhAccordionContent>
               <div class="py-8">
                 <wfh-step-indicator [completed]="0">
-                  <ng-container *ngFor="let step of steps">
+                  <ng-container *ngFor="let step of this.steps">
                     <ng-template wfh-step-indicator-item [title]="step">
                       <div class="w-2 h-2 rounded-full bg-white"></div>
                     </ng-template>
@@ -54,7 +54,7 @@ import { CURRENCY_CODE } from '@wfh/ui';
                   <div class="text-sm">
                     <p class="line-clamp-1">{{ product.name }}</p>
                     <p class="font-medium">
-                      {{ product.price | currency: currencyCode:'symbol':'1.0-0' }}
+                      {{ product.price | currency: this.currencyCode:'symbol':'1.0-0' }}
                     </p>
                   </div>
                 </li>
@@ -78,7 +78,7 @@ import { CURRENCY_CODE } from '@wfh/ui';
                           <p class="text-gray-500">{{ item.label }}</p>
                         </td>
                         <td class="text-right">
-                          <p class="font-medium">{{ item.value | currency: currencyCode }}</p>
+                          <p class="font-medium">{{ item.value | currency: this.currencyCode }}</p>
                         </td>
                       </tr>
                     </ng-container>
@@ -90,7 +90,7 @@ import { CURRENCY_CODE } from '@wfh/ui';
                       </td>
                       <td>
                         <p class="font-medium text-right">
-                          {{ order.total | currency: currencyCode:'symbol':'1.0-0' }}
+                          {{ order.total | currency: this.currencyCode:'symbol':'1.0-0' }}
                         </p>
                       </td>
                     </tr>
@@ -110,7 +110,7 @@ export class OrderItemComponent implements OnInit {
 
   steps = ['RECEIVED', 'PROCESSING', 'SHIPPED', 'DELIVERED'];
 
-  constructor(@Inject(CURRENCY_CODE) public currencyCode: string) {}
+  constructor(@Inject(CURRENCY_CODE) public readonly currencyCode: string) {}
 
   ngOnInit(): void {}
 }

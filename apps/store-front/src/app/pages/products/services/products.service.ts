@@ -7,7 +7,10 @@ import { shareReplay } from 'rxjs';
   providedIn: 'root',
 })
 export class ProductsService {
-  constructor(@Inject(API_URL) private readonly apiUrl: string, private http: HttpClient) {}
+  constructor(
+    @Inject(API_URL) private readonly apiUrl: string,
+    private readonly http: HttpClient
+  ) {}
 
   getAllProducts(filters: any) {
     const filterQuery = this.contsructFiltersQuery(filters);

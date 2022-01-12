@@ -9,33 +9,33 @@ import { IconModule } from '../../../shared/modules/icon.module';
     <div class="flex items-start">
       <div class="relative">
         <img
-          [src]="product.images[0]"
-          [alt]="product.name"
+          [src]="this.product.images[0]"
+          [alt]="this.product.name"
           style="height: 150px"
           class="aspect-square object-contain p-2"
         />
       </div>
       <div class="p-4">
-        <p class="text-sm font-medium text-gray-600">{{ product.name }}</p>
+        <p class="text-sm font-medium text-gray-600">{{ this.product.name }}</p>
         <ng-content select="rating"></ng-content>
         <div class="mt-2">
           <div class="flex text-sm items-center">
-            <p class="font-medium">{{ product.price | currency: currencyCode }}</p>
-            <ng-container *ngIf="product.originalPrice">
+            <p class="font-medium">{{ this.product.price | currency: this.currencyCode }}</p>
+            <ng-container *ngIf="this.product.originalPrice">
               <p class="text-gray-500 text-xs line-through ml-2">
-                {{ product.originalPrice | currency: currencyCode:'code':'1.0-0' }}
+                {{ this.product.originalPrice | currency: this.currencyCode:'code':'1.0-0' }}
               </p>
             </ng-container>
           </div>
-          <ng-container *ngIf="product.originalPrice">
+          <ng-container *ngIf="this.product.originalPrice">
             <div class="text-xs">
               <p>
                 Savings
                 <strong class="text-green-600">{{
-                  product.originalPrice - product.price
-                    | currency: currencyCode:'symbol-narrow':'1.0-0'
+                  this.product.originalPrice - this.product.price
+                    | currency: this.currencyCode:'symbol-narrow':'1.0-0'
                 }}</strong>
-                ({{ product.price | discount: product.originalPrice }}
+                ({{ this.product.price | discount: this.product.originalPrice }}
                 <span class="text-xs">%</span>)
               </p>
             </div>
@@ -48,7 +48,7 @@ import { IconModule } from '../../../shared/modules/icon.module';
       variant="neutral"
       size="xsmall"
       class="icon delete absolute bottom-1 right-1"
-      (click)="delete.emit()"
+      (click)="this.delete.emit()"
     >
       <rmx-icon name="delete-bin-5-fill" class="icon-xs"></rmx-icon>
     </button>
@@ -72,7 +72,7 @@ export class CartItemComponent {
   @Output()
   delete = new EventEmitter<void>();
 
-  constructor(@Inject(CURRENCY_CODE) public currencyCode: string) {}
+  constructor(@Inject(CURRENCY_CODE) public readonly currencyCode: string) {}
 }
 
 @NgModule({

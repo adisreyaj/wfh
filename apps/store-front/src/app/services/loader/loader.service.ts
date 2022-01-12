@@ -9,7 +9,7 @@ export class LoaderService implements OnDestroy {
   public readonly showLoader$: Observable<boolean> = this.showLoaderSubject.asObservable();
 
   private readonly destroySubject = new Subject<void>();
-  private stacker = new Subject<boolean>();
+  private readonly stacker = new Subject<boolean>();
 
   constructor() {
     this.stacker

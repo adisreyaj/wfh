@@ -15,11 +15,11 @@ import { HotToastService } from '@ngneat/hot-toast';
 @Component({
   selector: 'wfh-profile',
   template: `
-    <section *ngIf="user$ | async as user">
+    <section *ngIf="this.user$ | async as user">
       <img [src]="user.avatar" class="rounded-md    " [alt]="user.firstName" />
     </section>
     <section class="mt-10">
-      <form class="max-w-xl" [formGroup]="userForm">
+      <form class="max-w-xl" [formGroup]="this.userForm">
         <div class="grid grid-cols-2 gap-4">
           <div class="form-group">
             <label for="firstName">First Name</label>
@@ -83,7 +83,7 @@ import { HotToastService } from '@ngneat/hot-toast';
                 <p>Add New</p>
               </div>
             </li>
-            <ng-container *ngFor="let address of addresses$ | async">
+            <ng-container *ngFor="let address of this.addresses$ | async">
               <li class="border text-gray-600 relative border-gray-200 p-4 rounded-md">
                 <header class="absolute right-2 bottom-2 grid grid-cols-2 gap-2">
                   <button
@@ -138,8 +138,8 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     @Inject(USER_DETAILS) public readonly user$: Observable<UserDetails>,
-    private fb: FormBuilder,
-    private dialog: DialogService,
+    private readonly fb: FormBuilder,
+    private readonly dialog: DialogService,
     private readonly userService: UserService,
     private readonly toast: HotToastService,
     private readonly loader: LoaderService

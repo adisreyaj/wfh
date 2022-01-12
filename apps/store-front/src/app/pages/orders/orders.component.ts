@@ -36,7 +36,7 @@ import { FormsModule } from '@angular/forms';
         <button
           wfh
           size="small"
-          [disabled]="loading$ | async"
+          [disabled]="this.loading$ | async"
           (click)="this.searchQuerySubject.next(this.searchQuery)"
         >
           Search
@@ -45,7 +45,7 @@ import { FormsModule } from '@angular/forms';
           wfh
           variant="neutral"
           size="small"
-          [disabled]="loading$ | async"
+          [disabled]="this.loading$ | async"
           (click)="this.searchQuerySubject.next(''); this.searchQuery = ''"
         >
           Clear

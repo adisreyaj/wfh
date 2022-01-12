@@ -18,10 +18,10 @@ import { BehaviorSubject, catchError, EMPTY, tap } from 'rxjs';
   template: ` <div class="p-10">
     <header class="mb-6">
       <h1 class="font-medium text-lg">
-        {{ dialogRef.data?.isEditMode ? 'Update' : 'Add New' }} Address
+        {{ this.dialogRef.data?.isEditMode ? 'Update' : 'Add New' }} Address
       </h1>
     </header>
-    <form [formGroup]="addressForm" (ngSubmit)="createOrUpdate()">
+    <form [formGroup]="this.addressForm" (ngSubmit)="this.createOrUpdate()">
       <div class="form-group">
         <label for="firstName">Apartment</label>
         <input class="w-full" type="text" id="firstName" formControlName="apartment" />
@@ -58,7 +58,7 @@ import { BehaviorSubject, catchError, EMPTY, tap } from 'rxjs';
         <button wfh variant="neutral" type="button" (click)="this.dialogRef.close(false)">
           Close
         </button>
-        <button wfh [disabled]="addressForm.invalid || (loading$ | async)" type="submit">
+        <button wfh [disabled]="this.addressForm.invalid || (this.loading$ | async)" type="submit">
           Save
         </button>
       </footer>
@@ -71,10 +71,10 @@ export class AddressModalComponent {
   public readonly loading$ = this.loadingSubject.asObservable();
 
   constructor(
-    public dialogRef: DialogRef,
-    private fb: FormBuilder,
-    private userService: UserService,
-    private toast: HotToastService
+    public readonly dialogRef: DialogRef,
+    private readonly fb: FormBuilder,
+    private readonly userService: UserService,
+    private readonly toast: HotToastService
   ) {
     this.addressForm = this.fb.group({
       apartment: ['', Validators.required],

@@ -19,8 +19,8 @@ export class CartService {
 
   constructor(
     @Inject(USER_DETAILS) private readonly user$: Observable<UserDetails>,
-    @Inject(API_URL) private apiUrl: string,
-    private auth: AuthService,
+    @Inject(API_URL) private readonly apiUrl: string,
+    private readonly auth: AuthService,
     private readonly http: HttpClient
   ) {
     this.userId$ = this.user$.pipe(map((user) => user.id));
