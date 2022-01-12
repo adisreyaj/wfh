@@ -3,7 +3,7 @@ import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/
 import { ProductRequest } from '@wfh/api-interfaces';
 
 import { ApiProductService } from './api-product.service';
-import { Public } from '@wfh/api/util';
+import { Internal, Public } from '@wfh/api/util';
 
 @Controller('products')
 export class ApiProductController {
@@ -27,16 +27,19 @@ export class ApiProductController {
     return this.productsService.get(id);
   }
 
+  @Internal()
   @Post()
   create(@Body() productReq: ProductRequest) {
     return this.productsService.create(productReq);
   }
 
+  @Internal()
   @Put('/:id')
   update(@Param('id') id: string, @Body() productReq: Partial<ProductRequest>) {
     return this.productsService.update(id, productReq);
   }
 
+  @Internal()
   @Delete('/:id')
   delete(@Param('id') id: string) {
     return this.productsService.delete(id);
