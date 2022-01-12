@@ -13,18 +13,22 @@ import { CURRENCY_CODE } from '@wfh/ui';
         class="absolute top-0 left-0 w-full h-full bg-gradient-to-tl from-transparent via-gray-900 to-black opacity-80"
       ></div>
       <p class="text-white text-5xl font-semibold absolute top-4 left-4">{{ type | uppercase }}</p>
-      <div class="absolute z-10 top-0 lef-0 h-full w-full flex p-6">
+      <div class="absolute z-10 top-0 lef-0 w-full h-full flex p-6">
         <ul class="flex items-end justify-end w-full gap-4">
           <li
             routerLink="/products"
             [queryParams]="{ q: product.name }"
             *ngFor="let product of products | slice: 0:5"
             class="p-2 bg-white rounded-md cursor-pointer hover:-translate-y-1 shadow-lg hover:shadow-2xl transition-all duration-200"
-            style="max-width: 200px;"
+            style="width: 200px; height: 250px"
           >
-            <header>
-              <img [src]="product.images[0]" [alt]="product.name" class="h-40 object-contain" />
-              <p class="line-clamp-2 text-sm font-medium">{{ product?.name }}</p>
+            <header class="flex flex-col items-center">
+              <img
+                [src]="product.images[0]"
+                [alt]="product.name"
+                class="h-40 w-40 aspect-square object-contain"
+              />
+              <p class="line-clamp-1 text-sm font-medium">{{ product?.name }}</p>
             </header>
             <div>
               <div class="mt-2">
