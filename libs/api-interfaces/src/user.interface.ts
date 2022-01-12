@@ -1,7 +1,6 @@
 import { Document } from 'mongoose';
 
 interface UserBaseRequest {
-  auth0Id: string;
   email: string;
   password: string;
   firstName: string;

@@ -24,9 +24,6 @@ export class AuthGuard extends PassportAuthGuard('jwt') {
     const internalToken = this.cfg.get('INTERNAL_TOKEN') ?? '';
     const internalTokenPresent =
       context.switchToHttp().getRequest().headers['x-internal-token'] ?? null;
-    console.log(
-      `isPublic: ${isPublic}, isInternal: ${isInternal}, internalTokenPresent: ${internalTokenPresent}`
-    );
     if (isInternal) {
       return internalTokenPresent && internalToken === internalTokenPresent;
     }

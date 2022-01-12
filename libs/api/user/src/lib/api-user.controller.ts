@@ -1,20 +1,9 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpException,
-  InternalServerErrorException,
-  Param,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiUserService } from './api-user.service';
 import { ApiCartService } from './api-cart/api-cart.service';
 import { ApiWishlistService } from './api-wishlist/api-wishlist.service';
 import { AddressRequest, CartRequest, OrderRequest, UserAuth0Request } from '@wfh/api-interfaces';
-import { catchError, forkJoin, of, switchMap, throwError } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { ApiAddressService } from './api-address/api-address.service';
 import { ApiOrderService } from '@wfh/api/order';
 import { isEmpty } from 'lodash';
@@ -33,19 +22,7 @@ export class ApiUserController {
   @Internal()
   @Post('')
   async creatUser(@Body() user: UserAuth0Request) {
-    return this.user.createUserAuth0(user).pipe(
-      switchMap((user) => {
-        return forkJoin([this.cart.create(user.id), this.wishlist.create(user.id)]).pipe(
-          switchMap(([cart]) => of({ ...user, cart: cart._id }))
-        );
-      }),
-      catchError((err) => {
-        if (err instanceof HttpException) {
-          return throwError(() => err);
-        }
-        return throwError(() => new InternalServerErrorException());
-      })
-    );
+    return this.user.createUserAuth0(user);
   }
 
   @Get()

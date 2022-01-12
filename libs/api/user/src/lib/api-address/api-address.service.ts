@@ -13,16 +13,16 @@ export class ApiAddressService {
   ) {}
 
   add(address: AddressRequest): Observable<AddressDocument> {
-    return from(this.addressModel.create(address)).pipe(handleError('address'));
+    return from(this.addressModel.create(address)).pipe(handleError('address', 'add'));
   }
 
   update(id: string, address: AddressRequest) {
     return from(this.addressModel.findByIdAndUpdate(id, address, { new: true })).pipe(
-      handleError('address')
+      handleError('address', 'update')
     );
   }
 
   delete(id: string) {
-    return from(this.addressModel.findByIdAndDelete(id)).pipe(handleError('address'));
+    return from(this.addressModel.findByIdAndDelete(id)).pipe(handleError('address', 'delete'));
   }
 }

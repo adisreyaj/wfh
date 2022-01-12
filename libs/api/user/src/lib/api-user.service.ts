@@ -16,9 +16,12 @@ export class ApiUserService {
     private readonly wishlist: ApiWishlistService
   ) {}
 
-  createUserAuth0(user: UserAuth0Request): Observable<UserDocument> {
+  createUserAuth0(user: UserAuth0Request): Observable<{ id: string }> {
     console.info(`Creating user: ${JSON.stringify(user)}`);
-    return from(this.userModel.create(user)).pipe(handleError('user'));
+    return from(this.userModel.create(user)).pipe(
+      map((user) => ({ id: user._id })),
+      handleError('user', 'create')
+    );
   }
 
   getUserByEmail(email: string) {
@@ -39,19 +42,19 @@ export class ApiUserService {
   getAddresses(userId: string) {
     return from(this.userModel.findById(userId).select('addresses').populate('addresses')).pipe(
       map((resp) => resp.addresses ?? []),
-      handleError('address')
+      handleError('address', 'getAddresses')
     );
   }
 
   addUserAddress(userId: string, addressId: string) {
     return from(
       this.userModel.findByIdAndUpdate(userId, { $push: { addresses: addressId } }, { new: true })
-    ).pipe(handleError('address'));
+    ).pipe(handleError('address', 'addUserAddress'));
   }
 
   deleteUserAddress(userId: string, addressId: string) {
     return from(
       this.userModel.findByIdAndUpdate(userId, { $pull: { addresses: addressId } }, { new: true })
-    ).pipe(handleError('address'));
+    ).pipe(handleError('address', 'deleteUserAddress'));
   }
 }

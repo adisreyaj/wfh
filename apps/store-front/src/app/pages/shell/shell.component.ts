@@ -45,7 +45,9 @@ export class ShellComponent {
   }
 
   onLogout() {
-    this.auth.logout();
+    this.auth.logout({
+      returnTo: window.location.origin,
+    });
   }
 
   onAutoComplete($event: string) {
