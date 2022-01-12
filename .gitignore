@@ -44,3 +44,4 @@ Thumbs.db
 .env*
 .cloudflared/config.yaml
 scripts/*.json
+scripts/*.js

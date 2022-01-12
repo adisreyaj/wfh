@@ -20,7 +20,11 @@ export const BRANDS = [
     logo: '',
   },
   {
-    name: 'Secret Labs',
+    name: 'Secretlab',
+    logo: '',
+  },
+  {
+    name: 'Green Soul',
     logo: '',
   },
   {

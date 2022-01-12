@@ -1,4 +1,13 @@
-const KEYBOARDS = [
+import {
+  ProductChairRequest,
+  ProductDeskRequest,
+  ProductHeadphoneRequest,
+  ProductKeyboardRequest,
+  ProductMonitorRequest,
+  ProductMouseRequest,
+} from '../libs/api-interfaces/src';
+
+const KEYBOARDS: Omit<ProductKeyboardRequest, 'kind'>[] = [
   {
     name: 'K2 (Hot-Swappable) Version 2',
     price: 7840,
@@ -61,9 +70,48 @@ const KEYBOARDS = [
     brand: 'Razer',
     originalPrice: 14999,
   },
+  {
+    name: 'Keychron K6',
+    price: 7399,
+    description: '',
+    images: [''],
+    category: 'Keyboard',
+    brand: 'Keychron',
+    colors: ['black', 'white'],
+    type: 'Wireless',
+    numberOfKeys: 84,
+    illumination: 'RGB',
+    keyCaps: 'PBT',
+  },
+  {
+    name: 'Razer BlackWidow V3 Tenkeyless',
+    price: 9599,
+    description: '',
+    images: [''],
+    category: 'Keyboard',
+    brand: 'Razer',
+    colors: ['black'],
+    type: 'Wired',
+    numberOfKeys: 84,
+    illumination: 'RGB',
+    keyCaps: 'PBT',
+  },
+  {
+    name: 'Razer Ornata V2 Gaming Keyboard',
+    price: 18299,
+    description: '',
+    images: [''],
+    category: 'Keyboard',
+    brand: 'Razer',
+    colors: ['black'],
+    type: 'Wired',
+    numberOfKeys: 84,
+    illumination: 'RGB',
+    keyCaps: 'PBT',
+  },
 ];
 
-const MOUSE = [
+const MOUSE: Omit<ProductMouseRequest, 'kind'>[] = [
   {
     type: 'Wireless',
     buttons: 8,
@@ -89,11 +137,48 @@ const MOUSE = [
     category: 'Mouse',
     brand: 'Razer',
     colors: ['black'],
-    kind: 'ProductMouse',
+  },
+  {
+    type: 'Wireless',
+    buttons: 6,
+    name: 'Razer Basilisk X Hyperspeed Wireless Gaming Mouse',
+    price: 4277,
+    originalPrice: 5499,
+    description:
+      '25% Faster Than Competing Wireless Mice: The all-new, Razer HyperSpeed wireless technology brings together extreme low-latency and interference reduction for true wireless freedom.',
+    images: [''],
+    category: 'Mouse',
+    brand: 'Razer',
+    colors: ['black'],
+  },
+  {
+    type: 'Wireless',
+    buttons: 15,
+    name: 'Logitech G604 Lightspeed Wireless Gaming Mouse',
+    price: 5995,
+    originalPrice: 8495,
+    description: '',
+    images: ['https://m.media-amazon.com/images/I/613a-3jtieL._SL1500_.jpg'],
+    category: 'Mouse',
+    brand: 'Logitech',
+    colors: ['black'],
+  },
+  {
+    type: 'Wireless',
+    buttons: 8,
+    name: 'Logitech MX Master 2S Wireless Mouse',
+    price: 5495,
+    originalPrice: 8995,
+    description:
+      'MX Master has been designed, developed, and engineered with its companion keyboard, MX Keys. Get a premium look and feel, seamless workflow, and advanced functionality when you team MX Master with MX Keys. ',
+    images: ['https://m.media-amazon.com/images/I/613a-3jtieL._SL1500_.jpg'],
+    category: 'Mouse',
+    brand: 'Logitech',
+    colors: ['black'],
   },
 ];
 
-const CHAIR = [
+const CHAIR: Omit<ProductChairRequest, 'kind'>[] = [
   {
     name: 'Ikea UTESPELARE Gaming chair',
     price: 4899,
@@ -118,15 +203,111 @@ const CHAIR = [
     headSupport: true,
     upholstery: 'Acrylic',
   },
+  {
+    name: 'Ikea MARKUS office chair',
+    price: 14990,
+    originalPrice: 16499,
+    description: '',
+    images: [],
+    category: 'Chair',
+    brand: 'Ikea',
+    colors: ['black'],
+    headSupport: true,
+    upholstery: 'Polyurethane foam',
+  },
+  {
+    name: 'Ikea RENBERGET office chair',
+    price: 5290,
+    originalPrice: 6499,
+    description: '',
+    images: [],
+    category: 'Chair',
+    brand: 'Ikea',
+    colors: ['black'],
+    headSupport: false,
+    upholstery: 'Polyurethane foam',
+  },
+  {
+    name: 'Ikea GRUPPSPEL Gaming chair',
+    price: 19990,
+    originalPrice: 22499,
+    description: '',
+    images: [],
+    category: 'Chair',
+    brand: 'Ikea',
+    colors: ['grey'],
+    headSupport: true,
+    upholstery: 'Polyurethane foam',
+  },
+  {
+    name: 'Green Soul Ergonomics Gaming chair',
+    price: 18990,
+    originalPrice: 35533,
+    description: '',
+    images: [],
+    category: 'Chair',
+    brand: 'Green Soul',
+    colors: ['black'],
+    headSupport: true,
+    upholstery: 'Moulded Foam',
+  },
+  {
+    name: 'Ikea CRYSTAL V2 Office chair',
+    price: 8290,
+    originalPrice: 10299,
+    description: '',
+    images: [],
+    category: 'Chair',
+    brand: 'Green Soul',
+    colors: ['black'],
+    headSupport: true,
+    upholstery: 'Polyurethane foam',
+  },
+  {
+    name: 'Green Soul Ergonomics beast gaming chair',
+    price: 15190,
+    originalPrice: 22709,
+    description: '',
+    images: [],
+    category: 'Chair',
+    brand: 'Green Soul',
+    colors: ['red'],
+    headSupport: true,
+    upholstery: 'Polyurethane foam',
+  },
+  {
+    name: 'Grean Soul Thunder Multi-Functional Chair with LED RGB Lights',
+    price: 19990,
+    originalPrice: 39990,
+    description: '',
+    images: [],
+    category: 'Chair',
+    brand: 'Green Soul',
+    colors: ['black'],
+    headSupport: true,
+    upholstery: 'Polyurethane foam',
+  },
+  {
+    name: 'Green Soul NEW YORK Office Chair',
+    price: 34990,
+    originalPrice: 45436,
+    description: '',
+    images: [],
+    category: 'Chair',
+    brand: 'Green Soul',
+    colors: ['black'],
+    headSupport: true,
+    upholstery: 'Polyurethane foam',
+  },
 ];
 
-const DESK = [
+const DESK: Omit<ProductDeskRequest, 'kind'>[] = [
   {
     name: 'Ikea LAGKAPTEN White Desk',
     price: 9999,
     originalPrice: 12999,
     description: '',
-    images: [],
+    images: ['https://wfh-store.s3.amazonaws.com/desk/lagkapten-alex-desk.webp'],
     category: 'Desk',
     brand: 'Ikea',
     colors: ['black'],
@@ -145,9 +326,85 @@ const DESK = [
     material: 'Metal',
     heightAdjustable: true,
   },
+  {
+    name: 'Ikea ALEX White Desk',
+    price: 13990,
+    originalPrice: 15499,
+    description: '',
+    images: ['https://wfh-store.s3.amazonaws.com/desk/micke-desk-white.webp'],
+    category: 'Desk',
+    brand: 'Ikea',
+    colors: ['white'],
+    material: 'Wood',
+    heightAdjustable: false,
+  },
+  {
+    name: 'Ikea MICKE White Desk',
+    price: 6990,
+    originalPrice: 8999,
+    description: '',
+    images: [],
+    category: 'Desk',
+    brand: 'Ikea',
+    colors: ['white'],
+    material: 'Wood',
+    heightAdjustable: false,
+  },
+  {
+    name: 'Ikea BEKANT Corner Desk Left',
+    price: 21990,
+    originalPrice: 24499,
+    description: '',
+    images: [
+      'https://wfh-store.s3.amazonaws.com/desk/bekant-corner-desk-left-black-stained-ash-veneer-black.webp',
+    ],
+    category: 'Desk',
+    brand: 'Ikea',
+    colors: ['black'],
+    material: 'Wood',
+    heightAdjustable: true,
+  },
+  {
+    name: 'Ikea BEKANT Corner Desk Right',
+    price: 21990,
+    originalPrice: 24499,
+    description: '',
+    images: [
+      'https://wfh-store.s3.amazonaws.com/desk/bekant-corner-desk-right-black-stained-ash-veneer-black.webp',
+    ],
+    category: 'Desk',
+    brand: 'Ikea',
+    colors: ['black'],
+    material: 'Wood',
+    heightAdjustable: true,
+  },
+  {
+    name: 'Ikea MALM desk',
+    price: 10990,
+    originalPrice: 12455,
+    description: '',
+    images: ['https://wfh-store.s3.amazonaws.com/desk/malm-desk-white.webp'],
+    category: 'Desk',
+    brand: 'Ikea',
+    colors: ['white'],
+    material: 'Wood',
+    heightAdjustable: false,
+  },
+  {
+    name: 'Ikea HAUGA desk',
+    price: 6990,
+    originalPrice: 8455,
+    description: '',
+    images: ['https://wfh-store.s3.amazonaws.com/desk/hauga-desk-beige.webp'],
+    category: 'Desk',
+    brand: 'Ikea',
+    colors: ['brown'],
+    material: 'Wood',
+    heightAdjustable: false,
+  },
 ];
 
-const HEADPHONES = [
+const HEADPHONES: Omit<ProductHeadphoneRequest, 'kind'>[] = [
   {
     type: 'Wired',
     connectivity: '3.5mm Jack',
@@ -176,8 +433,46 @@ const HEADPHONES = [
     brand: 'Sony',
     colors: ['black'],
   },
+  {
+    type: 'Wireless',
+    connectivity: '3.5mm Jack',
+    name: 'Sony WH-1000XM4 Headphones',
+    price: 26990,
+    originalPrice: 29990,
+    description:
+      'Industry Leading Wireless Noise Cancelling Bluetooth Headphones with Mic for Phone Calls, 30 Hours Battery Life, Quick Charge, Touch Control and Alexa Voice Control.',
+    images: [''],
+    category: 'Headphone',
+    brand: 'Sony',
+    colors: ['black'],
+  },
+  {
+    type: 'Wireless',
+    connectivity: '3.5mm Jack',
+    name: 'Razer Barracuda X',
+    price: 11499,
+    originalPrice: 12499,
+    description: '',
+    images: [''],
+    category: 'Headphone',
+    brand: 'Razer',
+    colors: ['black'],
+  },
+  {
+    type: 'Wired',
+    connectivity: '3.5mm Jack',
+    name: 'Razer BlackShark V2 X',
+    price: 7599,
+    originalPrice: 7999,
+    description: '',
+    images: [''],
+    category: 'Headphone',
+    brand: 'Razer',
+    colors: ['black'],
+  },
 ];
-const MONITORS = [
+
+const MONITORS: Omit<ProductMonitorRequest, 'kind'>[] = [
   {
     type: '4K IPS',
     size: '27 Inch',
@@ -281,7 +576,15 @@ const MONITORS = [
   },
 ];
 
-export const PRODUCTS = [
+export type Items =
+  | Omit<ProductMonitorRequest, 'kind'>
+  | Omit<ProductHeadphoneRequest, 'kind'>
+  | Omit<ProductKeyboardRequest, 'kind'>
+  | Omit<ProductMouseRequest, 'kind'>
+  | Omit<ProductDeskRequest, 'kind'>
+  | Omit<ProductChairRequest, 'kind'>;
+
+export const PRODUCTS: { items: Items[]; kind: string }[] = [
   { items: KEYBOARDS, kind: 'ProductKeyboard' },
   { items: MONITORS, kind: 'ProductMonitor' },
   { items: HEADPHONES, kind: 'ProductHeadphone' },
