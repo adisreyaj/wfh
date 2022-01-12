@@ -7,7 +7,7 @@ import { OrderResponse } from '@wfh/api-interfaces';
 import { CommonModule } from '@angular/common';
 import { OrderItemComponent } from './order-item/order-item.component';
 import { AccordionModule } from '../../../../../../libs/ui/src/components/accordion/accordion.module';
-import { ButtonModule } from '@wfh/ui';
+import { ButtonModule, StepIndicatorModule } from '@wfh/ui';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -124,6 +124,7 @@ export class OrdersComponent {
     AccordionModule,
     ButtonModule,
     FormsModule,
+    StepIndicatorModule,
   ],
   exports: [OrdersComponent],
 })
