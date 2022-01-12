@@ -53,9 +53,24 @@ import { FormsModule } from '@angular/forms';
       </div>
     </section>
     <section class="flex flex-col gap-4 mt-6">
-      <ng-container *ngFor="let order of this.orders$ | async">
-        <wfh-order-item [order]="order"></wfh-order-item>
+      <ng-container *ngIf="this.orders$ | async as orders">
+        <ng-container *ngIf="orders && orders.length > 0; else noOrders">
+          <ng-container *ngFor="let order of orders">
+            <wfh-order-item [order]="order"></wfh-order-item>
+          </ng-container>
+        </ng-container>
       </ng-container>
+      <ng-template #noOrders>
+        <section class="flex flex-col items-center w-full h-full">
+          <img src="assets/images/no-orders.svg" alt="Shopping" [style.height.px]="300" />
+          <p class="mb-4 text-lg text-center font-semibold">
+            No orders found.<br />
+            <span class="text-gray-500 text-sm">
+              Go buy something or try changing the search term.</span
+            >
+          </p>
+        </section>
+      </ng-template>
     </section>
   `,
   styles: [
