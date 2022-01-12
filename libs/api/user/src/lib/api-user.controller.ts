@@ -77,6 +77,22 @@ export class ApiUserController {
       .pipe(switchMap((address) => this.user.addUserAddress(userId, address._id)));
   }
 
+  @Put(':userId/address/:addressId')
+  async updateAddress(
+    @Param('userId') userId: string,
+    @Param('addressId') addressId: string,
+    @Body() address: AddressRequest
+  ) {
+    return this.address.update(addressId, address);
+  }
+
+  @Delete(':userId/address/:addressId')
+  async deleteAddress(@Param('userId') userId: string, @Param('addressId') addressId: string) {
+    return this.address
+      .delete(addressId)
+      .pipe(switchMap(() => this.user.deleteUserAddress(userId, addressId)));
+  }
+
   @Get(':userId/cart/:cartId')
   async getCart(@Param('userId') userId: string, @Param('cartId') cartId: string) {
     return this.cart.get(userId, cartId);

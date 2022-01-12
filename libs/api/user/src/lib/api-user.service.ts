@@ -48,4 +48,10 @@ export class ApiUserService {
       this.userModel.findByIdAndUpdate(userId, { $push: { addresses: addressId } }, { new: true })
     ).pipe(handleError('address'));
   }
+
+  deleteUserAddress(userId: string, addressId: string) {
+    return from(
+      this.userModel.findByIdAndUpdate(userId, { $pull: { addresses: addressId } }, { new: true })
+    ).pipe(handleError('address'));
+  }
 }

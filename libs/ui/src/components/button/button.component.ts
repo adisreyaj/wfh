@@ -55,7 +55,7 @@ import { ChangeDetectionStrategy, Component, HostBinding, Input, NgModule } from
       }
 
       :host:disabled {
-        @apply bg-gray-300 cursor-not-allowed opacity-50 hover:bg-gray-300 focus:ring-0;
+        @apply bg-gray-300 cursor-not-allowed text-gray-400 opacity-50 hover:bg-gray-300 focus:ring-0;
       }
     `,
   ],

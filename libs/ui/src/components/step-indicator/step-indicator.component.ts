@@ -8,6 +8,7 @@ import {
   TemplateRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { IconModule } from '../icon.module';
 
 @Directive({
   selector: '[wfh-step-indicator-item]',
@@ -78,7 +79,7 @@ export class StepIndicatorComponent {
 
 @NgModule({
   declarations: [StepIndicatorComponent, StepIndicatorItem],
-  imports: [CommonModule],
+  imports: [CommonModule, IconModule],
   exports: [StepIndicatorComponent, StepIndicatorItem],
 })
 export class StepIndicatorModule {}

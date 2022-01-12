@@ -9,17 +9,22 @@ import {
   catchError,
   filter,
   map,
+  merge,
   Observable,
   of,
+  startWith,
+  Subject,
   switchMap,
   take,
   tap,
   withLatestFrom,
 } from 'rxjs';
-import { CartService, OrderService, UserService } from '@wfh/store-front/service';
+import { CartService, LoaderService, OrderService, UserService } from '@wfh/store-front/service';
 import { AddressResponse } from '@wfh/api-interfaces';
 import { AuthService } from '@auth0/auth0-angular';
 import { HotToastService } from '@ngneat/hot-toast';
+import { AddressModalComponent } from '../../../shared/components/address-modal.component';
+import { DialogService } from '@ngneat/dialog';
 
 @Component({
   selector: 'wfh-cart',
@@ -42,23 +47,33 @@ import { HotToastService } from '@ngneat/hot-toast';
               <header class="mb-4">
                 <h2 class="text-xl font-bold text-gray-500">Address</h2>
               </header>
-              <div class="grid lg:grid-cols-2 gap-4">
+              <ul class="grid lg:grid-cols-2 gap-4">
+                <li
+                  (click)="this.addNewAddress()"
+                  style="min-height: 150px;"
+                  class="border grid place-items-center cursor-pointer text-gray-600 relative border-gray-200 hover:bg-gray-100 hover:ring-2 hover:ring-primary p-4 rounded-md"
+                >
+                  <div class="flex gap-2 items-center">
+                    <rmx-icon name="add-line"></rmx-icon>
+                    <p>Add New</p>
+                  </div>
+                </li>
                 <ng-container *ngFor="let address of addresses$ | async">
-                  <article
-                    (click)="step = 1; addressSelected = address.id"
-                    class="border cursor-pointer text-gray-600 hover:shadow-lg hover:-translate-y-1 relative border-gray-200 p-4"
+                  <li
+                    (click)="step = 1; addressSelected = address._id"
+                    class="border cursor-pointer text-gray-600 hover:shadow-lg hover:-translate-y-1 relative border-gray-200 p-4 rounded-md"
                   >
                     <div class="absolute top-2 right-2">
-                      <wfh-checkbox [checked]="addressSelected === address.id"></wfh-checkbox>
+                      <wfh-checkbox [checked]="addressSelected === address._id"></wfh-checkbox>
                     </div>
                     <p>{{ address?.apartment }}, {{ address?.street }}</p>
                     <p>{{ address?.city }}</p>
                     <p>{{ address?.state }}, {{ address?.country }}</p>
                     <p class="font-semibold">{{ address?.zip }}</p>
                     <p>{{ address?.phone }}</p>
-                  </article>
+                  </li>
                 </ng-container>
-              </div>
+              </ul>
             </section>
             <section class="cart__section" #payments *ngIf="step > 0">
               <header class="mb-4">
@@ -177,13 +192,13 @@ export class CartComponent implements AfterViewInit {
   @ViewChild('payments') payments?: ElementRef;
   elementToNavigateTo!: Record<number, HTMLDivElement | undefined>;
   addressSelected: string = '';
-
   readonly addresses$: Observable<AddressResponse[]>;
   readonly items$: Observable<any>;
   readonly priceBreakdown$: Observable<{
     breakdown: { label: string; value: number }[];
     total: number;
   }>;
+  private updateAddressSubject = new Subject<void>();
 
   constructor(
     private readonly cartService: CartService,
@@ -191,7 +206,9 @@ export class CartComponent implements AfterViewInit {
     private readonly orderService: OrderService,
     public readonly auth: AuthService,
     private router: Router,
-    private toast: HotToastService
+    private toast: HotToastService,
+    private dialog: DialogService,
+    private loader: LoaderService
   ) {
     this.cartService.refreshCart().subscribe();
     this.items$ = this.cartService.cartItems$.pipe(catchError(() => of([])));
@@ -237,13 +254,26 @@ export class CartComponent implements AfterViewInit {
         };
       })
     );
-    this.addresses$ = this.auth.isAuthenticated$.pipe(
+    this.addresses$ = merge(
+      this.auth.isAuthenticated$,
+      this.updateAddressSubject.asObservable().pipe(startWith(true))
+    ).pipe(
+      tap(() => {
+        this.loader.show();
+      }),
       switchMap(() => this.userService.getAddresses()),
       tap((addresses) => {
         if (addresses.length) {
-          this.addressSelected = addresses[0].id;
+          this.addressSelected = addresses[0]._id;
           this.step = 1;
         }
+      }),
+      tap(() => {
+        this.loader.hide();
+      }),
+      catchError((err) => {
+        this.toast.error('Failed to load address.');
+        return of([]);
       })
     );
   }
@@ -253,6 +283,20 @@ export class CartComponent implements AfterViewInit {
       0: this.address?.nativeElement as HTMLDivElement,
       1: this.payments?.nativeElement as HTMLDivElement,
     };
+  }
+
+  addNewAddress(isEdit = false, address: AddressResponse | null = null) {
+    const ref = this.dialog.open(AddressModalComponent, {
+      data: {
+        isEditMode: isEdit,
+        address: address,
+      },
+    });
+    ref.afterClosed$.pipe(filter((updated) => !!updated)).subscribe((updated) => {
+      if (updated) {
+        this.updateAddressSubject.next();
+      }
+    });
   }
 
   onClicked() {
@@ -287,7 +331,7 @@ export class CartComponent implements AfterViewInit {
         .subscribe(() => {
           this.toast.success('Order placed successfully');
           this.cartService.reset();
-          this.router.navigate(['/products']);
+          this.router.navigate(['/orders']);
         });
     }
   }

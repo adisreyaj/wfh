@@ -10,15 +10,36 @@ import { CURRENCY_CODE } from '@wfh/ui';
         <p class="text-xs">
           #<strong class="text-sm">{{ order._id }}</strong>
         </p>
-        <p>
-          Ordered on: <strong>{{ order.createdAt | date: 'medium' }}</strong>
-        </p>
+        <div>
+          <p class="text-gray-500">
+            Ordered on: <strong>{{ order.createdAt | date: 'medium' }}</strong>
+          </p>
+          <p class="text-green-600">
+            Delivery by: <strong>{{ order.delivery.expectedDate | date: 'medium' }}</strong>
+          </p>
+        </div>
       </header>
       <div>
         <wfh-accordion>
-          <wfh-accordion-item [title]="'Products (' + order.products?.length + ')'" [isOpen]="true">
+          <wfh-accordion-item [title]="'Delivery'" [isOpen]="true">
             <ng-template wfhAccordionContent>
-              <ul class="flex items-center flex-wrap gap-2 mt-2 p-4">
+              <div class="py-8">
+                <wfh-step-indicator [completed]="0">
+                  <ng-container *ngFor="let step of steps">
+                    <ng-template wfh-step-indicator-item [title]="step">
+                      <div class="w-2 h-2 rounded-full bg-white"></div>
+                    </ng-template>
+                  </ng-container>
+                </wfh-step-indicator>
+              </div>
+            </ng-template>
+          </wfh-accordion-item>
+          <wfh-accordion-item
+            [title]="'Products (' + order.products?.length + ')'"
+            [isOpen]="false"
+          >
+            <ng-template wfhAccordionContent>
+              <ul class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 p-4">
                 <li
                   *ngFor="let product of order.products"
                   class="flex flex-1 gap-4 border border-collapse p-2"
@@ -86,6 +107,8 @@ import { CURRENCY_CODE } from '@wfh/ui';
 export class OrderItemComponent implements OnInit {
   @Input()
   order!: OrderResponse;
+
+  steps = ['RECEIVED', 'PROCESSING', 'SHIPPED', 'DELIVERED'];
 
   constructor(@Inject(CURRENCY_CODE) public currencyCode: string) {}
 
