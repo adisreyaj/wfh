@@ -70,20 +70,35 @@ import { HotToastService } from '@ngneat/hot-toast';
         ></wfh-filter-sidebar>
       </aside>
       <section class="content px-6 pb-10">
-        <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          <li *ngFor="let product of products$ | async">
-            <wfh-product-card
-              [class.active]="(searchQuery$ | async) === product.name"
-              [title]="product.name"
-              [price]="product.price"
-              [originalPrice]="product.originalPrice"
-              [images]="product.images"
-              (quickView)="openQuickView(product)"
-              (addToWishlist)="addToWishlist(product)"
-              (addToCart)="addToCart(product)"
-            ></wfh-product-card>
-          </li>
-        </ul>
+        <ng-container *ngIf="this.products$ | async as products">
+          <ng-container *ngIf="products && products.length > 0; else noProducts">
+            <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <li *ngFor="let product of products">
+                <wfh-product-card
+                  [class.active]="(searchQuery$ | async) === product.name"
+                  [title]="product.name"
+                  [price]="product.price"
+                  [originalPrice]="product.originalPrice"
+                  [images]="product.images"
+                  (quickView)="openQuickView(product)"
+                  (addToWishlist)="addToWishlist(product)"
+                  (addToCart)="addToCart(product)"
+                ></wfh-product-card>
+              </li>
+            </ul>
+          </ng-container>
+        </ng-container>
+        <ng-template #noProducts>
+          <section class="flex flex-1 flex-col items-center w-full h-full mt-10">
+            <img src="assets/images/no-products.svg" alt="No Products" [style.height.px]="300" />
+            <p class="mb-4 text-lg text-center font-semibold">
+              Oops...no Products found.<br />
+              <span class="text-gray-500 text-sm">
+                Try changing the filters or search for a different item.</span
+              >
+            </p>
+          </section>
+        </ng-template>
       </section>
     </section>
     <wfh-product-quick-view
