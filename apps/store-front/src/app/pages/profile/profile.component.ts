@@ -1,12 +1,12 @@
 import { Component, Inject, NgModule, OnInit } from '@angular/core';
 import { ButtonModule, USER_DETAILS, UserDetails } from '@wfh/ui';
-import { filter, Observable, startWith, Subject, switchMap } from 'rxjs';
+import { catchError, filter, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DialogService } from '@ngneat/dialog';
 import { AddressModalComponent } from '../../shared/components/address-modal.component';
-import { UserService } from '@wfh/store-front/service';
+import { LoaderService, UserService } from '@wfh/store-front/service';
 import { AddressResponse } from '@wfh/api-interfaces';
 import { IconModule } from '../../shared/modules/icon.module';
 import { TippyModule } from '@ngneat/helipopper';
@@ -72,7 +72,7 @@ import { HotToastService } from '@ngneat/hot-toast';
       <div class="mt-10 pb-10">
         <h2 class="text-xl font-bold text-gray-500">Address</h2>
         <div class="mt-6">
-          <ul class="grid grid-cols-4 gap-4">
+          <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <li
               (click)="this.addNewAddress()"
               style="min-height: 150px;"
@@ -141,12 +141,26 @@ export class ProfileComponent implements OnInit {
     private fb: FormBuilder,
     private dialog: DialogService,
     private readonly userService: UserService,
-    private readonly toast: HotToastService
+    private readonly toast: HotToastService,
+    private readonly loader: LoaderService
   ) {
     this.addresses$ = this.updateAddressSubject
       .asObservable()
       .pipe(startWith(true))
-      .pipe(switchMap(() => this.userService.getAddresses()));
+      .pipe(
+        tap(() => {
+          this.loader.show();
+        }),
+        switchMap(() => this.userService.getAddresses()),
+        tap(() => {
+          this.loader.hide();
+        }),
+        catchError(() => {
+          this.loader.hide();
+          this.toast.error('Error fetching addresses.');
+          return of([]);
+        })
+      );
   }
 
   ngOnInit() {

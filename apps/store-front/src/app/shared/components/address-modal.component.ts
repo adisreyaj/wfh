@@ -11,6 +11,7 @@ import {
 import { UserService } from '@wfh/store-front/service';
 import { DialogRef } from '@ngneat/dialog';
 import { HotToastService } from '@ngneat/hot-toast';
+import { BehaviorSubject, catchError, EMPTY, tap } from 'rxjs';
 
 @Component({
   selector: 'wfh-address-modal',
@@ -57,13 +58,17 @@ import { HotToastService } from '@ngneat/hot-toast';
         <button wfh variant="neutral" type="button" (click)="this.dialogRef.close(false)">
           Close
         </button>
-        <button wfh [disabled]="addressForm.invalid" type="submit">Save</button>
+        <button wfh [disabled]="addressForm.invalid || (loading$ | async)" type="submit">
+          Save
+        </button>
       </footer>
     </form>
   </div>`,
 })
 export class AddressModalComponent {
   addressForm: FormGroup;
+  private readonly loadingSubject = new BehaviorSubject<boolean>(false);
+  public readonly loading$ = this.loadingSubject.asObservable();
 
   constructor(
     public dialogRef: DialogRef,
@@ -90,8 +95,18 @@ export class AddressModalComponent {
   createOrUpdate() {
     if (this.addressForm.valid) {
       if (this.dialogRef.data.isEditMode) {
+        this.loadingSubject.next(true);
         this.userService
           .updatedAddress(this.dialogRef.data.address._id, this.addressForm.value)
+          .pipe(
+            tap(() => {
+              this.loadingSubject.next(false);
+            }),
+            catchError(() => {
+              this.loadingSubject.next(false);
+              return EMPTY;
+            })
+          )
           .subscribe({
             next: () => {
               this.addressForm.reset();
@@ -103,16 +118,27 @@ export class AddressModalComponent {
             },
           });
       } else {
-        this.userService.addAddress(this.addressForm.value).subscribe({
-          next: () => {
-            this.addressForm.reset();
-            this.dialogRef.close(true);
-            this.toast.success('Address added successfully');
-          },
-          error: () => {
-            this.toast.error('Failed to add address');
-          },
-        });
+        this.userService
+          .addAddress(this.addressForm.value)
+          .pipe(
+            tap(() => {
+              this.loadingSubject.next(false);
+            }),
+            catchError(() => {
+              this.loadingSubject.next(false);
+              return EMPTY;
+            })
+          )
+          .subscribe({
+            next: () => {
+              this.addressForm.reset();
+              this.dialogRef.close(true);
+              this.toast.success('Address added successfully');
+            },
+            error: () => {
+              this.toast.error('Failed to add address');
+            },
+          });
       }
     }
   }
