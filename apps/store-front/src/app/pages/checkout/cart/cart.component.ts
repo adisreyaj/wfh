@@ -287,7 +287,7 @@ export class CartComponent implements AfterViewInit {
         .subscribe(() => {
           this.toast.success('Order placed successfully');
           this.cartService.reset();
-          this.router.navigate(['/products']);
+          this.router.navigate(['/orders']);
         });
     }
   }

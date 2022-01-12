@@ -56,8 +56,10 @@ import { CommonModule } from '@angular/common';
         </div>
 
         <footer class="flex gap-4 mt-6">
-          <button wfh type="submit" form="userForm" variant="primary">Update</button>
-          <button wfh type="button" variant="neutral" routerLink="/app">Cancel</button>
+          <button wfh type="submit" [disabled]="true" form="userForm" variant="primary">
+            Update
+          </button>
+          <button wfh type="button" variant="neutral" [disabled]="true">Cancel</button>
         </footer>
       </form>
     </section>
@@ -102,11 +104,10 @@ export class ProfileComponent implements OnInit {
   declarations: [ProfileComponent],
   imports: [
     CommonModule,
-    RouterModule.forChild([{path: '', component: ProfileComponent}]),
+    RouterModule.forChild([{ path: '', component: ProfileComponent }]),
     ButtonModule,
     ReactiveFormsModule,
     FormsModule,
   ],
 })
-export class ProfileModule {
-}
+export class ProfileModule {}
