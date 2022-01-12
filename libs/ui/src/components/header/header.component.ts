@@ -39,7 +39,7 @@ import { ButtonModule } from '../button/button.component';
       <div class="flex items-center gap-2">
         <img
           routerLink="/"
-          src="assets/images/logo.svg"
+          src="assets/images/logo.png"
           alt="WFH Store"
           class="h-12 w-12 aspect-square cursor-pointer"
         />
