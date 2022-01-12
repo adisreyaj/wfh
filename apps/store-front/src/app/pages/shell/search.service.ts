@@ -18,7 +18,10 @@ export interface AutoCompleteData {
   providedIn: 'root',
 })
 export class SearchService {
-  constructor(@Inject(API_URL) private apiUrl: string, private readonly http: HttpClient) {}
+  constructor(
+    @Inject(API_URL) private readonly apiUrl: string,
+    private readonly http: HttpClient
+  ) {}
 
   getAutoComplete(query: string): Observable<AutoCompleteResult> {
     return forkJoin([

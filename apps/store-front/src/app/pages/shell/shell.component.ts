@@ -11,8 +11,8 @@ import { CommonModule } from '@angular/common';
 @Component({
   template: `
     <wfh-header
-      [suggestions]="$any(suggestions$ | async)"
-      [cartItemsCount]="cartItemsCount$ | async"
+      [suggestions]="$any(this.suggestions$ | async)"
+      [cartItemsCount]="this.cartItemsCount$ | async"
       (autoComplete)="this.onAutoComplete($event)"
       (searched)="this.onSearch($event)"
       (filtered)="this.onFilter($event)"
@@ -25,14 +25,14 @@ import { CommonModule } from '@angular/common';
 })
 export class ShellComponent {
   public readonly suggestions$: Observable<AutoCompleteResult>;
-  public autoCompleteSubject = new Subject<string>();
+  public readonly autoCompleteSubject = new Subject<string>();
   readonly cartItemsCount$: Observable<number>;
 
   constructor(
-    private searchService: SearchService,
-    private auth: AuthService,
-    private router: Router,
-    private cartService: CartService
+    private readonly searchService: SearchService,
+    private readonly auth: AuthService,
+    private readonly router: Router,
+    private readonly cartService: CartService
   ) {
     this.suggestions$ = this.autoCompleteSubject
       .asObservable()

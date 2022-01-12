@@ -29,13 +29,13 @@ import { AuthService } from '@auth0/auth0-angular';
             </tr>
           </thead>
           <tbody>
-            <ng-container *ngFor="let item of priceBreakdown.breakdown">
+            <ng-container *ngFor="let item of this.priceBreakdown.breakdown">
               <tr class="h-8">
                 <td>
                   <p class="text-gray-500">{{ item.label }}</p>
                 </td>
                 <td class="text-right">
-                  <p class="font-medium">{{ item.value | currency: currencyCode }}</p>
+                  <p class="font-medium">{{ item.value | currency: this.currencyCode }}</p>
                 </td>
               </tr>
             </ng-container>
@@ -47,7 +47,7 @@ import { AuthService } from '@auth0/auth0-angular';
               </td>
               <td>
                 <p class="font-medium text-right">
-                  {{ priceBreakdown.total | currency: currencyCode }}
+                  {{ priceBreakdown.total | currency: this.currencyCode }}
                 </p>
               </td>
             </tr>
@@ -55,9 +55,9 @@ import { AuthService } from '@auth0/auth0-angular';
         </table>
       </div>
     </section>
-    <section class="cart-sidebar__section steps" *ngIf="auth.isAuthenticated$ | async">
+    <section class="cart-sidebar__section steps" *ngIf="this.auth.isAuthenticated$ | async">
       <wfh-step-indicator [completed]="state">
-        <ng-container *ngFor="let step of steps">
+        <ng-container *ngFor="let step of this.steps">
           <ng-template wfh-step-indicator-item [title]="step">
             <rmx-icon name="check-line" class="icon-sm" style="fill:white"></rmx-icon>
           </ng-template>
@@ -65,11 +65,11 @@ import { AuthService } from '@auth0/auth0-angular';
       </wfh-step-indicator>
     </section>
     <footer class="mt-6">
-      <ng-container *ngIf="auth.isAuthenticated$ | async; else login">
-        <button class="w-full" wfh (click)="clicked.emit()">{{ labels[state] }}</button>
+      <ng-container *ngIf="this.auth.isAuthenticated$ | async; else login">
+        <button class="w-full" wfh (click)="this.clicked.emit()">{{ labels[state] }}</button>
       </ng-container>
       <ng-template #login>
-        <button class="w-full" wfh (click)="auth.loginWithPopup()">Login to Continue</button>
+        <button class="w-full" wfh (click)="this.auth.loginWithPopup()">Login to Continue</button>
       </ng-template>
     </footer>
   `,

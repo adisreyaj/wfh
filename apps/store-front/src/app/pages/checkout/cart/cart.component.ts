@@ -29,7 +29,7 @@ import { DialogService } from '@ngneat/dialog';
 @Component({
   selector: 'wfh-cart',
   template: `
-    <ng-container *ngIf="items$ | async as items">
+    <ng-container *ngIf="this.items$ | async as items">
       <ng-container *ngIf="items.length > 0; else emptyCart">
         <section class="flex-1">
           <header class="mb-4">
@@ -38,11 +38,11 @@ import { DialogService } from '@ngneat/dialog';
           <section class="cart__section">
             <section class="grid xl:grid-cols-2 gap-4">
               <article class="" *ngFor="let item of items">
-                <wfh-cart-item [product]="item" (delete)="onDelete(item)"></wfh-cart-item>
+                <wfh-cart-item [product]="item" (delete)="this.onDelete(item)"></wfh-cart-item>
               </article>
             </section>
           </section>
-          <ng-container *ngIf="auth.isAuthenticated$ | async; else login">
+          <ng-container *ngIf="this.auth.isAuthenticated$ | async; else login">
             <section class="cart__section" #address>
               <header class="mb-4">
                 <h2 class="text-xl font-bold text-gray-500">Address</h2>
@@ -58,13 +58,13 @@ import { DialogService } from '@ngneat/dialog';
                     <p>Add New</p>
                   </div>
                 </li>
-                <ng-container *ngFor="let address of addresses$ | async">
+                <ng-container *ngFor="let address of this.addresses$ | async">
                   <li
-                    (click)="step = 1; addressSelected = address._id"
+                    (click)="step = 1; this.addressSelected = address._id"
                     class="border cursor-pointer text-gray-600 hover:shadow-lg hover:-translate-y-1 relative border-gray-200 p-4 rounded-md"
                   >
                     <div class="absolute top-2 right-2">
-                      <wfh-checkbox [checked]="addressSelected === address._id"></wfh-checkbox>
+                      <wfh-checkbox [checked]="this.addressSelected === address._id"></wfh-checkbox>
                     </div>
                     <p>{{ address?.apartment }}, {{ address?.street }}</p>
                     <p>{{ address?.city }}</p>
@@ -80,7 +80,7 @@ import { DialogService } from '@ngneat/dialog';
                 <h2 class="text-xl font-bold text-gray-500">Payment</h2>
               </header>
               <div class="grid lg:grid-cols-3 gap-4">
-                <ng-container *ngFor="let card of cards$ | async; index as i">
+                <ng-container *ngFor="let card of this.cards$ | async; index as i">
                   <label
                     (click)="step = 2"
                     [for]="'card=' + i"
@@ -108,7 +108,7 @@ import { DialogService } from '@ngneat/dialog';
                 <span class="text-gray-500 text-sm"> You will need to choose/add an address.</span>
               </p>
 
-              <button wfh (click)="auth.loginWithPopup()">Login or Signup</button>
+              <button wfh (click)="this.auth.loginWithPopup()">Login or Signup</button>
             </section>
           </ng-template>
         </section>
@@ -117,9 +117,9 @@ import { DialogService } from '@ngneat/dialog';
             <h2 class="text-xl font-bold text-gray-500">Summary</h2>
           </header>
           <wfh-cart-sidebar
-            (clicked)="onClicked()"
-            [state]="step"
-            [priceBreakdown]="priceBreakdown$ | async"
+            (clicked)="this.onClicked()"
+            [state]="this.step"
+            [priceBreakdown]="this.priceBreakdown$ | async"
           ></wfh-cart-sidebar>
         </aside>
       </ng-container>
@@ -161,7 +161,7 @@ import { DialogService } from '@ngneat/dialog';
   ],
 })
 export class CartComponent implements AfterViewInit {
-  cards$ = this.auth.user$.pipe(
+  readonly cards$ = this.auth.user$.pipe(
     filter((user) => !!user),
     map((user) => [
       {
@@ -188,8 +188,6 @@ export class CartComponent implements AfterViewInit {
   );
 
   step = 0;
-  @ViewChild('address') address?: ElementRef;
-  @ViewChild('payments') payments?: ElementRef;
   elementToNavigateTo!: Record<number, HTMLDivElement | undefined>;
   addressSelected: string = '';
   readonly addresses$: Observable<AddressResponse[]>;
@@ -198,17 +196,22 @@ export class CartComponent implements AfterViewInit {
     breakdown: { label: string; value: number }[];
     total: number;
   }>;
-  private updateAddressSubject = new Subject<void>();
+  @ViewChild('address')
+  private readonly address?: ElementRef;
+  @ViewChild('payments')
+  private readonly payments?: ElementRef;
+
+  private readonly updateAddressSubject = new Subject<void>();
 
   constructor(
     private readonly cartService: CartService,
     private readonly userService: UserService,
     private readonly orderService: OrderService,
     public readonly auth: AuthService,
-    private router: Router,
-    private toast: HotToastService,
-    private dialog: DialogService,
-    private loader: LoaderService
+    private readonly router: Router,
+    private readonly toast: HotToastService,
+    private readonly dialog: DialogService,
+    private readonly loader: LoaderService
   ) {
     this.cartService.refreshCart().subscribe();
     this.items$ = this.cartService.cartItems$.pipe(catchError(() => of([])));

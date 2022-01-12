@@ -11,12 +11,7 @@ import {
 import { IconModule } from '../../shared/modules/icon.module';
 import { CommonModule } from '@angular/common';
 import { ProductQuickViewComponent } from './product-quick-view/product-quick-view.component';
-import {
-  Product,
-  ProductPromise,
-  ProductQuickView,
-  ProductSpecification,
-} from './products.interface';
+import { Product, ProductPromise, ProductQuickView } from './products.interface';
 import { ProductsService } from './services/products.service';
 import {
   catchError,
@@ -43,11 +38,11 @@ import { HotToastService } from '@ngneat/hot-toast';
   template: `
     <header class="mb-4">
       <h1 class="text-2xl font-semibold">Products</h1>
-      <ng-container *ngIf="searchQuery$ | async as searchQuery; else defaultSubtitle">
+      <ng-container *ngIf="this.searchQuery$ | async as searchQuery; else defaultSubtitle">
         <p class="text-gray-500">
           Searching for <strong>{{ searchQuery }}</strong>
           <span class="ml-2"
-            ><button (click)="clearSearch()" wfh size="xsmall" variant="neutral">
+            ><button (click)="this.clearSearch()" wfh size="xsmall" variant="neutral">
               Clear Search
             </button></span
           >
@@ -63,10 +58,10 @@ import { HotToastService } from '@ngneat/hot-toast';
     <section class="content flex">
       <aside class="sticky top-6">
         <wfh-filter-sidebar
-          [filters]="filters$ | async"
-          [brands]="brands$ | async"
-          [categories]="categories$ | async"
-          (filterChanged)="applyFilter($event)"
+          [filters]="this.filters$ | async"
+          [brands]="this.brands$ | async"
+          [categories]="this.categories$ | async"
+          (filterChanged)="this.applyFilter($event)"
         ></wfh-filter-sidebar>
       </aside>
       <section class="content px-6 pb-10">
@@ -75,14 +70,14 @@ import { HotToastService } from '@ngneat/hot-toast';
             <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               <li *ngFor="let product of products">
                 <wfh-product-card
-                  [class.active]="(searchQuery$ | async) === product.name"
+                  [class.active]="(this.searchQuery$ | async) === product.name"
                   [title]="product.name"
                   [price]="product.price"
                   [originalPrice]="product.originalPrice"
                   [images]="product.images"
-                  (quickView)="openQuickView(product)"
-                  (addToWishlist)="addToWishlist(product)"
-                  (addToCart)="addToCart(product)"
+                  (quickView)="this.openQuickView(product)"
+                  (addToWishlist)="this.addToWishlist(product)"
+                  (addToCart)="this.addToCart(product)"
                 ></wfh-product-card>
               </li>
             </ul>
@@ -102,8 +97,8 @@ import { HotToastService } from '@ngneat/hot-toast';
       </section>
     </section>
     <wfh-product-quick-view
-      [product]="activeProduct$ | async"
-      (addToCart)="addToCart($event)"
+      [product]="this.activeProduct$ | async"
+      (addToCart)="this.addToCart($event)"
     ></wfh-product-quick-view>
   `,
   styles: [
@@ -145,33 +140,6 @@ export class ProductsPage implements OnInit {
       img: 'installation.png',
     },
   ];
-
-  specifications: ProductSpecification[] = [
-    {
-      label: 'Dimensions',
-      value: '10 x 20 x 4 cm',
-    },
-    {
-      label: 'Weight',
-      value: '10 kg',
-    },
-    {
-      label: 'Brand',
-      value: 'Home Centre',
-    },
-    {
-      label: 'Model',
-      value: 'Helios Elite',
-    },
-    {
-      label: 'Warranty',
-      value: '1 year',
-    },
-    {
-      label: 'Color',
-      value: 'Brown',
-    },
-  ];
   @ViewChild(ProductQuickViewComponent, { static: true })
   productQuickViewRef?: ProductQuickViewComponent;
 
@@ -180,8 +148,8 @@ export class ProductsPage implements OnInit {
   readonly categories$: Observable<any[]>;
 
   filters: any = null;
-  filtersSubject: Subject<any> = new ReplaySubject();
-  filters$: Observable<any> = this.filtersSubject.asObservable();
+  readonly filtersSubject: Subject<any> = new ReplaySubject();
+  readonly filters$: Observable<any> = this.filtersSubject.asObservable();
   readonly filterQuery$ = this.activatedRoute.queryParams.pipe(
     map((params) => params.filters),
     tap(() => {
@@ -214,15 +182,15 @@ export class ProductsPage implements OnInit {
     );
 
   constructor(
-    @Inject(CURRENCY_CODE) public currencyCode: string,
-    private overlay: OverlayService,
-    private productService: ProductsService,
-    private wishlistService: WishlistService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private cartService: CartService,
-    private toast: HotToastService,
-    private loader: LoaderService
+    @Inject(CURRENCY_CODE) public readonly currencyCode: string,
+    private readonly overlay: OverlayService,
+    private readonly productService: ProductsService,
+    private readonly wishlistService: WishlistService,
+    private readonly router: Router,
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly cartService: CartService,
+    private readonly toast: HotToastService,
+    private readonly loader: LoaderService
   ) {
     overlay.clickedOutside$.subscribe(() => {
       this.productQuickViewRef?.close();
