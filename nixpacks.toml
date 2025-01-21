@@ -23,9 +23,13 @@ paths = ['/app/node_modules/.bin']
 [phases.setup]
 nixPkgs = [
     'nodejs_18',
-    'npm-6_x',
+    'npm-9_x',
     'openssl',
     'python311'
+]
+nixLibs = [
+    'libuuid',
+    'libGL',
 ]
 aptPkgs = ['build-essential']
 
